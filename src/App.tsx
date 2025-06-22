@@ -10,19 +10,19 @@ import { useAppDispatch } from "./hooks/store-hook";
 import { checkLoginStatus } from "./store/slices/authSlice";
 
 const App = () => {
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(checkLoginStatus());
+  // const dispatch = useAppDispatch();
+  // useEffect(() => {
+  //   dispatch(checkLoginStatus());
 
-  }, []);
+  // }, []);
 
   return (
     <BrowserRouter>
       <Suspense fallback={<Loading />}>
         <Routes>
-          <Route element={<TokenProtectedRoutes />}>
+          {/* <Route element={<TokenProtectedRoutes />}> */}
             {mapRoutes(getRoutes("tokenProtected"))}
-          </Route>
+          {/* </Route> */}
           <Route element={<PublicRoute />}>
             {mapRoutes(getRoutes("unprotected"))}
           </Route>
