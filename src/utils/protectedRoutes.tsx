@@ -5,17 +5,22 @@ import { useAppSelector } from "@/hooks/store-hook";
 export const TokenProtectedRoutes = () => {
   const { isLoggedIn, isAuthChecked } = useAppSelector((state) => state.Auth);
 
-  if (!isAuthChecked) {
-    return <Loading />;
-  }
+  // if (!isAuthChecked) {
+  //   return <Loading />;
+  // }
 
-  return isLoggedIn ? (
+  return (
     <Suspense fallback={<Loading />}>
       <Outlet />
     </Suspense>
-  ) : (
-    <Navigate to="/login" />
   );
+  // return isLoggedIn ? (
+  //   <Suspense fallback={<Loading />}>
+  //     <Outlet />
+  //   </Suspense>
+  // ) : (
+  //   <Navigate to="/login" />
+  // );
 };
 
 export const PublicRoute = () => {
