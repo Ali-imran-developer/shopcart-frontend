@@ -39,7 +39,7 @@ export const bookingOrder = createAsyncThunk(
 );
 
 export const fetchAllOrders = createAsyncThunk("/orders/get", async () => {
-  const result = await axios.get(`${BASE_URL}/orders/getting`, {
+  const result = await axios.get(`${BASE_URL}/api/orders/get`, {
     withCredentials: true,
   });
   return result?.data;

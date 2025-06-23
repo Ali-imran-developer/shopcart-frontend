@@ -29,7 +29,7 @@ export default function ConfirmOrdersPage() {
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <div className="mt-4 flex items-center lg:gap-3 gap-1 @lg:mt-0 flex-wrap">
+        <div className="mt-4 flex items-center lg:gap-3 gap-4 @lg:mt-0 flex-wrap">
           <ExportButton
             data={orderData}
             fileName="order_data"
