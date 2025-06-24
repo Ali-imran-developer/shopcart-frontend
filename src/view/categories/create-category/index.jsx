@@ -8,11 +8,11 @@ import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import { useNavigate } from "react-router-dom";
 import { routes } from "@/config/routes";
 import { PiX } from "react-icons/pi";
-import {
-  fetchAllCategory,
-  addNewCategory,
-  editCategory,
-} from "@/store/slices/categoriesSlice";
+// import {
+//   fetchAllCategory,
+//   addNewCategory,
+//   editCategory,
+// } from "@/store/slices/categoriesSlice";
 // import FormGroup from "@/components/shared/form-group";
 import cn from "@/utils/helperFunctions/class-names";
 
@@ -52,9 +52,9 @@ const CreateCategory = () => {
     status: "active",
   };  
 
-  useEffect(() => {
-    dispatch(fetchAllCategory());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchAllCategory());
+  // }, [dispatch]);
 
   const formik = useFormik({
     initialValues,
@@ -82,12 +82,12 @@ const CreateCategory = () => {
           };
           console.log("selectedCategory?._id", selectedCategory?._id);
           console.log("payload", payload);
-          await dispatch(
-            editCategory({
-              id: selectedCategory?._id,
-              formData: payload,
-            })
-          ).unwrap();
+          // await dispatch(
+          //   editCategory({
+          //     id: selectedCategory?._id,
+          //     formData: payload,
+          //   })
+          // ).unwrap();
           toast.success("Subcategories added successfully!");
           navigate(routes?.products?.categories);
         } catch (error) {
@@ -110,7 +110,7 @@ const CreateCategory = () => {
             description: formik?.values?.description,
             status: formik?.values?.status,
           };
-          await dispatch(addNewCategory(payload)).unwrap();
+          // await dispatch(addNewCategory(payload)).unwrap();
           toast.success("Category created successfully!");
           navigate(routes?.products?.categories);
         } catch (error) {

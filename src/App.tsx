@@ -20,9 +20,9 @@ const App = () => {
     <BrowserRouter>
       <Suspense fallback={<Loading />}>
         <Routes>
-          {/* <Route element={<TokenProtectedRoutes />}> */}
+          <Route element={<TokenProtectedRoutes />}>
             {mapRoutes(getRoutes("tokenProtected"))}
-          {/* </Route> */}
+          </Route>
           <Route element={<PublicRoute />}>
             {mapRoutes(getRoutes("unprotected"))}
           </Route>

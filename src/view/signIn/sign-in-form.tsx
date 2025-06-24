@@ -8,6 +8,7 @@ import { Form, Formik } from "formik";
 import { useAppDispatch } from "@/hooks/store-hook";
 import { login } from "@/store/slices/authSlice";
 import toast from "react-hot-toast";
+import AuthController from "@/controllers/authController";
 
 const initialValues = {
   email: "",
@@ -15,6 +16,7 @@ const initialValues = {
 };
 
 export default function SignInForm() {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,7 +25,11 @@ export default function SignInForm() {
     try{
       setIsLoading(true);
       const response = await dispatch(login(values)).unwrap();
+      if (response?.token) {
+        AuthController.set({ token: response?.token });
+      }
       toast.success(response.message || "Login Successfully!");
+      navigate("/");
     } catch(error: any){
       toast.error(error.message || "Failed to Login!");
     } finally{

@@ -14,7 +14,8 @@ import HandWaveIcon from "@shared/components/icons/hand-wave";
 import AuthController from "@/controllers/authController";
 
 export default function EcommerceDashboard() {
-  // const { stores } = AuthController.getSession();
+  const { token } = AuthController.get();
+  console.log("Token from AuthController:", token);
   return (
     // <div className="@container">
     //   <WelcomeBanner

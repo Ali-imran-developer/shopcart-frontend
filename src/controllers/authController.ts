@@ -1,66 +1,59 @@
-import { apiClient } from "../config/api.config";
-import { Login, UserLogin } from "../types";
 import Cookies from "js-cookie";
-import { decryptData, encryptData } from "../utils/auth";
-// import { clearAuthSlice, setSession, setUser } from "../store/slices/authSlice";
-import { APP_KEY, COOKIE_SECRET } from "../config/constants";
-import store from "../store";
-import { apiRequest } from "./apiController";
-import { SignUpSchema } from "@/validators/signup.schema";
-import { EditProfileValidation } from "@/utils/validators/login.schema";
+import CryptoJS from "crypto-js";
+
+const COOKIE_KEY = import.meta.env.VITE_APP_KEY;
+const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
+console.log("Cookie Key:", COOKIE_KEY);
+console.log("Secret Key:", SECRET_KEY);
 
 class AuthController {
-  static userLogin(data: Login) {
-    return apiRequest("post", "/api/v1/auth/signin", data);
-    // return apiRequest("post", "/api/auth/signin", data);
-  }
-  static userSignUp(data: SignUpSchema) {
-    return apiRequest("post", "/api/v1/auth/signup", data);
-  }
-  static updateProfile(data: EditProfileValidation) {
-    return apiRequest("put", "/api/v1/auth/users", data);
-  }
-  static shopilamSurvey(data: any) {
-    return apiRequest("post", "/api/v1/survey", data);
-  }
-  static getAllStores() {
-    return apiRequest("get", "/api/v1/stores");
+  static encrypt(data: Record<string, any>): string {
+    const plaintext = JSON.stringify(data);
+    return CryptoJS.AES.encrypt(plaintext, SECRET_KEY).toString();
   }
 
-  static getSession = () => {
-    const session = Cookies.get(APP_KEY);
-    let decrypted = null;
-    if (session) {
-      decrypted = decryptData(session, COOKIE_SECRET);
+  static decrypt(cipherText: string): Record<string, any> {
+    try {
+      const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY);
+      const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+      return JSON.parse(decryptedText);
+    } catch (error) {
+      console.error("Decryption failed:", error);
+      return {};
     }
-    return decrypted;
-  };
-  // static setSession(payload: any) {
-  //   console.log("@payloadpayload", payload);
-  //   const session = this.getSession();
-  //   const newSession = { ...session, ...payload };
-  //   store.dispatch(setSession(newSession));
-  //   console.log("newSession", newSession);
-  //   const encryptedData = encryptData(newSession, COOKIE_SECRET);
-  //   Cookies.set(APP_KEY, encryptedData, {
-  //     expires: 7,
-  //   });
-  // }
-  // static restoreSession() {
-  //   const session = AuthController.getSession();
-  //   if (session) {
-  //     store.dispatch(setSession(session));
-  //     this.setSession(session);
-  //   }
-  // }
-  // static removeSession() {
-  //   Cookies.remove(APP_KEY);
-  // }
-  // static logout() {
-  //   const credentials = AuthController.getSession();
-  //   store.dispatch(clearAuthSlice());
-  //   AuthController.removeSession();
-  // }
+  }
+
+  static get(): Record<string, any> {
+    const encrypted = Cookies.get(COOKIE_KEY);
+    return encrypted ? AuthController.decrypt(encrypted) : {};
+  }
+
+  static set(newData: Record<string, any>): void {
+    const existingData = AuthController.get();
+    const updatedData = { ...existingData, ...newData };
+    const encrypted = AuthController.encrypt(updatedData);
+    Cookies.set(COOKIE_KEY, encrypted, {
+      secure: true,
+      sameSite: "Strict",
+    });
+  }
+
+  static remove(keys: string | string[]): void {
+    const existingData = AuthController.get();
+    const updatedData = { ...existingData };
+    (Array.isArray(keys) ? keys : [keys]).forEach((key) => {
+      delete updatedData[key];
+    });
+    const encrypted = AuthController.encrypt(updatedData);
+    Cookies.set(COOKIE_KEY, encrypted, {
+      secure: true,
+      sameSite: "Strict",
+    });
+  }
+
+  static clear(): void {
+    Cookies.remove(COOKIE_KEY);
+  }
 }
 
 export default AuthController;

@@ -5,10 +5,11 @@ import { routes } from "@config/routes";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CALLBACK_STATUS } from "@config/enums";
-import { useAuth } from "@hooks/auth-hooks";
+// import { useAuth } from "@hooks/auth-hooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store-hook";
 import { logout } from "@/store/slices/authSlice";
 import toast from "react-hot-toast";
+import AuthController from "@/controllers/authController";
 
 export default function ProfileMenu({
   buttonClassName,
@@ -91,16 +92,15 @@ const menuItems = [
 const DropdownMenu = ({ profileList }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
 
   const handleSubmit = async () => {
     try{
       setIsLoading(true);
-      const response = await dispatch(logout()).unwrap();
-      toast.success(response.message);
+      await AuthController.clear();
+      toast.success("Logged out successfully!");
       navigate("/login");
     } catch(error: any){
-      toast.error(error.message);
+      toast.error(error.message || "Failed to log out!");
     } finally{
       setIsLoading(false);
     }    

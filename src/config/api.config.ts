@@ -1,6 +1,6 @@
 import axios from "axios";
 import AuthController from "@/controllers/authController";
-export const APP_BASE_URL = import.meta.env.VITE_BASE_URL;
+export const APP_BASE_URL = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
 
 export const apiClient = axios.create({
   baseURL: APP_BASE_URL,
@@ -8,12 +8,11 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const persistData = AuthController.getSession();
-
-    if (persistData?.accessToken && !config.headers.Authorization) {
-      config.headers[`Authorization`] = `Bearer ${persistData.accessToken}`;
+    const { token } = AuthController.get();
+    console.log("Token:", token);
+    if (token && !config.headers.Authorization) {
+      config.headers[`Authorization`] = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => {

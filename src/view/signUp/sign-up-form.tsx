@@ -1,21 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { SubmitHandler } from "react-hook-form";
-import { PiArrowRightBold } from "react-icons/pi";
-import { Password, Button, Input, Text } from "rizzui";
+import { Button, Input, Text } from "rizzui";
 import { routes } from "../../config/routes";
-import { signUpSchema, SignUpSchema } from "../../validators/signup.schema";
-import { useAuth } from "@hooks/auth-hooks";
-import { CALLBACK_STATUS } from "@config/enums";
 import toast from "react-hot-toast";
-import { trimObjectValues } from "@/utils/helperFunctions/formater-helper";
 import { Form, Formik } from "formik";
-import {
-  phoneNumberValidator,
-  usePhoneNumberMask,
-} from "@/utils/helperFunctions/phone-number";
 import { useAppDispatch } from "@/hooks/store-hook";
 import { signUp } from "@/store/slices/authSlice";
+import AuthController from "@/controllers/authController";
 
 const initialValues = {
   userName: "",
@@ -33,10 +24,14 @@ export default function SignUpForm() {
     try {
       setIsLoading(true);
       const response = await dispatch(signUp(values)).unwrap();
+      if (response?.token) {
+        AuthController.set({ token: response?.token });
+      }
       toast.success(response.success || "Sign up successfully!");
-      navigate("/")
+      navigate("/");
     } catch (error: any) {
-      toast.error(error.message || "Failed sign up!");
+      const backendMessage = error?.response?.data?.message || error?.data?.message || error?.message;
+      toast.error(backendMessage);
     } finally {
       setIsLoading(false);
     }

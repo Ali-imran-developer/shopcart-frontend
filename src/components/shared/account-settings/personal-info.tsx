@@ -15,7 +15,7 @@ import EditPasswordModel from "@components/shared/account-settings/modal/EditPas
 import { countries, language, region, timezones } from "@data/forms/my-details";
 import AvatarUpload from "@ui/file-upload/avatar-upload";
 import { useModal } from "../modal-views/use-modal";
-import { useAuth } from "@/hooks/auth-hooks";
+// import { useAuth } from "@/hooks/auth-hooks";
 
 const PersonalInfoView = () => {
   const {
@@ -24,14 +24,14 @@ const PersonalInfoView = () => {
     onOpen: openEditEmail,
   } = useModal();
   const [showEditPasswordModel, setShowEditPasswordModel] = useState(false);
-  const { handleLogout, user } = useAuth();
+  // const { handleLogout, user } = useAuth();
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState(null); 
-  console.log("@user", user);
+  // console.log("@user", user);
   const initialValues: any = {
     firstName: "",
     lastName: "",
-    email: user?.email,
+    // email: user?.email,
     country: "Pk",
     language: "eng",
     region: "",
@@ -101,7 +101,7 @@ const PersonalInfoView = () => {
                   className="flex-grow"
                 />
 
-                <Input
+                {/* <Input
                   className="flex-grow"
                   prefix={
                     <PiEnvelopeSimple className="h-6 w-6 text-gray-500" />
@@ -111,7 +111,7 @@ const PersonalInfoView = () => {
                   placeholder="email@gmail.com"
                   {...register("email")}
                   error={errors.email?.message}
-                />
+                /> */}
                 <Input
                   placeholder="Phone (optional)"
                   {...register("phone")}
