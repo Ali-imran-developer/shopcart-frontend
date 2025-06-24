@@ -26,6 +26,7 @@ export default function SignUpForm() {
       const response = await dispatch(signUp(values)).unwrap();
       if (response?.token) {
         AuthController.set({ token: response?.token });
+        AuthController.set({ user: response?.user });
       }
       toast.success(response.success || "Sign up successfully!");
       navigate("/");
@@ -76,7 +77,7 @@ export default function SignUpForm() {
 
             <Button
               type="submit"
-              className="w-full my-4"
+              className="bg-blue-600 w-full my-4"
               disabled={isLoading}
               isLoading={isLoading}
             >

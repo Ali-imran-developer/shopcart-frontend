@@ -1,26 +1,24 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { Avatar, Checkbox, Flex, Text } from "rizzui";
 import toast from "react-hot-toast";
-import categoriesController from "@/controllers/categories";
 import DeletePopover from "@/components/shared/components/table/delete-popover";
 import DateCell from "@/components/ui/date-cell";
-import { useAppDispatch } from "@/hooks/store-hook";
-// import { deleteCategory, fetchAllCategory } from "@/store/slices/categoriesSlice";
 import { getStatusBadge } from "@/components/shared/components/table-utils/get-status-badge";
+import { useCategories } from "@/hooks/categories";
 
 const columnHelper = createColumnHelper<any>();
 export const CategoriesColumns = () => {
-  // const dispatch = useAppDispatch();
-  // const removeCategories = async (val: any) => {
-  //   try {
-  //     await dispatch(deleteCategory(val._id));
-  //     toast.success("Category deleted successfully");
-  //     dispatch(fetchAllCategory());
-  //   } catch (error: any) {
-  //     toast.error(error.message || "Error deleting category");
-  //     console.error("Delete error:", error);
-  //   }
-  // };
+  const { handleDeleteCategory, handleGetCategories } = useCategories();
+  const removeCategories = async (val: any) => {
+    try {
+      await handleDeleteCategory(val._id);
+      toast.success("Category deleted successfully");
+      handleGetCategories();
+    } catch (error: any) {
+      toast.error(error.message || "Error deleting category");
+      console.error("Delete error:", error);
+    }
+  };
 
   const columns = [
     columnHelper.display({
@@ -106,18 +104,18 @@ export const CategoriesColumns = () => {
       enableSorting: false,
       cell: ({ row }) => getStatusBadge(row?.original?.status ?? ""),
     }),
-    // columnHelper.display({
-    //   id: "actions",
-    //   size: 50,
-    //   cell: ({ row }) => (
-    //     <>
-    //       <DeletePopover
-    //         onDelete={() => removeCategories(row?.original)}
-    //         description="Are u really want to delete this category!"
-    //       />
-    //     </>
-    //   ),
-    // }),
+    columnHelper.display({
+      id: "actions",
+      size: 50,
+      cell: ({ row }) => (
+        <>
+          <DeletePopover
+            onDelete={() => removeCategories(row?.original)}
+            description="Are u really want to delete this category!"
+          />
+        </>
+      ),
+    }),
   ];
 
   return columns;

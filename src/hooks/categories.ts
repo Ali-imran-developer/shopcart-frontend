@@ -21,8 +21,60 @@ export const useCategories = () => {
     }
   }, []);
 
+  const handleAddCategory = useCallback(async (data: any) => {
+    try {
+      setLoading(true);
+      const response: any = await categoriesController.addNewCategory(data);
+      return response;
+    } catch (error) {
+      console.log("@Error", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleEditCategory = useCallback(async (data: any, id: string) => {
+    try {
+      setLoading(true);
+      const response: any = await categoriesController.editCategory(data, id);
+      return response;
+    } catch (error) {
+      console.log("@Error", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleDeleteCategory = useCallback(async (id: string) => {
+    try {
+      setLoading(true);
+      const response: any = await categoriesController.deleteCategory(id);
+      return response;
+    } catch (error) {
+      console.log("@Error", error);
+    }finally{
+      setLoading(false);
+    }
+  }, []);
+
+  const handleDeleteSubCategory = useCallback(async (categoryId: string, subCategoryId: string) => {
+    try { 
+      setLoading(true);
+      const response: any = await categoriesController.deleteSubCategory(categoryId, subCategoryId);
+      return response;
+    } catch (error) {
+      console.log("@Error", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     handleGetCategories,
+    handleAddCategory,
+    handleEditCategory,
+    handleDeleteCategory,
+    handleDeleteSubCategory,
     Loading,
     setLoading,
   };

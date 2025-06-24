@@ -1,6 +1,6 @@
 import { Text, Avatar, Select, type SelectOption } from "rizzui";
 import cn from "@utils/helperFunctions/class-names";
-import { useAppSelector } from "@/hooks/store-hook";
+import AuthController from "@/controllers/authController";
 
 export default function WorkSpaceSwitcher({
   className,
@@ -13,8 +13,8 @@ export default function WorkSpaceSwitcher({
   dropdownClassName?: string;
   suffixClassName?: string;
 }) {
-  const { profileList } = useAppSelector((state) => state.Profile as { profileList: { name?: string; image?: string } });
-  
+  const { profile } = AuthController.get();
+
   return (
     // <Select
     //   options={customOptions}
@@ -40,8 +40,8 @@ export default function WorkSpaceSwitcher({
       >
         <div className="flex items-center gap-3 h-full px-3">
           <Avatar
-            src={profileList?.image ?? ""}
-            name={profileList?.name ?? ""}
+            src={profile?.image ?? ""}
+            name={profile?.name ?? ""}
             className={cn("!h-9 w-9 sm:!h-10 sm:!w-10")}
           />
           <div>
@@ -49,7 +49,7 @@ export default function WorkSpaceSwitcher({
               My Account
             </Text>
             <Text className="text-gray-500 text-xs font-semibold break-all ">
-              {profileList?.name ?? ""}
+              {profile?.name ?? ""}
             </Text>
           </div>
         </div>

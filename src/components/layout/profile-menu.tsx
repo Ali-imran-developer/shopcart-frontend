@@ -20,10 +20,7 @@ export default function ProfileMenu({
   avatarClassName?: string;
   username?: boolean;
 }) {
-  const { profileList } = useAppSelector(
-    (state: { Profile: { profileList: { image?: string; name?: string } } }) =>
-      state.Profile
-  );
+  const { profile } = AuthController.get();
   return (
     <ProfileMenuPopover>
       <Popover.Trigger>
@@ -34,8 +31,8 @@ export default function ProfileMenu({
           )}
         >
           <Avatar
-            src={profileList?.image ?? ""}
-            name={profileList?.name ?? ""}
+            src={profile?.image ?? ""}
+            name={profile?.name ?? ""}
             className={cn("!h-9 w-9 sm:!h-10 sm:!w-10", avatarClassName)}
           />
           {!!username && (
@@ -47,7 +44,7 @@ export default function ProfileMenu({
       </Popover.Trigger>
 
       <Popover.Content className="z-[9999] p-0 dark:bg-gray-100 [&>svg]:dark:fill-gray-100">
-        <DropdownMenu profileList={profileList} />
+        <DropdownMenu profileList={profile} />
       </Popover.Content>
     </ProfileMenuPopover>
   );
@@ -103,7 +100,7 @@ const DropdownMenu = ({ profileList }: any) => {
       toast.error(error.message || "Failed to log out!");
     } finally{
       setIsLoading(false);
-    }    
+    }
   };
 
   return (

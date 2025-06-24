@@ -27,6 +27,7 @@ export default function SignInForm() {
       const response = await dispatch(login(values)).unwrap();
       if (response?.token) {
         AuthController.set({ token: response?.token });
+        AuthController.set({ user: response?.user });
       }
       toast.success(response.message || "Login Successfully!");
       navigate("/");

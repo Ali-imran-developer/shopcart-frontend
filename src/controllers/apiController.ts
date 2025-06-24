@@ -7,15 +7,11 @@ export const apiRequest = async (
   headers?: any
 ) => {
   try {
-    console.log("@@data", data);
     const response = await apiClient[method](url, data, headers);
-
     if (response?.status === 200 || response?.status === 201) {
       return response?.data;
     }
   } catch (error: any) {
-    console.log("@error", error);
-
     throw error?.response
       ? {
           status: error.response.status,

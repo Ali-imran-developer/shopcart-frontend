@@ -64,9 +64,9 @@ export default function CategoriesTable({
             container: "border border-muted rounded-md border-t-0 mt-4",
             rowClassName: "last:border-0",
           }}
-          // components={{
-          //   expandedComponent: (row) => <CustomExpandedComponent row={row} />,
-          // }}
+          components={{
+            expandedComponent: (row) => <CustomExpandedComponent row={row} />,
+          }}
         />
         {/* <TableFooter table={table} /> */}
         {!hidePagination && <TablePagination table={table} className="py-4" />}

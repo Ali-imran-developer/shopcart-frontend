@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 // import logoImg from "./assets/images/shopilam_logo.svg";
-import logoImg from "../../../../public/assets/images/shopilam_logo.svg";
+// import logoImg from "../../../../public/assets/images/shopilam_logo.svg";
 import { Title, Text } from "rizzui";
 
 export default function AuthWrapperOne({
@@ -54,9 +54,13 @@ export default function AuthWrapperOne({
               <b className="ms-1 font-medium">Back to home</b>
             </Link> */}
             <div className="mb-2 px-6 pt-3 text-center md:pt-0 lg:px-0 lg:text-start xl:mb-3 2xl:mb-5">
-              <Link to={"/"} className="mb-2 inline-flex max-w-[168px] xl:mb-4">
-                {/* <img src={logoImg} alt="Isomorphic" /> */}
-              </Link>
+              <div className="mb-2 inline-flex max-w-[168px] xl:mb-4">
+                <img
+                  src="./assets/images/shopcart-logo.png"
+                  alt=""
+                  className="max-w-[135px] object-cover"
+                />
+              </div>
               <Title
                 as="h2"
                 className="mb-1 text-[26px] leading-snug md:text-3xl md:!leading-normal lg:pe-16 lg:text-[28px] xl:text-3xl 2xl:pe-8 2xl:text-4xl"

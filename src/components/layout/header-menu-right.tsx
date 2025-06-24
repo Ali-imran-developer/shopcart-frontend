@@ -5,8 +5,14 @@ import RingBellSolidIcon from "@shared/components/icons/ring-bell-solid";
 import ChatSolidIcon from "@shared/components/icons/chat-solid";
 import NotificationDropdown from "./notification-dropdown";
 import SettingsButton from "./settings-button";
+import { IoStorefrontSharp } from "react-icons/io5";
+import { BsHouse, BsHouseAddFill, BsHouseFill } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
+import { routes } from "@/config/routes";
 
 export default function HeaderMenuRight() {
+  const navigate = useNavigate();
+
   return (
     <div className="ms-auto grid shrink-0 grid-cols-4 items-center gap-2 text-gray-700 xs:gap-3 xl:gap-4">
       <NotificationDropdown>
@@ -39,8 +45,14 @@ export default function HeaderMenuRight() {
           />
         </ActionIcon>
       </MessagesDropdown>
-
-      <SettingsButton />
+      <ActionIcon
+        onClick={() => navigate(routes?.settings?.stores?.channels)}
+        variant="outline"
+        className="relative h-[34px] w-[34px] shadow backdrop-blur-md dark:bg-gray-100 md:h-9 md:w-9"
+      >
+        <BsHouseFill className="h-[18px] w-auto" />
+      </ActionIcon>
+      <SettingsButton className="hidden" />
       <ProfileMenu />
     </div>
   );

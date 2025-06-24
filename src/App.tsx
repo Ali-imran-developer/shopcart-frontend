@@ -3,18 +3,11 @@ import HydrogenLayout from "@layouts/hydrogen/layout";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { NotFound } from "./view/404";
 import { getRoutes, IRoute } from "./utils/routes";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { PublicRoute, TokenProtectedRoutes } from "./utils/protectedRoutes";
 import { Loading } from "./components/shared/loader";
-import { useAppDispatch } from "./hooks/store-hook";
-import { checkLoginStatus } from "./store/slices/authSlice";
 
 const App = () => {
-  // const dispatch = useAppDispatch();
-  // useEffect(() => {
-  //   dispatch(checkLoginStatus());
-
-  // }, []);
 
   return (
     <BrowserRouter>

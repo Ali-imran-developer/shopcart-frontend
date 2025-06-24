@@ -49,21 +49,21 @@ function ProfileImageUpload({
       setImageLoadingState(true);
       setUploadError(null);
       const data = new FormData();
-      data.append("my_file", imageFile);      
+      data.append("my_file", imageFile);
       const response = await axios.post(
-        `${BASE_URL}/api/profile/upload-image`,
+        `${BASE_URL}/api/products/upload-image`,
         data,
         {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            "Content-Type": "multipart/form-data",
           },
-          timeout: 30000
+          timeout: 30000,
         }
       );
       if (response?.data?.success) {
         const cloudinaryUrl = response.data.result.url;
         console.log("Upload successful:", cloudinaryUrl);
-        setUploadedImageUrl(cloudinaryUrl);        
+        setUploadedImageUrl(cloudinaryUrl);
         if (formik) {
           formik.setFieldValue("image", cloudinaryUrl);
         }
@@ -73,7 +73,9 @@ function ProfileImageUpload({
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      setUploadError(error.response?.data?.error || error.message || "Upload failed");
+      setUploadError(
+        error.response?.data?.error || error.message || "Upload failed"
+      );
     } finally {
       setImageLoadingState(false);
     }
@@ -84,9 +86,7 @@ function ProfileImageUpload({
   }, [imageFile]);
 
   return (
-    <div
-      className={`w-full mt-4 ${isCustomStyling ? "" : "max-w-md mx-auto"}`}
-    >
+    <div className={`w-full mt-4 ${isCustomStyling ? "" : "max-w-md mx-auto"}`}>
       <label className="text-lg font-semibold mb-2 block">Upload Image</label>
       <div
         onDragOver={handleDragOver}
@@ -101,8 +101,11 @@ function ProfileImageUpload({
           onChange={handleImageFileChange}
           accept="image/*"
         />
-        {!imageFile ? (
-          <label htmlFor="image-upload" className="flex flex-col items-center justify-center h-32 cursor-pointer">
+        {!(imageFile || formik?.values?.image || uploadedImageUrl) ? (
+          <label
+            htmlFor="image-upload"
+            className="flex flex-col items-center justify-center h-32 cursor-pointer"
+          >
             <BsUpload className="w-10 h-10 text-muted-foreground mb-2" />
             <span>Drag & drop or click to upload image</span>
           </label>
@@ -112,19 +115,21 @@ function ProfileImageUpload({
             <span className="mt-2">Uploading image...</span>
           </div>
         ) : (
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center">
-              {uploadedImageUrl ? (
-                <img 
-                  src={uploadedImageUrl} 
-                  alt="Uploaded preview" 
-                  className="w-12 h-12 object-cover rounded mr-2" 
+              {formik?.values?.image || uploadedImageUrl ? (
+                <img
+                  src={formik?.values?.image || uploadedImageUrl}
+                  alt="Uploaded preview"
+                  className="w-12 h-12 object-cover rounded mr-2"
                 />
               ) : (
-                 <BsFile className="w-8 text-primary mr-2 h-8" />
+                <BsFile className="w-8 text-primary mr-2 h-8" />
               )}
             </div>
-            <p className="text-sm font-medium">{imageFile.name}</p>
+            <p className="text-sm font-medium">
+              {imageFile?.name || "Previously uploaded image"}
+            </p>
             <Button
               variant="outline"
               size="icon"
@@ -138,9 +143,7 @@ function ProfileImageUpload({
         )}
       </div>
       {uploadError && (
-        <div className="mt-2 text-sm text-red-600">
-          Error: {uploadError}
-        </div>
+        <div className="mt-2 text-sm text-red-600">Error: {uploadError}</div>
       )}
       {uploadedImageUrl && !uploadError && (
         <div className="mt-2 text-sm text-green-600">

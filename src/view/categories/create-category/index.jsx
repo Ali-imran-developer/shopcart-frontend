@@ -9,12 +9,12 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "@/config/routes";
 import { PiX } from "react-icons/pi";
 // import {
-//   fetchAllCategory,
 //   addNewCategory,
 //   editCategory,
 // } from "@/store/slices/categoriesSlice";
 // import FormGroup from "@/components/shared/form-group";
 import cn from "@/utils/helperFunctions/class-names";
+import { useCategories } from "@/hooks/categories";
 
 function FormGroup({ title, className, description, children }) {
   return (
@@ -36,7 +36,8 @@ const CreateCategory = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [isLoading, setLoading] = useState(false);
-  const { categoryList } = useAppSelector((state) => state.Categories);
+  const { handleGetCategories, handleAddCategory, handleEditCategory } = useCategories();
+  const { data } = useAppSelector((state) => state.Categories);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryId, setCategoryId] = useState(null);
   const [tempSubCategories, setTempSubCategories] = useState([]);
@@ -50,11 +51,12 @@ const CreateCategory = () => {
     subCategoryName: "",
     description: "",
     status: "active",
-  };  
+  };
 
-  // useEffect(() => {
-  //   dispatch(fetchAllCategory());
-  // }, [dispatch]);
+  useEffect(() => {
+    handleGetCategories();
+
+  }, []);
 
   const formik = useFormik({
     initialValues,
@@ -82,12 +84,7 @@ const CreateCategory = () => {
           };
           console.log("selectedCategory?._id", selectedCategory?._id);
           console.log("payload", payload);
-          // await dispatch(
-          //   editCategory({
-          //     id: selectedCategory?._id,
-          //     formData: payload,
-          //   })
-          // ).unwrap();
+          await handleEditCategory(payload, selectedCategory?._id);
           toast.success("Subcategories added successfully!");
           navigate(routes?.products?.categories);
         } catch (error) {
@@ -110,7 +107,7 @@ const CreateCategory = () => {
             description: formik?.values?.description,
             status: formik?.values?.status,
           };
-          // await dispatch(addNewCategory(payload)).unwrap();
+          await handleAddCategory(payload);
           toast.success("Category created successfully!");
           navigate(routes?.products?.categories);
         } catch (error) {
@@ -127,7 +124,7 @@ const CreateCategory = () => {
     setTempSubCategories(tempSubCategories.filter((sub) => sub !== name));
   };
 
-  const categoryOptions = ensureArray(categoryList)?.map((cat) => ({
+  const categoryOptions = ensureArray(data)?.map((cat) => ({
     value: cat,
     label: cat?.name,
   }));

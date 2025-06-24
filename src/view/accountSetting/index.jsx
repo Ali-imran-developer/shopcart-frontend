@@ -7,25 +7,27 @@ import FormFooter from "@/components/shared/components/form-footer";
 import UploadZone from "./upload-zone";
 import { useEffect, useState } from "react";
 import { usePhoneNumberMask } from "@/utils/helperFunctions/phone-number";
-import { useDispatch } from "react-redux";
-import { addNewProfile, editProfile, fetchProfile } from "@/store/slices/profileSlice";
-import { useAppSelector } from "@/hooks/store-hook";
+import { useProfile } from "@/hooks/profile-hook";
 
 const PersonalInfoView = () => {
-  const dispatch = useDispatch();
-  const [isLoading, setLoading] = useState(false);
+  const {
+    handleEditProfile,
+    handleFetchProfile,
+    handleAddNewProfile,
+    Loading,
+    profileData,
+  } = useProfile();
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const { maskFormikValue } = usePhoneNumberMask();
-  const { profileList } = useAppSelector((state) => state.Profile);
 
   const initialValues = {
-    name: profileList?.name ?? "",
-    email: profileList?.email ?? "",
-    address: profileList?.address ?? "",
-    phoneNumber: profileList?.phoneNumber ?? "",
-    image: profileList?.image ?? "",
+    name: profileData?.name ?? "",
+    email: profileData?.email ?? "",
+    address: profileData?.address ?? "",
+    phoneNumber: profileData?.phoneNumber ?? "",
+    image: profileData?.image ?? "",
   };
 
   const formik = useFormik({
@@ -33,35 +35,25 @@ const PersonalInfoView = () => {
     enableReinitialize: true,
     onSubmit: async (values) => {
       console.log("Submitted values:", values);
-      try {
-        setLoading(true);
-        const profileData = {
-          ...values,
-          image: uploadedImageUrl || values.image,
-        };
-        if (!profileList || !profileList._id) {
-          const res = await dispatch(addNewProfile(profileData)).unwrap();
-          toast.success(res.message);
-        } else {
-          const res = await dispatch(
-            editProfile({ id: profileList._id, formData: profileData })
-          ).unwrap();
-          toast.success(res.message);
-        }
-        dispatch(fetchProfile());
-      } catch (error) {
-        console.log("Error", error);
-        toast.error(error.message || "An error occurred");
-      } finally {
-        setLoading(false);
+      const Data = {
+        ...values,
+        image: uploadedImageUrl || values.image,
+      };
+      if (!profileData || !profileData._id) {
+        const res = await handleAddNewProfile(Data);
+        toast.success(res.message);
+      } else {
+        const res = await handleEditProfile(Data, profileData._id);
+        toast.success(res.message);
       }
+      await handleFetchProfile();
     },
   });
 
   useEffect(() => {
-    dispatch(fetchProfile());
+    handleFetchProfile();
 
-  }, [dispatch]);
+  }, []);
 
   return (
     <>
@@ -76,7 +68,7 @@ const PersonalInfoView = () => {
               placeholder="Name"
               value={formik.values.name}
               onChange={formik.handleChange}
-              error={formik.touched.name && (formik.errors.name)}
+              error={formik.touched.name && formik.errors.name}
             />
             <Input
               name="email"
@@ -84,7 +76,7 @@ const PersonalInfoView = () => {
               value={formik.values.email}
               onChange={formik.handleChange}
               prefix={<PiEnvelopeSimple className="h-6 w-6 text-gray-500" />}
-              error={formik.touched.email && (formik.errors.email)}
+              error={formik.touched.email && formik.errors.email}
             />
             <Input
               name="phoneNumber"
@@ -124,7 +116,8 @@ const PersonalInfoView = () => {
         <FormFooter
           altBtnText="Cancel"
           submitBtnText="Save"
-          isLoading={isLoading}
+          isLoading={Loading}
+          disabled={imageLoadingState}
         />
       </form>
     </>

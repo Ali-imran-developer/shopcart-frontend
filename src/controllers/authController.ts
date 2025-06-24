@@ -3,8 +3,6 @@ import CryptoJS from "crypto-js";
 
 const COOKIE_KEY = import.meta.env.VITE_APP_KEY;
 const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
-console.log("Cookie Key:", COOKIE_KEY);
-console.log("Secret Key:", SECRET_KEY);
 
 class AuthController {
   static encrypt(data: Record<string, any>): string {

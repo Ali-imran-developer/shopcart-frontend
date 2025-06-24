@@ -19,11 +19,11 @@ export default function Sidebar({ className }: { className?: string }) {
           aria-label="Site Logo"
           className="text-gray-800 hover:text-gray-900"
         >
-          {/* <img
-            src="https://shopilam.com/assets/img/logo.svg"
+          <img
+            src="./assets/images/shopcart-logo.png"
             alt=""
-            className="max-w-[135px]"
-          /> */}
+            className="max-w-[135px] object-cover"
+          />
         </Link>
       </div>
 
