@@ -80,12 +80,6 @@ const allRoutes: IRoute[] = [
     component: lazy(() => import("../view/dispatch")),
   },
   {
-    name: "tracking",
-    section: "common",
-    route: "/tracking/:id",
-    component: lazy(() => import("../view/public-tracking-url")),
-  },
-  {
     name: "orders",
     section: "common",
     route: "/create-orders",
