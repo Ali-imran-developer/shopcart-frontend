@@ -35,7 +35,7 @@
     "src/**/*.jsx",
     "src/@types/**/*.d.ts",
     "src/view/a-testing/index.tsx"
-  ],
+, "src/view/dispatch/order-list/table.sx"  ],
   "exclude": ["node_modules"],
   "skipLibCheck": true
 }

@@ -1,8 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { ActionIcon, Avatar, Flex, Text, Tooltip } from "rizzui";
-import toast from "react-hot-toast";
-import DeletePopover from "@/components/shared/components/table/delete-popover";
-import EyeIcon from "@/components/shared/components/icons/eye";
+import { ActionIcon, Avatar, Text, Tooltip } from "rizzui";
 import DateCell from "@/components/ui/date-cell";
 import PencilIcon from "@/components/shared/components/icons/pencil";
 import { routes } from "@/config/routes";

@@ -1,5 +1,5 @@
 import { ordersColumns } from "./columns";
-import Table from "@shared/components/table/index";
+import Table from "@shared/components/table/table";
 import CustomExpandedComponent from "@shared/components/table/custom/expanded-row";
 import { useTanStackTable } from "@shared/components/table/custom/use-TanStack-Table";
 import TablePagination from "@shared/components/table/pagination";
@@ -11,10 +11,9 @@ import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import { routes } from "@/config/routes";
 import { startTransition } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { fetchAllOrders, updateOrderStatus } from "@/store/slices/ordersSlice";
 import { TabList } from "@/components/shared/tabs";
 import toast from "react-hot-toast";
+import { useOrders } from "@/hooks/order-hook";
 
 const filterOptions = [
   {
@@ -53,25 +52,26 @@ export default function OrderTable({
   hidePagination = false,
 }) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { OrderList, isLoading } = useAppSelector((state) => state.Orders);
+  const { orderData } = useAppSelector((state) => state.Orders);
   const [activeTab, setActiveTab] = useState("open");
   const [selectedStatus, setSelectedStatus] = useState({});
   const [loading, setLoading] = useState("");
+  const [expandedRowId, setExpandedRowId] = useState(null);
+  const { handleGetOrders, handleUpdateDispatchStatus, handleDeleteOrders, isLoading } = useOrders();
 
   const filteredOrders = useMemo(() => {
     const options = filterOptions.reduce((acc, item) => {
       acc[item.value] = item.label.toLowerCase();
       return acc;
     }, {});
-    return ensureArray(OrderList).filter(
+    return ensureArray(orderData?.orders).filter(
       (order) => order.status === options[activeTab]
     );
-  }, [OrderList, activeTab]);
+  }, [orderData?.orders, activeTab]);
 
-  const { table, setData } = useTanStackTable({
+  const { table, setData, setColumns } = useTanStackTable({
     tableData: filteredOrders,
-    columnConfig: ordersColumns({ navigate }),
+    columnConfig: ordersColumns({ expandedRowId, handleDeleteOrders }),
     options: {
       initialState: {
         pagination: {
@@ -90,6 +90,13 @@ export default function OrderTable({
             state: { selectedOrder: row },
           });
         },
+        handleSelectRow: (row) => {
+          if (expandedRowId === row?.original?._id) {
+            setExpandedRowId(null);
+          } else {
+            setExpandedRowId(row?.original?._id);
+          }
+        },
       },
       enableColumnResizing: false,
       getRowCanExpand: () => true,
@@ -102,12 +109,20 @@ export default function OrderTable({
   }, [activeTab]);
 
   useEffect(() => {
-    dispatch(fetchAllOrders());
-  }, [dispatch]);
+    handleGetOrders();
+
+  }, []);
 
   useEffect(() => {
     setData(filteredOrders);
+    setExpandedRowId(null);
+
   }, [filteredOrders]);
+
+  useEffect(() => {
+    setColumns(ordersColumns({ expandedRowId, handleDeleteOrders }));
+
+  }, [expandedRowId]);
 
   useEffect(() => {
     const getStatusButton = filterOptions.find(
@@ -135,13 +150,11 @@ export default function OrderTable({
 
       const response = await Promise.all(
         hasStatusUpdate.map((item) =>
-          dispatch(
-            updateOrderStatus({ id: item._id, status: item.status })
-          ).unwrap()
+          handleUpdateDispatchStatus(item?._id, {status: item?.status})
         )
       );
       toast.success(response.message || "Status updated successfully");
-      await dispatch(fetchAllOrders());
+      await handleGetOrders();
       table.resetRowSelection();
       table.resetExpanded();
     } catch (error) {
@@ -154,12 +167,7 @@ export default function OrderTable({
 
   return (
     <>
-      <div
-        className={cn(
-          "rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 px-4 py-2",
-          className
-        )}
-      >
+      <div className={cn("rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 px-4 py-2", className)}>
         <TabList
           tabs={filterOptions}
           setActiveTab={setActiveTab}
@@ -170,6 +178,7 @@ export default function OrderTable({
           table={table}
           activeTab={activeTab}
           variant={variant}
+          expandedRowId={expandedRowId}
           showLoadingText={isLoading}
           isLoading={isLoading}
           data={filteredOrders}

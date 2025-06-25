@@ -1,31 +1,47 @@
 import DateCell from "@ui/date-cell";
 import { createColumnHelper } from "@tanstack/react-table";
-import { ActionIcon, Checkbox, Flex, Text, Tooltip } from "rizzui";
+import { ActionIcon, Checkbox, Flex, Text } from "rizzui";
 import { formatNumberWithCommas } from "@/utils/helperFunctions/format-number";
-import { routes } from "@/config/routes";
-import PencilIcon from "@/components/shared/components/icons/pencil";
-import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { deleteOrder, fetchAllOrders } from "@/store/slices/ordersSlice";
 import DeletePopover from "@/components/shared/components/table/delete-popover";
 import { getStatusBadge } from "@/components/shared/components/table-utils/get-status-badge";
+import { PiCaretDownBold, PiCaretUpBold } from "react-icons/pi";
 
 const columnHelper = createColumnHelper();
-export const ordersColumns = ({ navigate }) => {
-  const dispatch = useDispatch();
-  const handleClick = async (row) => {
-    try {
-      const res = await dispatch(deleteOrder(row?._id))?.unwrap();
-      toast.success(res.message);
-      navigate(routes.orders.orders);
-      dispatch(fetchAllOrders());
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error(error.message || "An error occurred");
-    }
-  };
-
+export const ordersColumns = ({ expandedRowId, handleDeleteOrders }) => {
   const columns = [
+    columnHelper.display({
+      id: "expandedHandler",
+      size: 60,
+      cell: ({
+        row,
+        table: {
+          options: { meta },
+        },
+      }) => (
+        <>
+          {row.getCanExpand() && (
+            <ActionIcon
+              size="sm"
+              rounded="full"
+              aria-label="Expand row"
+              className="ms-0"
+              variant={
+                row.original?._id === expandedRowId ? "solid" : "outline"
+              }
+              onClick={() =>
+                meta?.handleSelectRow && meta?.handleSelectRow(row)
+              }
+            >
+              {row.original?._id === expandedRowId ? (
+                <PiCaretUpBold className="size-3.5" />
+              ) : (
+                <PiCaretDownBold className="size-3.5" />
+              )}
+            </ActionIcon>
+          )}
+        </>
+      ),
+    }),
     columnHelper.display({
       id: "select",
       size: 50,
@@ -131,18 +147,6 @@ export const ordersColumns = ({ navigate }) => {
         </Text>
       ),
     }),
-    // columnHelper.accessor("paymentMethod", {
-    //   id: "paymentMethod",
-    //   size: 150,
-    //   header: "Payment Type",
-    //   enableSorting: true,
-    //   enableGlobalFilter: true,
-    //   cell: ({ row }) => (
-    //     <Text className="font-semibold ms-3 uppercase">
-    //       {row?.original?.paymentMethod ?? ""}
-    //     </Text>
-    //   ),
-    // }),
     columnHelper.display({
       id: "status",
       size: 100,
@@ -153,10 +157,10 @@ export const ordersColumns = ({ navigate }) => {
     columnHelper.display({
       id: "actions",
       size: 50,
-      cell: ({ row, table: { meta } }) => (
+      cell: ({ row }) => (
         <DeletePopover
           description="Are u really want to delete this order!"
-          onDelete={() => handleClick(row?.original)}
+          onDelete={() => handleDeleteOrders(row?.original?._id)}
         />
       ),
     }),

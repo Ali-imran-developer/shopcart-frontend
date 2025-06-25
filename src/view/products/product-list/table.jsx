@@ -11,9 +11,9 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "@/config/routes";
 import { Input } from "rizzui";
 import { PiMagnifyingGlassBold } from "react-icons/pi";
-import { useDispatch } from "react-redux";
-import { deleteProduct, fetchAllProducts } from "@/store/slices/productSlice";
 import { useAppSelector } from "@/hooks/store-hook";
+import { useProduct } from "@/hooks/product-hook";
+import toast from "react-hot-toast";
 
 export default function ProductsTable({
   pageSize = 5,
@@ -28,17 +28,11 @@ export default function ProductsTable({
   paginationClassName,
 }) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { productList, isLoading } = useAppSelector((state) => state.Products);
-  const [selectedStatus, setSelectedStatus] = useState({});
-
-  useEffect(() => {
-    dispatch(fetchAllProducts());
-
-  }, [dispatch]);
+  const { handleGetProducts, handleDeleteProducts, isLoading } = useProduct();
+  const { data } = useAppSelector((state) => state.Products);
 
   const { table, setData } = useTanStackTable({
-    tableData: ensureArray(productList),
+    tableData: ensureArray(data?.products),
     columnConfig: productsListColumns,
     options: {
       initialState: {
@@ -53,34 +47,27 @@ export default function ProductsTable({
             state: { row },
           });
         },
-        handleDeleteProduct: (row) => {
-          dispatch(deleteProduct(row._id)).then((data) => {
-            if (data?.payload?.success) {
-              dispatch(fetchAllProducts());
-            }
-          });
+        handleDeleteProduct: async (row) => {
+          try {
+            const response = await handleDeleteProducts(row?._id);
+            console.log("response", response);
+          } catch (error) {
+            console.error("Error deleting product:", error);
+            toast.error("Failed to delete product");
+          }
         },
       },
       enableColumnResizing: false,
     },
   });
 
-  const selectedData = table
-    .getSelectedRowModel()
-    .rows.map((row) => row.original);
-
-  function handleExportData() {
-    exportToCSV(
-      selectedData,
-      "ID,Name,Category,Sku,Price,Stock,Status,Rating",
-      `product_data_${selectedData.length}`
-    );
-  }
+  useEffect(() => {
+    handleGetProducts();
+  }, []);
 
   useEffect(() => {
-    setData(ensureArray(productList));
-
-  }, [productList]);
+    setData(ensureArray(data?.products));
+  }, [data?.products]);
 
   return (
     <>
@@ -113,13 +100,7 @@ export default function ProductsTable({
             rowClassName: "last:border-0",
           }}
         />
-        {!hideFooter && (
-          <TableFooter
-            table={table}
-            onExport={handleExportData}
-            isLoading={""}
-          />
-        )}
+        {!hideFooter && <TableFooter table={table} isLoading={""} />}
         {!hidePagination && (
           <TablePagination
             table={table}

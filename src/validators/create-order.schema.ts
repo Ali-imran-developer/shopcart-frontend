@@ -48,34 +48,20 @@ export const orderFormSchema = z.object({
 });
 
 export const shipmentDetailsSchema = Yup.object().shape({
-  shipperId: Yup.string().required("Shipper is required"),
+  shipperCity: Yup.string().required("Shipper is required"),
   shipmentDetails: Yup.object().shape({
     email: Yup.string()
       .email("Invalid email format")
       .required("Email is required"),
-
-    addresses: Yup.array()
-      .of(
-        Yup.object().shape({
-          name: Yup.string().required("Name is required"),
-          phone: Yup.string()
-            .required("Phone is required")
-            .matches(/^(\+92|0)?3[0-9]{9}$/, "Phone must be a valid  number"),
-
-          city: Yup.object()
-            .shape({
-              city: Yup.string().required("City is required"),
-            })
-            .required("City is required"),
-          address1: Yup.string().required("Address Line 1 is required"),
-          address2: Yup.string(), // optional
-          company: Yup.string(), // optional
-          country: Yup.string().required("Country is required"),
-        })
-      )
-      .min(1, "At least one address is required"),
+    name: Yup.string().required("Name is required"),
+    phone: Yup.string()
+      .required("Phone is required")
+      .matches(/^(\+92|0)?3[0-9]{9}$/, "Phone must be a valid  number"),
+    city: Yup.string().required("City is required"),
+    address: Yup.string().required("Address is required"),
   }),
 }) as Yup.ObjectSchema<any>;
+
 export const shipmentDetailsResellingSchema = Yup.object().shape({
   shipmentDetails: Yup.object().shape({
     email: Yup.string()

@@ -8,7 +8,7 @@ import { useState } from "react";
 import { routes } from "@/config/routes";
 import UploadZone from "./upload-zone";
 import { useAppDispatch } from "@/hooks/store-hook";
-import { editStore } from "@/store/slices/storeSlice";
+import { useStores } from "@/hooks/salesChannel-hook";
 
 export const metadata = {
   ...metaObject("Add Store"),
@@ -18,7 +18,7 @@ const PersonalInfoView = () => {
   const location = useLocation();
   const { state } = location;
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { handleEditStore } = useStores();
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
@@ -36,9 +36,7 @@ const PersonalInfoView = () => {
       console.log("@values", values);
       setIsLoading(true);
       try {
-        const response: any = await dispatch(
-          editStore({ id: state?.row?._id, formData: values })
-        ).unwrap();
+        const response: any = await handleEditStore(state?.row?._id, values);
         toast.success(response.message);
         navigate(routes.settings.stores.channels);
       } catch (error: any) {

@@ -4,8 +4,8 @@ import QuillEditor from "@components/ui/quill-editor";
 import cn from "@/utils/helperFunctions/class-names";
 import { useAppDispatch, useAppSelector } from "@/hooks/store-hook";
 import { useEffect, useState } from "react";
-// import { fetchAllCategory } from "@/store/slices/categoriesSlice";
 import { ensureArray } from "@/utils/helperFunctions/formater-helper";
+import { useCategories } from "@/hooks/categories";
 
 interface ProductSummaryProps {
   className?: string;
@@ -16,18 +16,19 @@ export default function ProductSummary({
   className,
   formik,
 }: ProductSummaryProps) {
-  const dispatch = useAppDispatch();
+  const { handleGetCategories } = useCategories();
   const [subCategoryOptions, setSubCategoryOptions] = useState<any>(null);
-  // const { categoryList } = useAppSelector((state) => state.Categories);
+  const { data } = useAppSelector((state) => state.Categories);
 
-  // useEffect(() => {
-  //   dispatch(fetchAllCategory());
-  // }, [dispatch]);
+  useEffect(() => {
+    handleGetCategories();
 
-  // const categoriesOptions = ensureArray(categoryList)?.map((product) => ({
-  //   value: product,
-  //   label: product?.name,
-  // }));
+  }, []);
+
+  const categoriesOptions = ensureArray(data)?.map((product) => ({
+    value: product,
+    label: product?.name,
+  }));
 
   const subCateogry = ensureArray(subCategoryOptions?.subCategory)?.map((sub) => ({
     value: sub?.name,
@@ -58,11 +59,11 @@ export default function ProductSummary({
             }
           />
 
-          {/* <Select
+          <Select
             label="Category"
             placeholder="Category"
-            options={[]}
-            // getOptionValue={(option) => option?.value}
+            options={categoriesOptions}
+            getOptionValue={(option) => option?.value}
             dropdownClassName="h-auto"
             name="category"
             value={formik?.values?.category}
@@ -75,7 +76,7 @@ export default function ProductSummary({
                 ? formik?.errors?.category
                 : undefined
             }
-          /> */}
+          />
 
           <Select
             label="SubCategory"

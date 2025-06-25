@@ -1,19 +1,17 @@
 import FormGroup from "@/components/shared/form-group";
 import { Form } from "@/components/ui/form";
-import { useState } from "react";
-import toast from "react-hot-toast";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button, Input } from "rizzui";
-import { SubmitHandler } from "react-hook-form";
-import {ensureObject, trimObjectValues } from "@/utils/helperFunctions/formater-helper";
-import ShipperInfoController from "@/controllers/shipper-info";
+import { ensureObject } from "@/utils/helperFunctions/formater-helper";
 import { addInfoSchema } from "@/utils/validators/addShipperInfo.schema";
-import { phoneNumberValidator, usePhoneNumberMask } from "@/utils/helperFunctions/phone-number";
+import {
+  phoneNumberValidator,
+  usePhoneNumberMask,
+} from "@/utils/helperFunctions/phone-number";
 import { useAppDispatch } from "@/hooks/store-hook";
-import { addNewShipper, editShipper } from "@/store/slices/shipperSlice";
-import { routes } from "@/config/routes";
+import { useShipperData } from "@/hooks/shipper-hook";
 
-interface FormValues {
+export interface FormValues {
   locationName?: string;
   city?: string;
   storeName?: string;
@@ -23,16 +21,14 @@ interface FormValues {
 }
 
 const AddShipperInfo = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { maskRHFValue } = usePhoneNumberMask();
   const params = useParams();
-  const { id } = params;
+  const { addShipper, updateShipper, isLoading } = useShipperData();
 
   const editAddress = location?.state?.address;
-  console.log("editAddress", editAddress);
 
   const {
     address: {
@@ -47,7 +43,7 @@ const AddShipperInfo = () => {
     shipperInfo = "",
   } = ensureObject(location?.state) || {};
 
-  const initialValues: FormValues = {
+  const initialValues = {
     storeName: storeName ?? "",
     phoneNumber: phoneNumber ?? "",
     locationName: locationName ?? "",
@@ -56,31 +52,13 @@ const AddShipperInfo = () => {
     address: address ?? "",
   };
 
-  // const initialValues: FormValues = {
-  //   storeName: "",
-  //   phoneNumber: "",
-  //   locationName: "",
-  //   city: "",
-  //   returnAddress: "",
-  //   address: "",
-  // };
-
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    console.log("data", data);
-    try {
-      setIsLoading(true);
-      if (shipperInfo === "edit") {
-        const response = await dispatch(editShipper({ id: editAddress?._id, formData: data })).unwrap();
-        toast.success(response?.message);
-      } else {
-        const response = await dispatch(addNewShipper(data)).unwrap();
-        toast.success(response?.message);
-      }
-      navigate(routes.orders.shipperInfo);
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setIsLoading(false);
+  const onSubmit = async (data: any) => {
+    if (shipperInfo === "edit") {
+      const response = await updateShipper(data, editAddress?._id);
+      console.log("Update response:", response);
+    } else {
+      const response = await addShipper(data);
+      console.log("Add response:", response);
     }
   };
 
@@ -88,7 +66,7 @@ const AddShipperInfo = () => {
     <>
       <div className="label-tab-data">
         <Form<FormValues>
-          // validationSchema={addInfoSchema}
+          validationSchema={addInfoSchema}
           onSubmit={onSubmit}
           className="@container"
           useFormProps={{ defaultValues: initialValues }}

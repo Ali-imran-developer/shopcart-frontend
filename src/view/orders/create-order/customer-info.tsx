@@ -3,8 +3,7 @@ import cn from "@utils/helperFunctions/class-names";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { ensureArray } from "@/utils/helperFunctions/formater-helper";
-import { useAppDispatch, useAppSelector } from "@/hooks/store-hook";
-import { fetchAllShipper } from "@/store/slices/shipperSlice";
+import { useShipperData } from "@/hooks/shipper-hook";
 
 interface CustomerInfoProps {
   className?: string;
@@ -23,15 +22,14 @@ const paymentOptions = [
 ];
 
 export default function CustomerInfo({ className, formik }: CustomerInfoProps) {
-  const dispatch = useAppDispatch();
-  const { shipperList } = useAppSelector((state) => state.Shipper);
+  const { fetchShippers, shippers } = useShipperData();
 
   useEffect(() => {
-    dispatch(fetchAllShipper());
+    fetchShippers();
 
   },[])
 
-  const shipperOptions = ensureArray(shipperList)?.map((item: any) => ({
+  const shipperOptions = ensureArray(shippers)?.map((item: any) => ({
     value: item?.city,
     label: item?.city,
   }));
@@ -65,7 +63,7 @@ export default function CustomerInfo({ className, formik }: CustomerInfoProps) {
           />
 
           <div className="relative ">
-            {ensureArray(shipperList)?.length === 0 && (
+            {ensureArray(shippers)?.length === 0 && (
               <Link
                 className="absolute right-2 cursor-pointer text-[#3872fa] underline"
                 to={"/add-shipper-info"}

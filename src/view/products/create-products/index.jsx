@@ -9,23 +9,24 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { validationProductSchema } from "@/validators/create-product-schema";
 import { routes } from "@/config/routes";
 import toast from "react-hot-toast";
-import {
-  addNewProduct,
-  editProduct,
-  fetchAllProducts,
-} from "@/store/slices/productSlice";
+// import {
+//   addNewProduct,
+//   editProduct,
+//   fetchAllProducts,
+// } from "@/store/slices/productSlice";
 import { useAppDispatch } from "@/hooks/store-hook";
+import { useProduct } from "@/hooks/product-hook";
 
 const CreateEditProduct = () => {
   const location = useLocation();
   const { state } = location;
   const { id } = useParams();
   const dispatch = useAppDispatch();
+  const { handleAddProduct, handleUpdateProduct, isLoading } = useProduct();
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
   const isEdit = Boolean(id && state?.row);
 
   const initialValues = {
@@ -50,21 +51,19 @@ const CreateEditProduct = () => {
       return;
     }
     try {
-      setIsLoading(true);
       if (isEdit) {
-        const res = await dispatch(editProduct({  id: state.row._id,  formData: values  })).unwrap();
-        toast.success(res.message);
+        const res = await handleUpdateProduct(values, state?.row._id);
+        toast.success("Product updated successfully");
       } else {
         const productData = { ...values, image: uploadedImageUrl ?? values.image };
-        const res = await dispatch(addNewProduct(productData)).unwrap();
-        toast.success(res.message);
+        const res = await handleAddProduct(productData);
+        toast.success("Product created successfully");
       }
       navigate(routes.products.products);
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error(error.message || "An error occurred");
     } finally {
-      setIsLoading(false);
       resetForm();
     }
   };

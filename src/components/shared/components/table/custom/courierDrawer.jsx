@@ -1,11 +1,9 @@
 import { Form } from "@/components/ui/form";
-import OrdersController from "@/controllers/ordersController";
-import { editOrder, fetchAllOrders } from "@/store/slices/ordersSlice";
+import { useOrders } from "@/hooks/order-hook";
 import { phoneNumberValidator, usePhoneNumberMask } from "@/utils/helperFunctions/phone-number";
 import validationSchema from "@/validators/shipping-info";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
 import { Drawer, Input, Button } from "rizzui";
 
 export default function CourierDrawer({
@@ -18,9 +16,9 @@ export default function CourierDrawer({
   city,
   row,
 }) {
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  // const [isLoading, setIsLoading ] = useState(false);
   const { maskRHFValue } = usePhoneNumberMask();
+  const { handleUpdateShipmentDetails, handleGetOrders, isLoading } = useOrders();
 
   const initialValues = {
     name: name ?? "",
@@ -31,18 +29,13 @@ export default function CourierDrawer({
   };
 
   const onSubmit = async (data) => {
-    console.log("@@Form Values:", data, row?.original);
     try {
-      setLoading(true);
-      const response = await dispatch(editOrder({ id: row.original._id, formData: { shipmentDetails: data } })).unwrap();
-      toast.success(response.message);
+      await handleUpdateShipmentDetails(row?.original?._id, { shipmentDetails: data });
       closeDrawer();
-      dispatch(fetchAllOrders());
+      await handleGetOrders();
     } catch (error) {
       console.log("Error", error);
       toast.error(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -111,7 +104,7 @@ export default function CourierDrawer({
                 className="text-white bg-black flex-1"
                 size="lg"
                 type="submit"
-                isLoading={loading}
+                isLoading={isLoading}
                 onClick={handleSubmit(onSubmit)}
               >
                 Edit

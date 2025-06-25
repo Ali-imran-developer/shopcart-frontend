@@ -3,10 +3,9 @@ import PageHeader from "@shared/page-header";
 import CustomerTable from "./customer-list/table";
 import { PiPlusBold } from "react-icons/pi";
 import { metaObject } from "@config/site.config";
-import { useAppDispatch, useAppSelector } from "@/hooks/store-hook";
+import { useAppSelector } from "@/hooks/store-hook";
 import { useEffect, useState } from "react";
-import { fetchAllCustomers } from "@/store/slices/customerSlice";
-import CustomerDrawer from "./drawer";
+import { useCustomer } from "@/hooks/customer-hook";
 
 export const metadata = {
   ...metaObject("Customer"),
@@ -17,12 +16,13 @@ const pageHeader = {
 };
 
 export default function CustomerDetail() {
-  const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
-  const { customerList, isLoading } = useAppSelector( (state) => state?.Customer);
+  const { handleGetCustomer, isLoading } = useCustomer();
+  const { customerData } = useAppSelector( (state) => state?.Customer);
 
   useEffect(() => {
-    dispatch(fetchAllCustomers());
+    handleGetCustomer();
+
   }, []);
 
   return (
@@ -45,7 +45,7 @@ export default function CustomerDetail() {
         <CustomerTable
           open={open}
           setOpen={setOpen}
-          data={customerList}
+          data={customerData}
           isDataLoaded={isLoading}
         />
       </div>

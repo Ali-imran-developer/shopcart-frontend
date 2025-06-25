@@ -23,16 +23,10 @@ import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import toast from "react-hot-toast";
 import { PiMagnifyingGlassBold } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
-import {
-  bookingOrder,
-  fetchAllOrders,
-  fetchBookedOrders,
-  updateOrderStatus,
-} from "@/store/slices/ordersSlice";
 import { fetchAllCourier } from "@/store/slices/CourierSlice";
-import { fetchAllShipper } from "@/store/slices/shipperSlice";
 import { generateShippingLabelPDF } from "../labelPrint";
-import { useFormik } from "formik";
+import { useOrders } from "@/hooks/order-hook";
+import { useShipperData } from "@/hooks/shipper-hook";
 
 const filterOptions = [
   {
@@ -70,17 +64,24 @@ export default function OrderTable({
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<string>("confirmed");
-  const { OrderList, isLoading, BookedOrderList } = useAppSelector(
+  const { orderData, bookedOrdersData } = useAppSelector(
     (state) => state?.Orders
   );
-  const { shipperList } = useAppSelector((state) => state?.Shipper);
   const { CourierList } = useAppSelector((state) => state?.Courier);
   const [selectedCouriers, setSelectedCouriers] = useState({});
   const [selectedMethod, setSelectedMethod] = useState({});
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedShipper, setSelectedShipper] = useState();
   const [loading, setLoading] = useState("");
-  const [orderData, setOrderData] = useState<any>([]);
+  const [ordersData, setOrderData] = useState<any>([]);
+  const { fetchShippers, shippers } = useShipperData();
+  const {
+    handleGetOrders,
+    handleOrdersBooking,
+    handleGetBookedOrders,
+    handleUpdateDispatchStatus,
+    isLoading,
+  } = useOrders();
 
   const filteredOrders = useMemo(() => {
     const options = filterOptions.reduce<Record<string, string>>(
@@ -90,48 +91,50 @@ export default function OrderTable({
       },
       {}
     );
-    return ensureArray(OrderList).filter(
+    return ensureArray(orderData?.orders).filter(
       (order) => order.status === options[activeTab]
     );
-  }, [OrderList, activeTab]);
+  }, [orderData?.orders, activeTab]);
+  console.log(filteredOrders);
 
   useEffect(() => {
     dispatch(fetchAllCourier());
-    dispatch(fetchAllShipper());
+    fetchShippers();
   }, []);
 
   useEffect(() => {
-    if (filteredOrders?.length && shipperList?.length && CourierList?.length) {
-      const updatedOrders = ensureArray(filteredOrders).map((order) => {
-        const shippers: any[] = ensureArray(shipperList).filter(
-          (s: any) => s.user === order.user
-        );
-        const couriers = ensureArray(CourierList);
+    if (filteredOrders?.length && shippers?.length && CourierList?.length) {
+      const updatedOrders = ensureArray(filteredOrders).map((order: any) => {
+        const shippersData = shippers.filter((shipper: any) => {
+          return shipper?.user === order?.user;
+        });
+        const shipperInfo = shippersData.map((shipper: any) => {
+          return {
+            shipperId: shipper?._id ?? null,
+            shipperCity: shipper?.city ?? null,
+          };
+        });
+        console.log(shipperInfo, "shipper info from table");
+        const courierInfo = CourierList.map((courier: any) => ({
+          courierId: courier?._id ?? null,
+          courierName: courier?.name ?? "",
+          logo: courier?.logo ?? "",
+          defaultCourier: courier?.isDefault ?? false,
+        }));
         return {
           ...order,
-          shipperInfo: shippers.length
-            ? shippers.map((shipper) => ({
-                shipperId: shipper._id,
-                shipperCity: shipper.city,
-              }))
-            : [],
-          courierInfo: couriers.length
-            ? couriers.map((courier) => ({
-                courierId: courier._id,
-                courierName: courier.name,
-                logo: courier.logo,
-                defaultCoureir: courier.isDefault,
-              }))
-            : [],
+          shipperInfo: shipperInfo.length ? shipperInfo : [],
+          courierInfo: courierInfo.length ? courierInfo : [],
         };
       });
+      console.log("Updated Orders with Shipper Info", updatedOrders);
       setOrderData(updatedOrders);
     }
-  }, [OrderList, shipperList, CourierList]);
+  }, [filteredOrders, shippers, CourierList]);
 
-  console.log("orderData", CourierList?.length);
   const [expandedRowId, setExpandedRowId] = useState<any>(null);
-  const ultimateData = activeTab === "booked" ? BookedOrderList : orderData;
+  const ultimateData =
+    activeTab === "booked" ? bookedOrdersData?.bookOrders : ordersData;
   const { table, setData, setColumns } = useTanStackTable<any>({
     tableData: ensureArray(ultimateData),
     columnConfig: [],
@@ -160,9 +163,9 @@ export default function OrderTable({
 
   useEffect(() => {
     if (activeTab === "booked") {
-      dispatch(fetchBookedOrders());
+      handleGetBookedOrders();
     } else {
-      dispatch(fetchAllOrders());
+      handleGetOrders();
     }
   }, [activeTab]);
 
@@ -188,7 +191,7 @@ export default function OrderTable({
     } else {
       setColumns(cancelledOrders({ expandedRowId }));
     }
-  }, [expandedRowId, CourierList, shipperList, activeTab]);
+  }, [expandedRowId, CourierList, shippers, activeTab]);
 
   useEffect(() => {
     const getStatusButton: any = filterOptions.find(
@@ -221,14 +224,14 @@ export default function OrderTable({
       if (status === "Booked") {
         console.log("initialValues", initialValues);
         try {
-          const resultAction: any = await dispatch(bookingOrder(initialValues));
-          const response = resultAction?.payload;
-          if (response?.message) {
-            toast.success(response?.message);
-          } else {
-            toast.error("Booking failed");
-          }
-          await dispatch(fetchAllOrders());
+          await handleOrdersBooking(initialValues, (status, result) => {
+            if (status === "success") {
+              toast.success(result?.message || "Order booked successfully!");
+            } else if (status === "error") {
+              toast.error(result?.message || "Something went wrong");
+            }
+          });
+          await handleGetOrders();
         } catch (error: any) {
           console.log("error", error);
           toast.error(error?.message || "Something went wrong");
@@ -242,12 +245,19 @@ export default function OrderTable({
                   status: status?.toLowerCase(),
                 }))
               : [{ ...row?.original, status: status?.toLowerCase() }];
-
           const response: any = await Promise.all(
             hasStatusUpdate.map((item) =>
-              dispatch(
-                updateOrderStatus({ id: item._id, status: item.status })
-              ).unwrap()
+              handleUpdateDispatchStatus(
+                item._id,
+                { status: item.status },
+                (status, result) => {
+                  if (status === "success") {
+                    console.log(result?.message);
+                  } else if (status === "error") {
+                    console.log(result?.message);
+                  }
+                }
+              )
             )
           );
           ensureArray(response)?.forEach((res) => {
@@ -255,7 +265,7 @@ export default function OrderTable({
               toast.success(res.message);
             }
           });
-          await dispatch(fetchAllOrders());
+          await handleGetOrders();
         } catch (error: any) {
           console.log("error", error);
           toast.error(error.message || "Failed to update status");

@@ -2,18 +2,13 @@ import { ShipperInfoColumn } from "./columns";
 import Table from "@shared/components/table/table";
 import { useTanStackTable } from "@shared/components/table/custom/use-TanStack-Table";
 import TablePagination from "@shared/components/table/pagination";
-import { OrderDataType } from "@shared/components/types/order-type";
-import { Button, TableVariantProps } from "rizzui";
+import { TableVariantProps } from "rizzui";
 import cn from "@/utils/helperFunctions/class-names";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import TableFooter from "@/components/shared/components/table/footer";
-import toast from "react-hot-toast";
 import { ensureArray } from "@/utils/helperFunctions/formater-helper";
-import { routes } from "@/config/routes";
 import { useNavigate } from "react-router-dom";
-import ShipperInfoController from "@/controllers/shipper-info";
-import { useAppDispatch, useAppSelector } from "@/hooks/store-hook";
-import { fetchAllShipper } from "@/store/slices/shipperSlice";
+import { useShipperData } from "@/hooks/shipper-hook";
 
 export interface ShipperInfoType {
   _id?: string;
@@ -37,17 +32,11 @@ export default function OrderTable({
   variant?: TableVariantProps;
 }) {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { fetchShippers, deleteShipper, shippers, isLoading } = useShipperData();
 
-  useEffect(() => {
-    dispatch(fetchAllShipper());
-
-  },[dispatch])
-
-  const { shipperList, isLoading } = useAppSelector((state) => state.Shipper);
   const { table, setData } = useTanStackTable<any>({
-    tableData: ensureArray(shipperList),
-    columnConfig: ShipperInfoColumn({ navigate, dispatch }),
+    tableData: ensureArray(shippers),
+    columnConfig: ShipperInfoColumn({ navigate, deleteShipper }),
     options: {
       initialState: {
         pagination: {
@@ -60,11 +49,9 @@ export default function OrderTable({
         },
       },
       meta: {
-        handleSelectedRow: (row) => {
-          console.log("@row", row);
-          navigate(routes.orders.orderDetail(row._id), {
-            state: { selectedOrder: row },
-          });
+        handleDeleteRow: async (row) => {
+          const data: any = await deleteShipper(row?._id);
+          setData((prev) => prev.filter((item) => item?._id !== data?._id));
         },
       },
       enableColumnResizing: false,
@@ -73,9 +60,14 @@ export default function OrderTable({
   });
 
   useEffect(() => {
-    setData(ensureArray(shipperList));
+    fetchShippers();
 
-  }, [shipperList]);
+  },[]);
+
+  useEffect(() => {
+    setData(ensureArray(shippers));
+
+  }, [shippers]);
 
   return (
     <>

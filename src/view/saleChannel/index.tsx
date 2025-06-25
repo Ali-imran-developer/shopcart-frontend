@@ -1,12 +1,9 @@
 import PageHeader from "@shared/page-header";
 import { metaObject } from "@config/site.config";
-import { Button } from "rizzui";
-import { useNavigate } from "react-router-dom";
 import SalesChannelTable from "./salesChannel-list/table";
-import { useEffect, useState } from "react";
-import AuthController from "@/controllers/authController";
-import { useAppDispatch, useAppSelector } from "@/hooks/store-hook";
-import { fetchAllStores } from "@/store/slices/storeSlice";
+import { useEffect } from "react";
+import { useAppSelector } from "@/hooks/store-hook";
+import { useStores } from "@/hooks/salesChannel-hook";
 
 export const metadata = {
   ...metaObject("Sales Channel"),
@@ -17,18 +14,18 @@ const pageHeader = {
 };
 
 const SalesChannel = () => {
-  const dispatch = useAppDispatch();
-  const { StoresList, isLoading } = useAppSelector((state) => state.Stores);
+  const { handleGetStore, isLoading } = useStores();
+  const { storeData } = useAppSelector((state) => state.Stores);
 
   useEffect(() => {
-    dispatch(fetchAllStores());
+    handleGetStore();
 
   },[])
 
   return (
     <>
       <PageHeader title={pageHeader.title} />
-      <SalesChannelTable channels={StoresList} loading={isLoading} />
+      <SalesChannelTable channels={storeData?.store} loading={isLoading} />
     </>
   );
 };

@@ -1,14 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PiArrowRightBold } from "react-icons/pi";
 import { Checkbox, Password, Button, Input, Text } from "rizzui";
 import { routes } from "@config/routes";
-import { loginSchema, LoginSchema } from "@utils/validators/login.schema";
 import { Form, Formik } from "formik";
 import { useAppDispatch } from "@/hooks/store-hook";
 import { login } from "@/store/slices/authSlice";
 import toast from "react-hot-toast";
 import AuthController from "@/controllers/authController";
+import { useShipperData } from "@/hooks/shipper-hook";
+import { useProfile } from "@/hooks/profile-hook";
 
 const initialValues = {
   email: "",
@@ -18,6 +19,7 @@ const initialValues = {
 export default function SignInForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { handleFetchProfile, profileData } = useProfile();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (values: any) => {
@@ -27,9 +29,10 @@ export default function SignInForm() {
       const response = await dispatch(login(values)).unwrap();
       if (response?.token) {
         AuthController.set({ token: response?.token });
-        AuthController.set({ user: response?.user });
       }
       toast.success(response.message || "Login Successfully!");
+      await handleFetchProfile();
+      AuthController.set({ profile: profileData?.profile });
       navigate("/");
     } catch(error: any){
       toast.error(error.message || "Failed to Login!");

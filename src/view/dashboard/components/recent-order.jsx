@@ -12,32 +12,11 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { Checkbox, Flex, Text } from "rizzui";
 import { formatNumberWithCommas } from "@/utils/helperFunctions/format-number";
 import { routes } from "@/config/routes";
-import { useDispatch } from "react-redux";
-import { fetchAllOrders } from "@/store/slices/ordersSlice";
+import { useOrders } from "@/hooks/order-hook";
 
 const columnHelper = createColumnHelper();
-export const ordersColumns = ({ navigate }) => {
+export const ordersColumns = () => {
   const columns = [
-    columnHelper.display({
-      id: "select",
-      size: 50,
-      header: ({ table }) => (
-        <Checkbox
-          className="ps-0"
-          aria-label="Select all rows"
-          checked={table.getIsAllPageRowsSelected()}
-          onChange={() => table.toggleAllPageRowsSelected()}
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          className="ps-0"
-          aria-label="Select row"
-          checked={row.getIsSelected()}
-          onChange={() => row.toggleSelected()}
-        />
-      ),
-    }),
     columnHelper.accessor("_id", {
       id: "id",
       size: 100,
@@ -134,13 +113,12 @@ export default function OrderTable({
   hideFilters = false,
   hidePagination = false,
 }) {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { OrderList, isLoading } = useAppSelector((state) => state.Orders);
-  console.log("OrderList", OrderList);
+  const { orderData } = useAppSelector((state) => state.Orders);
+  const { handleGetOrders, isLoading } = useOrders();
+
   const { table, setData } = useTanStackTable({
-    tableData: ensureArray(OrderList),
-    columnConfig: ordersColumns({ navigate }),
+    tableData: ensureArray(orderData?.orders),
+    columnConfig: ordersColumns(),
     options: {
       initialState: {
         pagination: {
@@ -166,12 +144,14 @@ export default function OrderTable({
   });
 
   useEffect(() => {
-    dispatch(fetchAllOrders());
-  }, [dispatch]);
+    handleGetOrders();
+
+  }, []);
 
   useEffect(() => {
-    setData(ensureArray(OrderList));
-  }, [OrderList]);
+    setData(ensureArray(orderData?.orders));
+
+  }, [orderData?.orders]);
 
   return (
     <>
@@ -186,7 +166,7 @@ export default function OrderTable({
           variant={variant}
           showLoadingText={isLoading}
           isLoading={isLoading}
-          data={ensureArray(OrderList)}
+          data={ensureArray(orderData?.orders)}
           classNames={{
             container: "border border-muted rounded-md border-t-0 mt-4",
             rowClassName: "last:border-0",

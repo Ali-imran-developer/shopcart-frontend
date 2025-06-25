@@ -1,54 +1,26 @@
 import { apiRequest } from "./apiController";
 
 class OrdersController {
-  static getAllOrders(queryParams: URLSearchParams) {
-    // return apiRequest("get", `/api/v1/orders`);
-    return apiRequest("get", `/api/v1/orders?${queryParams}`);
+  static getAllOrders() {
+    return apiRequest("get", `/api/orders/get`);
+  }
+  static getBookedOrders() {
+    return apiRequest("get", `/api/orders/booking/get`);
   }
   static createOrder(data: any) {
-    // return apiRequest("get", `/api/v1/orders`);
-    return apiRequest("post", `/api/v1/orders`, data);
+    return apiRequest("post", `/api/orders/create`, data);
   }
-  static updateOrderDispatchStatus(order_id: string, status: URLSearchParams) {
-    console.log("@@order_id", order_id, status);
-
-    return apiRequest("put", `/api/v1/orders/${order_id}/status`, {
-      status,
-    });
+  static updateShipmentDetails(id: String, data: any) {
+    return apiRequest("put", `/api/orders/update/${id}`, data);
   }
-  // static updateOrderDispatchStatus(data: URLSearchParams) {
-  //   return apiRequest("put", `/api/orders/orderDispatchStatus`, data);
-  // }
-  static addTrackingNumbers({
-    orderId,
-    storeId,
-    trackingCompany,
-    shipmentType,
-  }: any) {
-    let data = { orderId, storeId, trackingCompany, shipmentType };
-    return apiRequest("post", `/api/orders/saveShipmentRecord`, data);
+  static updateOrderStatus(id: String, status: String) {
+    return apiRequest("put", `/api/orders/status/update/${id}`, status);
   }
-  static saveBillingLogs(storeId: any, current_total_price: URLSearchParams) {
-    const data = { storeId: storeId, current_total_price: current_total_price };
-    return apiRequest("post", `/api/billingLogs/saveBilling`, data);
+  static orderBooking(data: any) {
+    return apiRequest("post", `/api/orders/booking`, data);
   }
-  static assignedOrders(data: any) {
-    console.log("@datadata", data);
-    return apiRequest("post", `/api/v1/orders/booking`, data);
-  }
-  static getSelectedCourierCities(courier_id: URLSearchParams) {
-    // return apiRequest("post", `/api/orders/assignedOrders`, { orders });
-    return apiRequest("get", `/api/v1/courier/${courier_id}/cites`);
-  }
-  static updateShipmentDetails(order_id: string, payload: any) {
-    // return apiRequest("post", `/api/orders/assignedOrders`, { orders });
-    return apiRequest("put", `/api/v1/orders/${order_id}/address`, payload);
-  }
-  static addProcureStatuses(payload: any) {
-    return apiRequest("put", `/api/v1/orders/procure-status`, payload);
-  }
-  static getAllShopilamCities() {
-    return apiRequest("get", "/api/v1/courier/shopilam-cities");
+  static orderDelete(id: String) {
+    return apiRequest("delete", `/api/orders/delete/${id}`);
   }
 }
 

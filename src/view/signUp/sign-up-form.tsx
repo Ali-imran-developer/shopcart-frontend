@@ -24,11 +24,11 @@ export default function SignUpForm() {
     try {
       setIsLoading(true);
       const response = await dispatch(signUp(values)).unwrap();
+      toast.success("Sign up successfully!");
       if (response?.token) {
         AuthController.set({ token: response?.token });
         AuthController.set({ user: response?.user });
       }
-      toast.success(response.success || "Sign up successfully!");
       navigate("/");
     } catch (error: any) {
       const backendMessage = error?.response?.data?.message || error?.data?.message || error?.message;

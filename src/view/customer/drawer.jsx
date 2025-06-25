@@ -1,30 +1,33 @@
 import { Form } from "@/components/ui/form";
-import { addNewCustomer, editCustomers, fetchAllCustomers } from "@/store/slices/customerSlice";
-import { useState } from "react";
+import { useCustomer } from "@/hooks/customer-hook";
 import toast from "react-hot-toast";
 import { Drawer, Input, Button } from "rizzui";
 
-export default function CustomerDrawer({ dispatch, isDrawerOpen, closeDrawer, customerData }) {
-  const [loading, setLoading] = useState(false);
+export default function CustomerDrawer({
+  isDrawerOpen,
+  closeDrawer,
+  customerData,
+}) {
   const isEdit = Boolean(customerData);
+  const { handleAddCustomer, handleEditCustomer, isLoading } = useCustomer();
 
   const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      if(isEdit){
-        const response = await dispatch(editCustomers({ id: customerData?._id, formData: data })).unwrap();
+    if (isEdit) {
+      try {
+        const response = await handleEditCustomer(customerData?._id, data);
         toast.success(response.message);
-      }else{
-        const response = await dispatch(addNewCustomer(data)).unwrap();
-        toast.success(response.message);
+        closeDrawer();
+      } catch (error) {
+        toast.error(error.message);
       }
-      closeDrawer();
-      dispatch(fetchAllCustomers());
-    } catch (error) {
-      console.log("Error", error);
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
+    } else {
+      try {
+        const response = await handleAddCustomer(data);
+        toast.success(response.message);
+        closeDrawer();
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
   };
 
@@ -80,13 +83,13 @@ export default function CustomerDrawer({ dispatch, isDrawerOpen, closeDrawer, cu
                 Cancel
               </Button>
               <Button
-                className="text-white bg-black flex-1"
+                className="bg-blue-600 hover:bg-blue-700"
                 size="lg"
                 type="submit"
-                isLoading={loading}
+                isLoading={isLoading}
                 onClick={handleSubmit(onSubmit)}
               >
-                {isEdit ? "Edit Customer" : "Create Customer" }
+                {isEdit ? "Edit Customer" : "Create Customer"}
               </Button>
             </div>
           </div>

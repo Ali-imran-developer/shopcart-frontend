@@ -6,19 +6,20 @@ import cn from "@utils/helperFunctions/class-names";
 import { CartPageWrapper } from "./index";
 import { SelectProduct } from "./selectProduct/index";
 import { Button } from "rizzui";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addNewOrder, editOrder } from "@/store/slices/ordersSlice";
 import toast from "react-hot-toast";
 import { routes } from "@/config/routes";
 import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import CustomerInfo from "./customer-info";
+import { useOrders } from "@/hooks/order-hook";
+import { shipmentDetailsSchema } from "@/validators/create-order.schema";
 
 export default function CreateOrder() {
   const [isLoading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { handleAddOrders } = useOrders();
   const selectedProducts = ensureArray(products)?.filter((p) => p?.checked);
 
   const initialValues = {
@@ -51,14 +52,17 @@ export default function CreateOrder() {
 
   const formik = useFormik({
     initialValues: initialValues,
-    // validationSchema: shipmentDetailsSchema,
+    validationSchema: shipmentDetailsSchema,
     onSubmit: async (values) => {
-      console.log("values", values);
       try {
         setLoading(true);
-        const res = await dispatch(addNewOrder(values))?.unwrap();
-        toast.success(res.message);
-        navigate(routes.orders.orders);
+        if(values.products[0]?.productId === ""){
+          toast.error("Please select product!")
+        }else{
+          await handleAddOrders(values);
+          toast.success("Order created successfully");
+          navigate(routes.orders.orders);
+        }
       } catch (error) {
         console.error("Error submitting form:", error);
         toast.error(error.message || "An error occurred");

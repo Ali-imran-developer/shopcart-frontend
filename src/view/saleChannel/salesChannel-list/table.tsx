@@ -5,7 +5,6 @@ import { SalesChannelType } from "@data/salesChannel";
 import { SalesChannelColumns } from "./columns";
 import { TableClassNameProps } from "@shared/components/table/table-types";
 import cn from "@utils/helperFunctions/class-names";
-import AuthController from "@/controllers/authController";
 import { useEffect } from "react";
 import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import { useNavigate } from "react-router-dom";

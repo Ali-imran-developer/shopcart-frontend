@@ -2,9 +2,6 @@ import DateCell from "@ui/date-cell";
 import { createColumnHelper } from "@tanstack/react-table";
 import { ActionIcon, Checkbox, Flex, Select, Text, Tooltip } from "rizzui";
 import { formatNumberWithCommas } from "@/utils/helperFunctions/format-number";
-import { routes } from "@/config/routes";
-import toast from "react-hot-toast";
-import { deleteOrder, fetchAllOrders } from "@/store/slices/ordersSlice";
 import DeletePopover from "@/components/shared/components/table/delete-popover";
 import { getStatusBadge } from "@/components/shared/components/table-utils/get-status-badge";
 import { PiCaretDownBold, PiCaretUpBold } from "react-icons/pi";
@@ -49,16 +46,16 @@ export const confirmOrdersColumns = ({
   setSelectedCouriers,
   setSelectedShipper,
 }: any) => {
-  const handleClick = async (row: OrderRow) => {
-    try {
-      const res = await dispatch(deleteOrder(row?._id))?.unwrap();
-      toast.success(res.message);
-      navigate(routes.orders.orders);
-      dispatch(fetchAllOrders());
-    } catch (error: any) {
-      toast.error(error.message || "An error occurred");
-    }
-  };
+  // const handleClick = async (row: OrderRow) => {
+  //   try {
+  //     const res = await dispatch(deleteOrder(row?._id))?.unwrap();
+  //     toast.success(res.message);
+  //     navigate(routes.orders.orders);
+  //     dispatch(fetchAllOrders());
+  //   } catch (error: any) {
+  //     toast.error(error.message || "An error occurred");
+  //   }
+  // };
 
   const columns = [
     columnHelper.display({
@@ -172,6 +169,7 @@ export const confirmOrdersColumns = ({
       enableSorting: false,
       cell: ({ row }) => {
         const shipperData = row?.original?.shipperInfo;
+        // console.log(shipperData);
         const shipperOptions = ensureArray(shipperData)?.map((item: any) => ({
           label: item?.shipperCity,
           value: item?.shipperId,
@@ -220,16 +218,16 @@ export const confirmOrdersColumns = ({
       enableSorting: false,
       cell: ({ row }) => getStatusBadge(row?.original?.status ?? ""),
     }),
-    columnHelper.display({
-      id: "actions",
-      size: 50,
-      cell: ({ row }) => (
-        <DeletePopover
-          description="Are u really want to delete this order!"
-          onDelete={() => handleClick(row?.original)}
-        />
-      ),
-    }),
+    // columnHelper.display({
+    //   id: "actions",
+    //   size: 50,
+    //   cell: ({ row }) => (
+    //     <DeletePopover
+    //       description="Are u really want to delete this order!"
+    //       onDelete={() => handleClick(row?.original)}
+    //     />
+    //   ),
+    // }),
   ];
 
   return columns;

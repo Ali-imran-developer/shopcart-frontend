@@ -3,44 +3,30 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ActionIcon, Checkbox, Flex, Text, Tooltip } from "rizzui";
 import PencilIcon from "@/components/icons/pencil";
 import DeletePopover from "@/components/shared/components/table/delete-popover";
-import { deleteCustomers, fetchAllCustomers } from "@/store/slices/customerSlice";
-import { useAppDispatch } from "@/hooks/store-hook";
-import toast from "react-hot-toast";
 
 const columnHelper = createColumnHelper<any>();
-export const CustomerColumn = () => {
-  const dispatch = useAppDispatch();
-  const handleDelete = async (row: any) => {
-    try {
-      const response = await dispatch(deleteCustomers(row._id)).unwrap();
-      toast.success(response.message);
-      await dispatch(fetchAllCustomers());
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
-
+export const CustomerColumn = ({ handleDeleteCustomer }: any) => {
   const columns = [
-    columnHelper.display({
-      id: "select",
-      size: 50,
-      header: ({ table }) => (
-        <Checkbox
-          className="ps-0"
-          aria-label="Select all rows"
-          checked={table.getIsAllPageRowsSelected()}
-          onChange={() => table.toggleAllPageRowsSelected()}
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          className="ps-0"
-          aria-label="Select row"
-          checked={row.getIsSelected()}
-          onChange={() => row.toggleSelected()}
-        />
-      ),
-    }),
+    // columnHelper.display({
+    //   id: "select",
+    //   size: 50,
+    //   header: ({ table }) => (
+    //     <Checkbox
+    //       className="ps-0"
+    //       aria-label="Select all rows"
+    //       checked={table.getIsAllPageRowsSelected()}
+    //       onChange={() => table.toggleAllPageRowsSelected()}
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <Checkbox
+    //       className="ps-0"
+    //       aria-label="Select row"
+    //       checked={row.getIsSelected()}
+    //       onChange={() => row.toggleSelected()}
+    //     />
+    //   ),
+    // }),
     columnHelper.display({
       id: "name",
       size: 120,
@@ -131,7 +117,7 @@ export const CustomerColumn = () => {
           </Tooltip>
           <DeletePopover
             description="Are u really want to delete this customer!"
-            onDelete={() => handleDelete(row?.original)}
+            onDelete={() => handleDeleteCustomer(row?.original?._id)}
           />
         </Flex>
       ),

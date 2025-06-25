@@ -87,20 +87,13 @@ const menuItems = [
 ];
 
 const DropdownMenu = ({ profileList }: any) => {
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    try{
-      setIsLoading(true);
-      await AuthController.clear();
-      toast.success("Logged out successfully!");
-      navigate("/login");
-    } catch(error: any){
-      toast.error(error.message || "Failed to log out!");
-    } finally{
-      setIsLoading(false);
-    }
+    AuthController.clear();
+    localStorage.clear();
+    toast.success("Logged out successfully!");
+    navigate("/login");
   };
 
   return (
@@ -131,8 +124,8 @@ const DropdownMenu = ({ profileList }: any) => {
         <Button
           className="h-auto w-full justify-start p-0 font-medium text-gray-700 px-2.5 py-2  outline-none focus-within:text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus-visible:ring-0"
           variant="text"
-          disabled={isLoading}
-          isLoading={isLoading}
+          // disabled={isLoading}
+          // isLoading={isLoading}
           onClick={handleSubmit}
         >
           Sign Out

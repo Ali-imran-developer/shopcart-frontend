@@ -1,53 +1,20 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { ActionIcon, Checkbox, Flex, Text, Tooltip } from "rizzui";
-// import { ShipperInfoType } from "./shipper-info";
 import PencilIcon from "@/components/shared/components/icons/pencil";
-import ShipperInfoController from "@/controllers/shipper-info";
 import toast from "react-hot-toast";
 import DeletePopover from "@/components/shared/components/table/delete-popover";
-import { deleteShipper, fetchAllShipper } from "@/store/slices/shipperSlice";
+import { useShipperData } from "@/hooks/shipper-hook";
 
 const columnHelper = createColumnHelper<any>();
 
-export const ShipperInfoColumn = ({ navigate, dispatch }: any) => {
+export const ShipperInfoColumn = ({ navigate, deleteShipper }: any) => {
   const handleEditAddress = (address: any) => {
-    console.log("test2", address?._id);
     navigate(`/add-shipper-info`, {
       state: { address, shipperInfo: "edit" },
     });
   };
 
-  const handleDelete = async (row: any) => {
-    try {
-      const response = await dispatch(deleteShipper(row._id)).unwrap();
-      toast.success(response.message);
-      dispatch(fetchAllShipper());
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
-
   const columns = [
-    columnHelper.display({
-      id: "select",
-      size: 50,
-      header: ({ table }) => (
-        <Checkbox
-          className="ps-0"
-          aria-label="Select all rows"
-          checked={table.getIsAllPageRowsSelected()}
-          onChange={() => table.toggleAllPageRowsSelected()}
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          className="ps-0"
-          aria-label="Select row"
-          checked={row.getIsSelected()}
-          onChange={() => row.toggleSelected()}
-        />
-      ),
-    }),
     columnHelper.display({
       id: "name",
       size: 120,
@@ -93,7 +60,12 @@ export const ShipperInfoColumn = ({ navigate, dispatch }: any) => {
     columnHelper.display({
       id: "actions",
       size: 50,
-      cell: ({ row }) => (
+      cell: ({
+        row,
+        table: {
+          options: { meta },
+        },
+      }) => (
         <>
           <Flex className="items-center gap-2">
             <Tooltip
@@ -114,7 +86,7 @@ export const ShipperInfoColumn = ({ navigate, dispatch }: any) => {
               </ActionIcon>
             </Tooltip>
             <DeletePopover
-              onDelete={() => handleDelete(row?.original)}
+              onDelete={() => meta?.handleDeleteRow && meta?.handleDeleteRow(row?.original)}
               description="Are u really want to delete this shipper info!"
             />
           </Flex>
