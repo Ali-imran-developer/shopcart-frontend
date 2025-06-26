@@ -12,8 +12,8 @@ const initialState: initialStateType = {
   isDataLoaded: false,
 };
 
-export const CourierSlice = createSlice({
-  name: "CourierSlice",
+export const courierSlice = createSlice({
+  name: "courierSlice",
   initialState,
   reducers: {
     setCourier: (state, action: PayloadAction<any>) => {
@@ -27,5 +27,5 @@ export const CourierSlice = createSlice({
   },
 });
 
-export const { setCourier, setCourierCreds } = CourierSlice.actions;
-export default CourierSlice.reducer;
+export const { setCourier, setCourierCreds } = courierSlice.actions;
+export default courierSlice.reducer;
