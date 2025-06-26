@@ -1,5 +1,5 @@
 import CourierControllers from "@/controllers/courierController";
-import { setCourier, setCourierCreds } from "@/store/slices/courierSlice";
+import { setCourier, setCourierCreds } from "../store/slices/courierSlice";
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
