@@ -1,15 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { PiArrowRightBold } from "react-icons/pi";
 import { Checkbox, Password, Button, Input, Text } from "rizzui";
 import { routes } from "@config/routes";
 import { Form, Formik } from "formik";
-import { useAppDispatch } from "@/hooks/store-hook";
-import { login } from "@/store/slices/authSlice";
-import toast from "react-hot-toast";
-import AuthController from "@/controllers/authController";
-import { useShipperData } from "@/hooks/shipper-hook";
-import { useProfile } from "@/hooks/profile-hook";
+import { useAuth } from "@/hooks/auth-hooks";
+import { loginSchema } from "@/utils/validators/login.schema";
 
 const initialValues = {
   email: "",
@@ -17,38 +12,20 @@ const initialValues = {
 };
 
 export default function SignInForm() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { handleFetchProfile, profileData } = useProfile();
-  const [isLoading, setIsLoading] = useState(false);
+  const { handlePrimaryLogin, isLoading } = useAuth();
 
   const handleSubmit = async (values: any) => {
-    console.log(values);
-    try{
-      setIsLoading(true);
-      const response = await dispatch(login(values)).unwrap();
-      if (response?.token) {
-        AuthController.set({ token: response?.token });
-      }
-      toast.success(response.message || "Login Successfully!");
-      await handleFetchProfile();
-      AuthController.set({ profile: profileData?.profile });
-      navigate("/");
-    } catch(error: any){
-      toast.error(error.message || "Failed to Login!");
-    } finally{
-      setIsLoading(false);
-    }
+    await handlePrimaryLogin(values);
   };
 
   return (
     <>
       <Formik
         initialValues={initialValues}
-        // validationSchema={loginSchema}
+        validationSchema={loginSchema}
         onSubmit={handleSubmit}
       >
-        {({ getFieldProps, errors, touched, setFieldValue }) => (
+        {({ getFieldProps, errors, touched }) => (
           <Form>
             <div className="space-y-4">
               <Input
@@ -70,24 +47,25 @@ export default function SignInForm() {
                 {...getFieldProps("password")}
                 error={touched.password && (errors.password as any)}
               />
-              {/* <div className="flex items-center justify-between pb-2">
+              <div className="flex items-center justify-between pb-2">
                 <Checkbox
                   {...getFieldProps("rememberMe")}
                   label="Remember Me"
                   className="[&>label>span]:font-medium"
                   size="sm"
                 />
-                <Link
+                {/* <Link
                   to={routes.auth.forgotPassword}
                   className="h-auto p-0 text-sm font-semibold text-blue underline transition-colors hover:text-gray-900 hover:no-underline"
                 >
                   Forget Password?
-                </Link>
-              </div> */}
+                </Link> */}
+              </div>
               <Button
                 className="w-full bg-blue-600"
                 type="submit"
                 size="lg"
+                disabled={isLoading}
                 isLoading={isLoading}
               >
                 <span>Sign in</span>{" "}

@@ -1,41 +1,29 @@
 import { apiRequest } from "./apiController";
 
 class CourierControllers {
-  static getCouriersname() {
-    return apiRequest("get", "/api/v1/courier?manual=false");
+  static createCourier(data: any) {
+    return apiRequest("post", "/api/courier/create", data);
   }
-  static getManualCourier() {
-    return apiRequest("get", "/api/v1/courier?manual=true");
+  static getCourier() {
+    return apiRequest("get", "/api/courier/get");
   }
-  static updateCourier(data: any) {
-    return apiRequest("post", "/api/v1/courier/creds", data);
+  static deleteCourier(id: String) {
+    return apiRequest("delete", `/api/courier/delete/${id}`);
   }
-  static removeCourier(courier_id: any) {
-    return apiRequest("delete", `/api/v1/courier/${courier_id}`);
+  static editCourier(id: String, data: any) {
+    return apiRequest("put", `/api/courier/update/${id}`, data);
   }
-  static getAllSelectedCourier() {
-    return apiRequest("get", "/api/v1/courier/selected");
+  static courierCreds(data: any) {
+    return apiRequest("post", `/api/courier/creds`, data);
   }
-  static defaultCityCourier(data: any) {
-    return apiRequest("put", "/api/couriers/defaultCityCourier", data);
+  static getCourierCreds() {
+    return apiRequest("get", `/api/courier/get-creds`);
   }
-  static getCourierSlip(data: any) {
-    return apiRequest("post", "/api/pdf/courierSlip", data);
+  static removeCourierCreds(id: String) {
+    return apiRequest("delete", `/api/courier/creds/${id}`);
   }
-  static addKeys(data: any) {
-    return apiRequest("post", "/api/v1/courier/creds", data);
-  }
-  static getAllCities() {
-    return apiRequest("get", "/api/cities/allCities");
-  }
-  static generateLoadSheet(payload: any) {
-    return apiRequest("post", "/api/v1/load-sheets", payload);
-  }
-  static getLoadSheet() {
-    return apiRequest("get", "/api/v1/load-sheets");
-  }
-  static addCourier(data: { name: string; logo: string }) {
-    return apiRequest("post", "/api/v1/courier?manual=true", data);
+  static defaultCourier(id: String, data: any) {
+    return apiRequest("put", `/api/courier/creds/default/${id}`, data);
   }
 }
 

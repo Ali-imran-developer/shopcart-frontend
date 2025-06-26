@@ -1,107 +1,65 @@
-// import { useCallback } from "react";
-// import { CALLBACK_STATUS } from "../config/enums";
-// import AuthController from "../controllers/authController";
-// import StoreController from "@/controllers/storeController";
-// import { useHandleRequest } from "./api-hook";
-// import { SignUpSchema } from "@/validators/signup.schema";
+import { useCallback, useState } from "react";
+import LoginController from "@/controllers/loginController";
+import toast from "react-hot-toast";
+import AuthController from "@/controllers/authController";
+import { useNavigate } from "react-router-dom";
 
-// export const useAuth = () => {
-//   const session = AuthController.getSession();
-//   const { handleRequest } = useHandleRequest();
+export const useAuth = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-//   const handlePrimaryLogin = useCallback(
-//     async (
-//       payload = { email: "", password: "" },
-//       callback: (status: any, value: any) => void
-//     ) => {
-//       try {
-//         callback && callback(CALLBACK_STATUS.LOADING, true);
-//         const response: any = await AuthController.userLogin(payload);
+  const handlePrimaryLogin = useCallback(async (values: any) => {
+    try {
+      setIsLoading(true);
+      const data: any = await LoginController.login(values);
+      AuthController.set({ token: data?.token });
+      AuthController.set({ profile: data?.user })
+      toast.success(data?.message);
+      navigate("/");
+      return data;
+    } catch (error: any) {
+      console.log("@Error", error);
+      toast.error(error?.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-//         const { user, token, stores, survey } = response;
-//         // AuthController.setSession({
-//         //   survey,
-//         //   user,
-//         //   stores,
-//         //   isAuthenticated: true,
-//         //   accessToken: token,
-//         // });
-//         callback &&
-//           callback(CALLBACK_STATUS.SUCCESS, { user, token, stores, survey });
-//       } catch (error) {
-//         callback && callback(CALLBACK_STATUS.ERROR, error);
-//       } finally {
-//         callback && callback(CALLBACK_STATUS.LOADING, false);
-//       }
-//     },
-//     []
-//   );
+  const handlePrimarySignup = useCallback(async (values: any) => {
+    try {
+      setIsLoading(true);
+      const data: any = await LoginController.register(values);
+      AuthController.set({ token: data?.token });
+      toast.success(data?.message);
+      navigate("/");
+      return data;
+    } catch (error: any) {
+      console.log("@Error", error);
+      toast.error(error?.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-//   const handlePrimarySignUp = useCallback(
-//     async (
-//       payload: SignUpSchema,
-//       callback: (status: any, value: any) => void
-//     ) => {
-//       try {
-//         callback && callback(CALLBACK_STATUS.LOADING, true);
-//         const response: any = await AuthController.userSignUp(payload);
-//         const { user, token } = response;
-//         // AuthController.setSession({
-//         //   user,
-//         //   isAuthenticated: true,
-//         //   accessToken: token,
-//         // });
-//         callback && callback(CALLBACK_STATUS.SUCCESS, user);
-//       } catch (error) {
-//         callback && callback(CALLBACK_STATUS.ERROR, error);
-//       } finally {
-//         callback && callback(CALLBACK_STATUS.LOADING, false);
-//       }
-//     },
-//     []
-//   );
+  const handleUpdateUser = useCallback(async (id: String ,values: any) => {
+    try {
+      setIsLoading(true);
+      const data: any = await LoginController.updateUser(id, values);
+      AuthController.set({ profile: data?.user });
+      toast.success(data?.message);
+      return data;
+    } catch (error: any) {
+      console.log("@Error", error);
+      toast.error(error?.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-//   const handleLogout = useCallback(
-//     async (callback: (status: CALLBACK_STATUS, value: any) => void) => {
-//       try {
-//         callback && callback(CALLBACK_STATUS.LOADING, true);
-//         // const res = await AuthController.logout();
-//         // callback && callback(CALLBACK_STATUS.SUCCESS, res);
-//       } catch (error) {
-//         callback && callback(CALLBACK_STATUS.ERROR, error);
-//       } finally {
-//         callback && callback(CALLBACK_STATUS.LOADING, false);
-//       }
-//     },
-//     []
-//   );
-
-//   const handleQuestionnaire = useCallback(
-//     async (callback: (status: CALLBACK_STATUS, value: any) => void) => {
-//       try {
-//         // callback && callback(CALLBACK_STATUS.LOADING, true);
-//         // AuthController.setSession({
-//         //   isAuthenticated: true,
-//         // });
-//         // callback && callback(CALLBACK_STATUS.SUCCESS, res);
-//       } catch (error) {
-//         console.log(error);
-//         // callback && callback(CALLBACK_STATUS.ERROR, error);
-//       } finally {
-//         // callback && callback(CALLBACK_STATUS.LOADING, false);
-//       }
-//     },
-//     []
-//   );
-
-//   return {
-//     handlePrimaryLogin,
-//     handleLogout,
-//     handlePrimarySignUp,
-//     handleQuestionnaire,
-//     user: session?.user,
-//     isAuthenticated: session?.isAuthenticated,
-//     accessToken: session?.accessToken,
-//     session
-//   };
-// };
+  return {
+    isLoading,
+    handleUpdateUser,
+    handlePrimaryLogin,
+    handlePrimarySignup,
+  };
+};

@@ -5,7 +5,7 @@ import UserCog from "@components/shared/components/icons/user-cog";
 import { ROLES } from "@config/constants";
 import { useModal } from "@components/shared/modal-views/use-modal";
 import ModalButton from "@components/shared/components/table/modal-button";
-import EditRole from "@components/shared/roles-permissions/edit-role";
+// import EditRole from "@components/shared/roles-permissions/edit-role";
 import CreateUser from "@components/shared/roles-permissions/create-user";
 
 type User = {

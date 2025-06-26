@@ -1,23 +1,24 @@
 import { Button, Tooltip, ActionIcon, Radio } from "rizzui";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import PencilIcon from "../../components/shared/components/icons/pencil";
 import cn from "../../utils/helperFunctions/class-names";
 import CourierDrawer from "./courier-drawer";
 import { Switch } from "rizzui";
-import CourierControllers from "@/controllers/courierController";
-import toast from "react-hot-toast";
+import { useCouriers } from "@/hooks/courier-hook";
 
 export function Card({
   item,
   className,
   courier,
   isDefault,
+  courierCreds,
   onDefaultChange,
   updateCourier,
   switchCourier,
 }: {
   item: any;
   courier: any;
+  courierCreds: any;
   className?: string;
   isDefault: boolean;
   switchCourier: boolean;
@@ -27,21 +28,19 @@ export function Card({
 }) {
   const [isSwitchChecked, setIsSwitchChecked] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { deleteCourierKeys } = useCouriers();
 
   const switchHandler = async (e: any, data: any, courier: any) => {
     if (e.target.checked) {
       setIsSwitchChecked(data);
       setIsDrawerOpen(true);
-      updateCourier(data);
+      // updateCourier(data);
     } else {
       try {
-        const selectedCourierData: any = courier?.find(
-          (c: any) => c.name === data.name
-        );
-        await CourierControllers.removeCourier(selectedCourierData._id).then(
-          (e) => toast.success(e.message)
-        );
-        updateCourier(data);
+        const selectedCourierData: any = courierCreds?.find((c: any) => c?.couriersname === data?.name);
+        console.log(selectedCourierData?._id);
+        await deleteCourierKeys(selectedCourierData?._id);
+        // updateCourier(data);
       } catch (error) {
         console.log("@error", error);
       }
@@ -93,7 +92,7 @@ export function Card({
           name="radio"
           size="sm"
           className="!mt-0"
-          onChange={() => onDefaultChange(item.label)}
+          onChange={() => onDefaultChange(item)}
           checked={isDefault}
           disabled={!switchCourier}
         />

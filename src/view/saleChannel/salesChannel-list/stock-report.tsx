@@ -1,4 +1,4 @@
-import { SalesChannel } from "@data/salesChannel";
+// import { SalesChannel } from "@data/salesChannel";
 import { SalesChannelColumns } from "./columns";
 import { useTanStackTable } from "@shared/components/table/custom/use-TanStack-Table";
 import Table from "@shared/components/table";
@@ -9,12 +9,12 @@ import { Input } from "rizzui";
 import { PiMagnifyingGlassBold } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 
-export type SalesChannelType = (typeof SalesChannel)[number];
+// export type SalesChannelType = (typeof SalesChannel)[number];
 
 export default function StockReport({ className }: { className?: string }) {
   const navigate = useNavigate();
-  const { table, setData } = useTanStackTable<SalesChannelType>({
-    tableData: SalesChannel,
+  const { table, setData } = useTanStackTable<any>({
+    tableData: [],
     columnConfig: SalesChannelColumns(navigate),
     options: {
       initialState: {

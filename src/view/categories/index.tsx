@@ -4,7 +4,7 @@ import { Button } from "rizzui";
 import PageHeader from "@shared/page-header";
 import CategoriesTable from "./category-list/table";
 import { PiPlusBold } from "react-icons/pi";
-import { orderData } from "@data/order-data";
+// import { orderData } from "@data/order-data";
 import { metaObject } from "@config/site.config";
 import ExportButton from "@shared/components/export-button";
 
@@ -31,7 +31,7 @@ export default function ConfirmOrdersPage() {
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center lg:gap-3 gap-4 @lg:mt-0 flex-wrap">
           <ExportButton
-            data={orderData}
+            data={[]}
             fileName="order_data"
             header="Order ID,Name,Email,Avatar,Items,Price,Status,Created At,Updated At"
           />

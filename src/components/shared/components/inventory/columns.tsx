@@ -1,5 +1,3 @@
-import { getStockStatus } from "@shared/components/table-utils/get-stock-status";
-import { ProductType } from "@data/products-data";
 import AvatarCard from "@ui/avatar-card";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Checkbox, Input, Text } from "rizzui";

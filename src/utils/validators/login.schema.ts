@@ -3,7 +3,7 @@ import * as Yup from "yup";
 export const loginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
-    .min(1, "Password is required")
+    .min(8, "Password is required")
     .required("Password is required"),
   rememberMe: Yup.boolean().optional(),
 });

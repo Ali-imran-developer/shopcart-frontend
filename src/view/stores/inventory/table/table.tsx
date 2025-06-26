@@ -1,5 +1,5 @@
 import Table from "@shared/components/table/table";
-import { shopilamData } from "@data/sku-mapping";
+// import { shopilamData } from "@data/sku-mapping";
 import { useTanStackTable } from "@shared/components/table/custom/use-TanStack-Table";
 import { TableVariantProps } from "rizzui";
 import { useEffect } from "react";
@@ -24,7 +24,7 @@ export default function BasicTable({
       initialState: {
         pagination: {
           pageIndex: 0,
-          pageSize: stickyHeader ? shopilamData.length : shopilamData.length,
+          // pageSize: stickyHeader ? shopilamData.length : shopilamData.length,
         },
       },
       meta: {

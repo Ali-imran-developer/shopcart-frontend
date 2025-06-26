@@ -23,10 +23,10 @@ import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import toast from "react-hot-toast";
 import { PiMagnifyingGlassBold } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
-import { fetchAllCourier } from "@/store/slices/CourierSlice";
 import { generateShippingLabelPDF } from "../labelPrint";
 import { useOrders } from "@/hooks/order-hook";
 import { useShipperData } from "@/hooks/shipper-hook";
+import { useCouriers } from "@/hooks/courier-hook";
 
 const filterOptions = [
   {
@@ -67,7 +67,7 @@ export default function OrderTable({
   const { orderData, bookedOrdersData } = useAppSelector(
     (state) => state?.Orders
   );
-  const { CourierList } = useAppSelector((state) => state?.Courier);
+  const { courierCreds } = useAppSelector((state) => state?.Courier);
   const [selectedCouriers, setSelectedCouriers] = useState({});
   const [selectedMethod, setSelectedMethod] = useState({});
   const [selectedStatus, setSelectedStatus] = useState(null);
@@ -75,6 +75,7 @@ export default function OrderTable({
   const [loading, setLoading] = useState("");
   const [ordersData, setOrderData] = useState<any>([]);
   const { fetchShippers, shippers } = useShipperData();
+  const { getCourierKeys } = useCouriers();
   const {
     handleGetOrders,
     handleOrdersBooking,
@@ -95,15 +96,15 @@ export default function OrderTable({
       (order) => order.status === options[activeTab]
     );
   }, [orderData?.orders, activeTab]);
-  console.log(filteredOrders);
+  console.log(courierCreds?.creds, "....");
 
   useEffect(() => {
-    dispatch(fetchAllCourier());
+    getCourierKeys();
     fetchShippers();
   }, []);
 
   useEffect(() => {
-    if (filteredOrders?.length && shippers?.length && CourierList?.length) {
+    if (filteredOrders?.length && shippers?.length && courierCreds?.creds?.length) {
       const updatedOrders = ensureArray(filteredOrders).map((order: any) => {
         const shippersData = shippers.filter((shipper: any) => {
           return shipper?.user === order?.user;
@@ -115,9 +116,9 @@ export default function OrderTable({
           };
         });
         console.log(shipperInfo, "shipper info from table");
-        const courierInfo = CourierList.map((courier: any) => ({
-          courierId: courier?._id ?? null,
-          courierName: courier?.name ?? "",
+        const courierInfo = courierCreds?.creds?.map((courier: any) => ({
+          courierId: courier?.courier ?? null,
+          courierName: courier?.couriersname ?? "",
           logo: courier?.logo ?? "",
           defaultCourier: courier?.isDefault ?? false,
         }));
@@ -130,7 +131,7 @@ export default function OrderTable({
       console.log("Updated Orders with Shipper Info", updatedOrders);
       setOrderData(updatedOrders);
     }
-  }, [filteredOrders, shippers, CourierList]);
+  }, [filteredOrders, shippers, courierCreds?.creds]);
 
   const [expandedRowId, setExpandedRowId] = useState<any>(null);
   const ultimateData =
@@ -191,7 +192,7 @@ export default function OrderTable({
     } else {
       setColumns(cancelledOrders({ expandedRowId }));
     }
-  }, [expandedRowId, CourierList, shippers, activeTab]);
+  }, [expandedRowId, courierCreds?.creds, shippers, activeTab]);
 
   useEffect(() => {
     const getStatusButton: any = filterOptions.find(

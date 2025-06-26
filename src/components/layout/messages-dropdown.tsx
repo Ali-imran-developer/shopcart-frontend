@@ -7,7 +7,7 @@ import { routes } from "@config/routes";
 import { useMedia } from "@hooks/use-media";
 import SimpleBar from "@ui/simplebar";
 import { PiCheck } from "react-icons/pi";
-import { messagesData } from "@data/messages";
+// import { messagesData } from "@data/messages";
 import { Link } from "react-router-dom";
 
 dayjs.extend(relativeTime);
@@ -31,7 +31,7 @@ function MessagesList({
           View all
         </Link>
       </div>
-      <SimpleBar className="max-h-[406px]">
+      {/* <SimpleBar className="max-h-[406px]">
         <div className="grid grid-cols-1 ps-4">
           {messagesData.map((item) => (
             <div
@@ -87,7 +87,7 @@ function MessagesList({
             </div>
           ))}
         </div>
-      </SimpleBar>
+      </SimpleBar> */}
     </div>
   );
 }

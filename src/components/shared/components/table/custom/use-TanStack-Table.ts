@@ -1,4 +1,3 @@
-import { ProductType } from "@data/products-data";
 import {
   DragEndEvent,
   KeyboardSensor,

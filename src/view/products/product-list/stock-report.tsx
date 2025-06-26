@@ -1,4 +1,4 @@
-import { productsData } from "@data/products-data";
+// import { productsData } from "@data/products-data";
 import { productsListColumns } from "./columns";
 import { useTanStackTable } from "@shared/components/table/custom/use-TanStack-Table";
 import Table from "@shared/components/table";
@@ -8,11 +8,11 @@ import TablePagination from "@shared/components/table/pagination";
 import { Input } from "rizzui";
 import { PiMagnifyingGlassBold } from "react-icons/pi";
 
-export type ProductsDataType = (typeof productsData)[number];
+// export type ProductsDataType = (typeof productsData)[number];
 
 export default function StockReport({ className }: { className?: string }) {
-  const { table, setData } = useTanStackTable<ProductsDataType>({
-    tableData: productsData,
+  const { table, setData } = useTanStackTable<any>({
+    tableData: [],
     columnConfig: productsListColumns,
     options: {
       initialState: {

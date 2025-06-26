@@ -1,4 +1,3 @@
-import { productsData } from "@data/products-data";
 import Table from "@components/shared/components/table/table";
 import { useTanStackTable } from "@components/shared/components/table/custom/use-TanStack-Table";
 import TablePagination from "@components/shared/components/table/pagination";

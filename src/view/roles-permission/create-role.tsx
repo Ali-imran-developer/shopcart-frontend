@@ -9,7 +9,6 @@ import {
   CreateRoleInput,
   createRoleSchema,
 } from "../../validators/create-role.schema";
-import { useModal } from "@shared/modal-views/use-modal";
 
 // main category form component for create and update category
 export default function CreateRole() {

@@ -26,9 +26,9 @@ export const useProfile = () => {
       setLoading(true);
       const response: any = await ProfileController.fetchProfile();
       dispatch(setProfileList(response?.profile));
-      AuthController.set({ profile: response?.profile });
-      const { profile } = AuthController.get();
-      setProfileData(profile);
+      // AuthController.set({ profile: response?.profile });
+      // const { profile } = AuthController.get();
+      setProfileData(response?.profile);
       return response;
     } catch (error) {
       console.log("@Error", error);

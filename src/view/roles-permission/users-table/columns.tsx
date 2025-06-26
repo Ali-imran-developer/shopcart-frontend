@@ -1,9 +1,7 @@
-import AvatarCard from "@components/ui/avatar-card";
 import DateCell from "@components/ui/date-cell";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge, Checkbox, Flex, Text } from "rizzui";
 import { UsersTableDataType } from "./index";
-import { getStatusBadge } from "@components/shared/components/table-utils/get-status-badge";
 import TableRowActionGroup from "@components/shared/components/table-utils/table-row-action-group";
 
 const columnHelper = createColumnHelper<UsersTableDataType>();

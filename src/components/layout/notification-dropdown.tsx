@@ -6,7 +6,7 @@ import { Popover, Title, Badge, Checkbox, Text } from "rizzui";
 import { useMedia } from "@hooks/use-media";
 import SimpleBar from "@ui/simplebar";
 import { PiCheck } from "react-icons/pi";
-import { notificationsData } from "@data/notifications";
+// import { notificationsData } from "@data/notifications";
 import { Link } from "react-router-dom";
 
 dayjs.extend(relativeTime);
@@ -29,7 +29,7 @@ function NotificationsList({
           labelClassName="text-sm"
         />
       </div>
-      <SimpleBar className="max-h-[420px]">
+      {/* <SimpleBar className="max-h-[420px]">
         <div className="grid cursor-pointer grid-cols-1 gap-1 ps-4">
           {notificationsData.map((item) => (
             <div
@@ -66,7 +66,7 @@ function NotificationsList({
             </div>
           ))}
         </div>
-      </SimpleBar>
+      </SimpleBar> */}
       <Link
         to={"#"}
         onClick={() => setIsOpen(false)}

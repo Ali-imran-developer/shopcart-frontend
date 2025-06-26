@@ -5,29 +5,25 @@ import { Input } from "rizzui";
 import { PiEnvelopeSimple } from "react-icons/pi";
 import FormFooter from "@/components/shared/components/form-footer";
 import UploadZone from "./upload-zone";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { usePhoneNumberMask } from "@/utils/helperFunctions/phone-number";
-import { useProfile } from "@/hooks/profile-hook";
+import AuthController from "@/controllers/authController";
+import { useAuth } from "@/hooks/auth-hooks";
 
 const PersonalInfoView = () => {
-  const {
-    handleEditProfile,
-    handleFetchProfile,
-    handleAddNewProfile,
-    Loading,
-    profileData,
-  } = useProfile();
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const { maskFormikValue } = usePhoneNumberMask();
+  const { profile } = AuthController.get();
+  const { handleUpdateUser, isLoading } = useAuth();
 
   const initialValues = {
-    name: profileData?.name ?? "",
-    email: profileData?.email ?? "",
-    address: profileData?.address ?? "",
-    phoneNumber: profileData?.phoneNumber ?? "",
-    image: profileData?.image ?? "",
+    name: profile?.userName ?? "",
+    email: profile?.email ?? "",
+    address: profile?.address ?? "",
+    phoneNumber: profile?.phoneNumber ?? "",
+    image: profile?.image ?? "",
   };
 
   const formik = useFormik({
@@ -39,21 +35,9 @@ const PersonalInfoView = () => {
         ...values,
         image: uploadedImageUrl || values.image,
       };
-      if (!profileData || !profileData._id) {
-        const res = await handleAddNewProfile(Data);
-        toast.success(res.message);
-      } else {
-        const res = await handleEditProfile(Data, profileData._id);
-        toast.success(res.message);
-      }
-      await handleFetchProfile();
-    },
+      await handleUpdateUser(profile?._id, Data);
+    }
   });
-
-  useEffect(() => {
-    handleFetchProfile();
-
-  }, []);
 
   return (
     <>
@@ -73,10 +57,9 @@ const PersonalInfoView = () => {
             <Input
               name="email"
               placeholder="email@gmail.com"
-              value={formik.values.email}
-              onChange={formik.handleChange}
+              value={profile?.email}
+              disabled
               prefix={<PiEnvelopeSimple className="h-6 w-6 text-gray-500" />}
-              error={formik.touched.email && formik.errors.email}
             />
             <Input
               name="phoneNumber"
@@ -116,8 +99,8 @@ const PersonalInfoView = () => {
         <FormFooter
           altBtnText="Cancel"
           submitBtnText="Save"
-          isLoading={Loading}
-          disabled={imageLoadingState}
+          isLoading={isLoading}
+          disabled={imageLoadingState || isLoading}
         />
       </form>
     </>

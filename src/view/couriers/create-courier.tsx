@@ -7,7 +7,7 @@ import ProductMedia from "./upload-zone";
 import { useNavigate } from "react-router-dom";
 import FormFooter from "@/components/shared/components/form-footer";
 import { useAppDispatch } from "@/hooks/store-hook";
-import { addNewCourier } from "@/store/slices/CourierSlice";
+// import { addNewCourier } from "@/store/slices/courierSlice";
 
 export default function SalesChannelModal() {
   const navigate = useNavigate();
@@ -29,8 +29,8 @@ export default function SalesChannelModal() {
       console.log("values", values);
       try {
         setLoading(true);
-        const response: any = await dispatch(addNewCourier(values));
-        toast.success(response.message);
+        // const response: any = await dispatch(addNewCourier(values));
+        // toast.success(response.message);
         navigate("/courier-management");
       } catch (error: any) {
         toast.error(error.message);

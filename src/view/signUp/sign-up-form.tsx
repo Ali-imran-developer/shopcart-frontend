@@ -1,12 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Input, Text } from "rizzui";
 import { routes } from "../../config/routes";
-import toast from "react-hot-toast";
 import { Form, Formik } from "formik";
-import { useAppDispatch } from "@/hooks/store-hook";
-import { signUp } from "@/store/slices/authSlice";
-import AuthController from "@/controllers/authController";
+import { useAuth } from "@/hooks/auth-hooks";
+import { signUpSchema } from "@/validators/signup.schema";
 
 const initialValues = {
   userName: "",
@@ -15,38 +12,21 @@ const initialValues = {
 };
 
 export default function SignUpForm() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { handlePrimarySignup, isLoading } = useAuth();
 
   const handleSubmit = async (values: any) => {
-    console.log("values", values);
-    try {
-      setIsLoading(true);
-      const response = await dispatch(signUp(values)).unwrap();
-      toast.success("Sign up successfully!");
-      if (response?.token) {
-        AuthController.set({ token: response?.token });
-        AuthController.set({ user: response?.user });
-      }
-      navigate("/");
-    } catch (error: any) {
-      const backendMessage = error?.response?.data?.message || error?.data?.message || error?.message;
-      toast.error(backendMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    await handlePrimarySignup(values);
   };
 
   return (
     <>
       <Formik
         initialValues={initialValues}
-        // validationSchema={signUpSchema}
+        validationSchema={signUpSchema}
         onSubmit={handleSubmit}
       >
         {({ getFieldProps, errors, touched }) => (
-          <Form className="space-y-4">
+          <Form className="flex flex-col gap-2">
             <Input
               type="text"
               size="md"
@@ -55,6 +35,7 @@ export default function SignUpForm() {
               className="[&>label>span]:font-medium"
               inputClassName="text-sm"
               {...getFieldProps("userName")}
+              error={touched.userName && (errors.userName as any)}
             />
             <Input
               size="md"
@@ -63,6 +44,7 @@ export default function SignUpForm() {
               className="[&>label>span]:font-medium"
               inputClassName="text-sm"
               {...getFieldProps("email")}
+              error={touched.email && (errors.email as any)}
             />
 
             <Input
@@ -73,16 +55,18 @@ export default function SignUpForm() {
               inputClassName="text-sm"
               placeholder="Enter your password"
               {...getFieldProps("password")}
+              error={touched.password && (errors.password as any)}
             />
-
-            <Button
-              type="submit"
-              className="bg-blue-600 w-full my-4"
-              disabled={isLoading}
-              isLoading={isLoading}
-            >
-              Sign Up
-            </Button>
+            <div className="mt-4">
+              <Button
+                type="submit"
+                className="bg-blue-600 w-full"
+                disabled={isLoading}
+                isLoading={isLoading}
+              >
+                Sign Up
+              </Button>
+            </div>
           </Form>
         )}
       </Formik>

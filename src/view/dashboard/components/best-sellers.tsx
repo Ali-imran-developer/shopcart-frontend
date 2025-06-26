@@ -2,7 +2,7 @@ import { useState } from "react";
 import { DatePicker } from "@ui/datepicker";
 import WidgetCard from "@shared/components/cards/widget-card";
 import { Button, Text } from "rizzui";
-import { topProducts } from '@data/top-products-data';
+// import { topProducts } from '@data/top-products-data';
 import Rating from "@shared/components/rating";
 
 const currentDate = new Date();
@@ -48,7 +48,7 @@ export default function BestSellers({ className }: { className?: string }) {
       descriptionClassName="mt-1 flex items-center [&_.react-datepicker-wrapper]:w-full [&_.react-datepicker-wrapper]:max-w-[228px] text-gray-500"
       className={className}
     >
-      <div className="custom-scrollbar -me-2 mt-[18px] grid max-h-[460px] gap-4 overflow-y-auto @sm:gap-5">
+      {/* <div className="custom-scrollbar -me-2 mt-[18px] grid max-h-[460px] gap-4 overflow-y-auto @sm:gap-5">
         {topProducts.map((product) => (
           <div
             key={product.title + product.id}
@@ -75,7 +75,7 @@ export default function BestSellers({ className }: { className?: string }) {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
     </WidgetCard>
   );
 }

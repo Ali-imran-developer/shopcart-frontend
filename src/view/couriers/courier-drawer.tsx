@@ -1,10 +1,6 @@
-import { CALLBACK_STATUS } from "@/config/enums";
-// import { useAuth } from "@/hooks/auth-hooks";
 import { useCouriers } from "@/hooks/courier-hook";
 import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import { useFormik } from "formik";
-import { useState } from "react";
-import toast from "react-hot-toast";
 import { Drawer, Input, Button } from "rizzui";
 
 const courierFields: Record<
@@ -32,7 +28,7 @@ const courierFields: Record<
     { label: "API Key", name: "apiKey", type: "text" },
     // { label: "Password", name: "apiPassword", type: "password" },
   ],
-  "Honey Bee": [
+  HoneyBee: [
     { label: "HBC API Key", name: "apiKey", type: "text" },
     { label: "Merchant ID", name: "apiPassword", type: "password" },
   ],
@@ -55,25 +51,10 @@ const CourierDrawer = ({
   selectedCourier: any;
   cancelCloseDrawer: () => void;
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  // const { handleAddCourierKeys, updateMyCouriers } = useCouriers();
-
-  const functionCallBack: any = {
-    [CALLBACK_STATUS.LOADING]: (payload: any) => {
-      setIsLoading(payload);
-    },
-    [CALLBACK_STATUS.SUCCESS]: async (payload: any) => {
-      toast.success(payload.message);
-      closeDrawer();
-    },
-    [CALLBACK_STATUS.ERROR]: (payload: any) => {
-      toast.error(payload.message);
-      setIsLoading(false);
-    },
-  };
+  const { addCourierKeys, isLoading, getCourierKeys } = useCouriers();
 
   const drawerCloseHandler = () => {
-    formik.resetForm(); 
+    formik.resetForm();
     closeDrawer();
     if (!selectedCourierData) {
       cancelCloseDrawer();
@@ -83,7 +64,6 @@ const CourierDrawer = ({
   const selectedCourierData: any = ensureArray(selectedCourier).find(
     (c: any) => c.name === courier.name
   );
-  console.log("@selectedCourierData", selectedCourierData);
   const formik: any = useFormik({
     initialValues:
       courierFields[courier.name]?.reduce(
@@ -94,15 +74,16 @@ const CourierDrawer = ({
         {}
       ) || {},
     enableReinitialize: true,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const payload = {
         ...values,
-        name: courier.name,
-        courierId: courier._id,
+        isDefault: false,
+        courierName: courier?.name,
+        courierId: courier?._id,
       };
-      // handleAddCourierKeys(payload, (status: string, payload: any) =>
-      //   functionCallBack[status](payload)
-      // );
+      await addCourierKeys(payload);
+      await getCourierKeys();
+      drawerCloseHandler();
     },
   });
 
@@ -146,7 +127,7 @@ const CourierDrawer = ({
             disabled={isLoading}
             isLoading={isLoading}
           >
-            {selectedCourierData ? "Update" : "Save"}
+            Save
           </Button>
         </div>
       </form>

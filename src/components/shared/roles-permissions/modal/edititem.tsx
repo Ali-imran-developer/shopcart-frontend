@@ -1,15 +1,18 @@
-import { MainModal } from "../../modal";
-import EditRole from "../edit-role";
+// import { MainModal } from "../../modal";
+// // import EditRole from "../edit-role";
 
-interface AddUserModalProps {
-  show: boolean;
-  onClose: () => void;
-}
+// interface AddUserModalProps {
+//   show: boolean;
+//   onClose: () => void;
+// }
 
-export const AddUserModal = ({ show, onClose }: AddUserModalProps) => {
+export const AddUserModal = ({ show, onClose }: any) => {
   return (
-    <MainModal show={show} onClose={onClose} size="md">
-      <EditRole onClose={onClose} />
-    </MainModal>
+    <div>
+      
+    </div>
+    // <MainModal show={show} onClose={onClose} size="md">
+    //   <EditRole onClose={onClose} />
+    // </MainModal>
   );
 };

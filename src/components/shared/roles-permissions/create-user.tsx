@@ -6,12 +6,12 @@ import {
   CreateUserInput,
   createUserSchema,
 } from "../../../utils/validators/create-user.schema";
-import {
-  permissions,
-  roles,
-  statuses,
-} from "@components/shared/roles-permissions/utils";
-import { useRoles } from "@/hooks/roles-hook";
+// import {
+//   permissions,
+//   roles,
+//   statuses,
+// } from "@components/shared/roles-permissions/utils";
+// import { useRoles } from "@/hooks/roles-hook";
 import toast from "react-hot-toast";
 
 interface CreateUserProps {
@@ -20,7 +20,7 @@ interface CreateUserProps {
 
 export default function CreateUser({ onClose }: CreateUserProps) {
   const [isLoading, setLoading] = useState(false);
-  const { handleCreateRoles } = useRoles();
+  // const { handleCreateRoles } = useRoles();
 
   const {
     register,
@@ -59,7 +59,7 @@ export default function CreateUser({ onClose }: CreateUserProps) {
         name: data.role,
         permissions: Array.isArray(data?.permissions) ? data?.permissions : [data?.permissions],
       };
-      const response = await handleCreateRoles(payload as any);
+      // const response = await handleCreateRoles(payload as any);
 
       reset();
       onClose();
@@ -104,7 +104,7 @@ export default function CreateUser({ onClose }: CreateUserProps) {
         error={errors.email?.message}
       />
 
-      <Controller
+      {/* <Controller
         name="role"
         control={control}
         render={({ field }) => (
@@ -120,9 +120,9 @@ export default function CreateUser({ onClose }: CreateUserProps) {
             getOptionValue={(option) => option.value}
           />
         )}
-      />
+      /> */}
 
-      <Controller
+      {/* <Controller
         name="status"
         control={control}
         render={({ field }) => (
@@ -137,9 +137,9 @@ export default function CreateUser({ onClose }: CreateUserProps) {
             getOptionValue={(option) => option.value}
           />
         )}
-      />
+      /> */}
 
-      <Controller
+      {/* <Controller
         name="permissions"
         control={control}
         render={({ field }) => (
@@ -155,7 +155,7 @@ export default function CreateUser({ onClose }: CreateUserProps) {
             getOptionValue={(option) => option.value}
           />
         )}
-      />
+      /> */}
 
       <div className="col-span-full flex items-center justify-end gap-4">
         <Button variant="outline" onClick={onClose} className="w-full @xl:w-auto">

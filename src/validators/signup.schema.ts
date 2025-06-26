@@ -2,13 +2,9 @@ import { z, ZodType } from "zod";
 import * as Yup from "yup";
 
 export const signUpSchema = Yup.object({
+  userName: Yup.string().required("userName is required"),
+  email: Yup.string().required("email is required"),
   password: Yup.string().required("Password is required"),
-  token: Yup.object({
-    name: Yup.string().required("Name is required"),
-    phoneNumber: Yup.string().required("Number is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    image: Yup.string().optional(),
-  }),
 });
 
 export type formType = {

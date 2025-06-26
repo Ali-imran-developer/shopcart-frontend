@@ -1,7 +1,7 @@
 import Table from "@components/shared/components/table/table";
 import { useTanStackTable } from "@components/shared/components/table/custom/use-TanStack-Table";
 import TablePagination from "@components/shared/components/table/pagination";
-import { SalesChannelType } from "@data/salesChannel";
+// import { SalesChannelType } from "@data/salesChannel";
 import { SalesChannelColumns } from "./columns";
 import { TableClassNameProps } from "@shared/components/table/table-types";
 import cn from "@utils/helperFunctions/class-names";
@@ -32,7 +32,7 @@ export default function SalesChannelTable({
   paginationClassName?: string;
 }) {
   const navigate = useNavigate();
-  const { table, setData } = useTanStackTable<SalesChannelType>({
+  const { table, setData } = useTanStackTable<any>({
     tableData: ensureArray(channels),
     columnConfig: SalesChannelColumns({ navigate }),
     options: {

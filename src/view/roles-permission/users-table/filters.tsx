@@ -1,4 +1,4 @@
-import { STATUSES } from "@data/users-data";
+// import { STATUSES } from "@data/users-data";
 import { Badge, Box, Button, Flex, Input, Text, Title } from "rizzui";
 import StatusField from "@components/shared/components/controlled-table/status-field";
 import { type Table as ReactTableType } from "@tanstack/react-table";
@@ -7,29 +7,29 @@ import {
   PiPlusBold,
   PiTrashDuotone,
 } from "react-icons/pi";
-import { rolesList } from "@data/roles-permissions";
+// import { rolesList } from "@data/roles-permissions";
 import { useModal } from "../../../components/shared/modal-views/use-modal";
 import { AddUserModal } from "../../../components/shared/roles-permissions/modal";
 
-const statusOptions = [
-  {
-    value: STATUSES.Active,
-    label: STATUSES.Active,
-  },
-  {
-    value: STATUSES.Deactivated,
-    label: STATUSES.Deactivated,
-  },
-  {
-    value: STATUSES.Pending,
-    label: STATUSES.Pending,
-  },
-];
+// const statusOptions = [
+//   {
+//     value: STATUSES.Active,
+//     label: STATUSES.Active,
+//   },
+//   {
+//     value: STATUSES.Deactivated,
+//     label: STATUSES.Deactivated,
+//   },
+//   {
+//     value: STATUSES.Pending,
+//     label: STATUSES.Pending,
+//   },
+// ];
 
-const roles = rolesList.map((role) => ({
-  label: role.name,
-  value: role.name,
-}));
+// const roles = rolesList.map((role) => ({
+//   label: role.name,
+//   value: role.name,
+// }));
 
 interface TableToolbarProps<T extends Record<string, any>> {
   table: ReactTableType<T>;
@@ -63,7 +63,7 @@ export default function Filters<TData extends Record<string, any>>({
             gap="2"
             className="order-4 @lg:grid @lg:grid-cols-2 @4xl:order-2 @4xl:flex @4xl:flex-row"
           >
-            <StatusField
+            {/* <StatusField
               placeholder="Filter by status"
               options={statusOptions}
               value={table.getColumn("status")?.getFilterValue() ?? []}
@@ -77,8 +77,8 @@ export default function Filters<TData extends Record<string, any>>({
               displayValue={(selected: string) =>
                 renderOptionDisplayValue(selected)
               }
-            />
-            <StatusField
+            /> */}
+            {/* <StatusField
               placeholder="Filter by Role"
               options={roles}
               value={table.getColumn("role")?.getFilterValue() ?? []}
@@ -86,7 +86,7 @@ export default function Filters<TData extends Record<string, any>>({
               getOptionValue={(option) => option.label}
               dropdownClassName="!z-10"
               className="@4xl:w-40"
-            />
+            /> */}
             {isFiltered && (
               <Button
                 size="sm"
@@ -128,34 +128,34 @@ export default function Filters<TData extends Record<string, any>>({
   );
 }
 
-function renderOptionDisplayValue(value: string) {
-  switch (value) {
-    case STATUSES.Active:
-      return (
-        <div className="flex items-center">
-          <Badge color="success" renderAsDot />
-          <Text className="ms-2 font-medium capitalize text-green-dark">
-            {value}
-          </Text>
-        </div>
-      );
-    case STATUSES.Deactivated:
-      return (
-        <div className="flex items-center">
-          <Badge color="danger" renderAsDot />
-          <Text className="ms-2 font-medium capitalize text-red-dark">
-            {value}
-          </Text>
-        </div>
-      );
-    default:
-      return (
-        <div className="flex items-center">
-          <Badge renderAsDot className="bg-orange-dark" />
-          <Text className="ms-2 font-medium capitalize text-orange-dark">
-            {value}
-          </Text>
-        </div>
-      );
-  }
-}
+// function renderOptionDisplayValue(value: string) {
+//   switch (value) {
+//     case STATUSES.Active:
+//       return (
+//         <div className="flex items-center">
+//           <Badge color="success" renderAsDot />
+//           <Text className="ms-2 font-medium capitalize text-green-dark">
+//             {value}
+//           </Text>
+//         </div>
+//       );
+//     case STATUSES.Deactivated:
+//       return (
+//         <div className="flex items-center">
+//           <Badge color="danger" renderAsDot />
+//           <Text className="ms-2 font-medium capitalize text-red-dark">
+//             {value}
+//           </Text>
+//         </div>
+//       );
+//     default:
+//       return (
+//         <div className="flex items-center">
+//           <Badge renderAsDot className="bg-orange-dark" />
+//           <Text className="ms-2 font-medium capitalize text-orange-dark">
+//             {value}
+//           </Text>
+//         </div>
+//       );
+//   }
+// }
