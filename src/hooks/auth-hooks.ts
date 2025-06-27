@@ -56,10 +56,55 @@ export const useAuth = () => {
     }
   }, []);
 
+  const handleforgetPassword = useCallback(async (values: any) => {
+    try {
+      setIsLoading(true);
+      const data: any = await LoginController.forgetPassword(values);
+      toast.success(data?.message);
+      return data;
+    } catch (error: any) {
+      console.log("@Error", error);
+      toast.error(error?.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const handleVerifyCode = useCallback(async (values: any) => {
+    try {
+      setIsLoading(true);
+      const data: any = await LoginController.verifyCode(values);
+      toast.success(data?.message);
+      return data;
+    } catch (error: any) {
+      console.log("@Error", error);
+      toast.error(error?.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const handleResetPassword = useCallback(async (values: any) => {
+    try {
+      setIsLoading(true);
+      const data: any = await LoginController.resetPassword(values);
+      toast.success(data?.message);
+      return data;
+    } catch (error: any) {
+      console.log("@Error", error);
+      toast.error(error?.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isLoading,
+    handleVerifyCode,
     handleUpdateUser,
     handlePrimaryLogin,
     handlePrimarySignup,
+    handleResetPassword,
+    handleforgetPassword,
   };
 };

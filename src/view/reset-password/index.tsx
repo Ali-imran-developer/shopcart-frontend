@@ -1,4 +1,4 @@
-import ForgetPasswordForm from "./forget-password-form";
+import ForgetPasswordForm from "./reset-password-form";
 import AuthWrapperOne from "./auth-wrapper-one";
 import { Text } from "rizzui";
 
@@ -8,10 +8,10 @@ export default function SignIn() {
       title={
         <>
           <span className="relative inline-block">
-            Verify your email!
+            Enters the new Password!
           </span>
           <Text className="text-xs">
-            if your mail exists in our database, we send a code to your email.
+            The password you entering is now your new password!
           </Text>
         </>
       }

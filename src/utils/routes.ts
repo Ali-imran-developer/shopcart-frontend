@@ -28,12 +28,10 @@ const allRoutes: IRoute[] = [
     component: lazy(() => import("../view/signIn")),
   },
   {
-    name: "ForgetPassword",
+    name: "resetPassword",
     section: "auth",
-    route: "/forgot-password",
-    component: lazy(
-      () => import("../view/forget-password/forget-password-form")
-    ),
+    route: "/reset-password/:token",
+    component: lazy(() => import("../view/reset-password")),
   },
   {
     name: "SignUP",
@@ -101,9 +99,7 @@ const allRoutes: IRoute[] = [
     route: "/create-products",
     protections: "token",
     sidebar: true,
-    component: lazy(
-      () => import("../view/products/create-products")
-    ),
+    component: lazy(() => import("../view/products/create-products")),
   },
   {
     name: "edit production",
@@ -111,9 +107,7 @@ const allRoutes: IRoute[] = [
     route: "/products/:id/edit",
     protections: "token",
     sidebar: true,
-    component: lazy(
-      () => import("../view/products/create-products")
-    ),
+    component: lazy(() => import("../view/products/create-products")),
   },
   {
     name: "edit production",
@@ -121,9 +115,7 @@ const allRoutes: IRoute[] = [
     route: "/create-orders/:id",
     protections: "token",
     sidebar: true,
-    component: lazy(
-      () => import("../view/orders/create-order/create-order")
-    ),
+    component: lazy(() => import("../view/orders/create-order/create-order")),
   },
   {
     name: "myCouriers",

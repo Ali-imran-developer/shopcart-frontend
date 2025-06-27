@@ -1,22 +1,29 @@
 import { z } from "zod";
-import { messages } from "@config/messages";
 import {
   validateEmail,
   validatePassword,
   validateConfirmPassword,
 } from "./common-rules";
 
-// form zod validation schema
-export const resetPasswordSchema = z
-  .object({
-    email: validateEmail,
-    password: validatePassword,
-    confirmPassword: validateConfirmPassword,
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: messages.passwordsDidNotMatch,
-    path: ["confirmPassword"], // Correct path for the confirmedPassword field
-  });
+export const resetPasswordSchema = z.object({
+  email: validateEmail,
+});
 
-// generate form types from zod validation schema
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
+
+
+
+export const verifyCodeSchema = z.object({
+  email: validateEmail,
+  code: validatePassword,
+});
+
+export type VerifyCodeSchema = z.infer<typeof verifyCodeSchema>;
+
+
+
+export const forgetPasswordSchema = z.object({
+  newPassword: validateConfirmPassword,
+});
+
+export type ForgetPasswordSchema = z.infer<typeof forgetPasswordSchema>;

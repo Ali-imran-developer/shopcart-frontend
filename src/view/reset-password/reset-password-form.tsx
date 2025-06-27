@@ -1,35 +1,38 @@
-import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Button, Text, Input, Password } from "rizzui";
-import { SubmitHandler } from "react-hook-form";
+import { Button, Input, Password } from "rizzui";
 import { Form } from "@components/ui/form";
-import { routes } from "@config/routes";
-import {
-  resetPasswordSchema,
-  ResetPasswordSchema,
-} from "../../validators/reset-password.schema";
+import { forgetPasswordSchema, ForgetPasswordSchema } from "../../validators/reset-password.schema";
 import { useAuth } from "@/hooks/auth-hooks";
+import { useNavigate, useParams } from "react-router-dom";
 
 const initialValues = {
-  email: "",
-  // password: "",
-  // confirmPassword: "",
+  // token: "",
+  newPassword: "",
 };
 
 export default function ForgetPasswordForm() {
+  const navigate = useNavigate();
+  const { token } = useParams();
   const [reset, setReset] = useState({});
-  const { handleforgetPassword, isLoading } = useAuth();
+  const { handleResetPassword, isLoading } = useAuth();
 
   const onSubmit = async (data: any) => {
-    console.log(data);
-    await handleforgetPassword(data);
-    setReset(initialValues);
+    const payload = {
+      token,
+      newPassword: data.newPassword,
+    };
+    console.log("Sending payload: ", payload);
+    const response = await handleResetPassword(payload);
+    if(response?.message === "Password reset successful"){
+      navigate("/login");
+      setReset(initialValues);
+    }
   };
 
   return (
     <>
-      <Form<ResetPasswordSchema>
-        validationSchema={resetPasswordSchema}
+      <Form<ForgetPasswordSchema>
+        validationSchema={forgetPasswordSchema}
         resetValues={reset}
         onSubmit={onSubmit}
         useFormProps={{
@@ -40,7 +43,7 @@ export default function ForgetPasswordForm() {
       >
         {({ register, formState: { errors } }) => (
           <div className="space-y-6">
-            <Input
+            {/* <Input
               type="email"
               size="lg"
               label="Email"
@@ -50,24 +53,24 @@ export default function ForgetPasswordForm() {
               {...register("email")}
               error={errors.email?.message}
             />
-            {/* <Password
+            <Password
               label="Password"
               placeholder="Enter your password"
               size="lg"
               className="[&>label>span]:font-medium"
               inputClassName="text-sm"
-              {...register("password")}
-              error={errors.password?.message}
-            />
+              {...register("code")}
+              error={errors.code?.message}
+            /> */}
             <Password
               label="Confirm Password"
               placeholder="Enter confirm password"
               size="lg"
               className="[&>label>span]:font-medium"
               inputClassName="text-sm"
-              {...register("confirmPassword")}
-              error={errors.confirmPassword?.message}
-            /> */}
+              {...register("newPassword")}
+              error={errors.newPassword?.message}
+            />
             <Button
               className="mt-2 w-full bg-blue-600 hover:bg-blue-700"
               type="submit"
@@ -75,20 +78,11 @@ export default function ForgetPasswordForm() {
               isLoading={isLoading}
               disabled={isLoading}
             >
-              Verify Email
+              Verify new password
             </Button>
           </div>
         )}
       </Form>
-      <Text className="mt-6 text-center text-[15px] leading-loose text-gray-500 lg:mt-8 lg:text-start xl:text-base">
-        Don’t want to reset your password?{" "}
-        <Link
-          to={routes.signIn}
-          className="font-bold text-gray-700 transition-colors hover:text-blue"
-        >
-          Sign In
-        </Link>
-      </Text>
     </>
   );
 }

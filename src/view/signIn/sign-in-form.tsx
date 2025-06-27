@@ -54,12 +54,12 @@ export default function SignInForm() {
                   className="[&>label>span]:font-medium"
                   size="sm"
                 />
-                {/* <Link
+                <Link
                   to={routes.auth.forgotPassword}
                   className="h-auto p-0 text-sm font-semibold text-blue underline transition-colors hover:text-gray-900 hover:no-underline"
                 >
                   Forget Password?
-                </Link> */}
+                </Link>
               </div>
               <Button
                 className="w-full bg-blue-600"
