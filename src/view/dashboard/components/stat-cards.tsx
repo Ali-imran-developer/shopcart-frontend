@@ -9,6 +9,7 @@ import {
   PiChartPieSliceDuotone,
 } from "react-icons/pi";
 import { BarChart, Bar, ResponsiveContainer } from "recharts";
+import { formatPrice } from "@/utils/helperFunctions/formater-helper";
 
 const orderData = [
   {
@@ -163,7 +164,69 @@ const eComDashboardStatData = [
   },
 ];
 
-export default function StatCards({ className }: { className?: string }) {
+export default function StatCards({
+  className,
+  dashboardData,
+}: {
+  className?: string;
+  dashboardData: {
+    newOrders: {
+      todayOrders: number;
+      id: number;
+      totalPercentage: number;
+    };
+    totalSales: {
+      totalSales: number;
+      id: number;
+      totalPercentage: number;
+    };
+    totalRevenue: {
+      totalRevenue: number;
+      id: number;
+      totalPercentage: number;
+    };
+  };
+}) {
+  const eComDashboardStatData = [
+    {
+      id: `${dashboardData?.newOrders?.id}`,
+      icon: <PiGiftDuotone className="h-6 w-6" />,
+      title: "New Orders",
+      metric: `${dashboardData?.newOrders?.todayOrders ?? 0} Orders`,
+      increased: true,
+      decreased: false,
+      // percentage: "+32.40",
+      percentage: `+${dashboardData?.newOrders?.totalPercentage ?? 0}`,
+      style: "text-[#3872FA]",
+      fill: "#3872FA",
+      chart: orderData,
+    },
+    {
+      id: `${dashboardData?.totalRevenue?.id}`,
+      icon: <PiChartPieSliceDuotone className="h-6 w-6" />,
+      title: "Sales",
+      metric: `Rs. ${formatPrice(dashboardData?.totalSales?.totalSales ?? 0)}`,
+      increased: true,
+      decreased: false,
+      percentage: `+${dashboardData?.totalSales?.totalPercentage ?? 0}`,
+      style: "text-[#10b981]",
+      fill: "#10b981",
+      chart: salesData,
+    },
+    {
+      id: `${dashboardData?.totalSales?.id}`,
+      icon: <PiBankDuotone className="h-6 w-6" />,
+      title: "Revenue",
+      metric: `Rs. ${formatPrice(dashboardData?.totalRevenue?.totalRevenue ?? 0)}`,
+      increased: true,
+      decreased: false,
+      percentage: `+${dashboardData?.totalRevenue?.totalPercentage ?? 0}`,
+      style: "text-[#7928ca]",
+      fill: "#7928ca",
+      chart: revenueData,
+    },
+  ];
+
   return (
     <div
       className={cn("grid grid-cols-1 gap-5 3xl:gap-8 4xl:gap-9", className)}
@@ -172,8 +235,8 @@ export default function StatCards({ className }: { className?: string }) {
         <MetricCard
           key={stat.title + stat.id}
           title={stat.title}
-          metric={stat.metric}
-          metricClassName="lg:text-[22px]"
+          metric={stat.metric as any}
+          metricClassName="lg:text-[18px]"
           icon={stat.icon}
           iconClassName={cn(
             "[&>svg]:w-10 [&>svg]:h-8 lg:[&>svg]:w-11 lg:[&>svg]:h-9 w-auto h-auto p-0 bg-transparent -mx-1.5",

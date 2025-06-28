@@ -22,6 +22,9 @@ class OrdersController {
   static orderDelete(id: String) {
     return apiRequest("delete", `/api/orders/delete/${id}`);
   }
+  static dashboradData() {
+    return apiRequest("get", "/api/orders/dashboard-stats");
+  }
 }
 
 export default OrdersController;

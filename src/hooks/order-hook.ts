@@ -3,7 +3,7 @@ import { CALLBACK_STATUS } from "../config/enums";
 import { useAppDispatch } from "./store-hook";
 import toast from "react-hot-toast";
 import OrdersController from "@/controllers/ordersController";
-import { setBookedOrders, setOrders } from "@/store/slices/ordersSlice";
+import { setBookedOrders, setDashboardData, setOrders } from "@/store/slices/ordersSlice";
 
 export const useOrders = () => {
   const dispatch = useAppDispatch();
@@ -15,8 +15,9 @@ export const useOrders = () => {
       const data: any = await OrdersController.getAllOrders();
       dispatch(setOrders(data));
       return data;
-    } catch (error) {
+    } catch (error: any) {
       console.log("@Error", error);
+      toast.error(error?.message);
     } finally {
       setIsLoading(false);
     }
@@ -26,9 +27,12 @@ export const useOrders = () => {
     async (values: any, callback: (status: any, value: any) => void) => {
       try {
         const response: any = await OrdersController.createOrder(values);
-        response && dispatch(setOrders(response));
-        callback && callback(CALLBACK_STATUS.SUCCESS, response);
-      } catch (error) {
+        toast.success(response.message);
+        // response && dispatch(setOrders(response));
+        // callback && callback(CALLBACK_STATUS.SUCCESS, response);
+        return response;
+      } catch (error: any) {
+        toast.error(error.message);
         callback && callback(CALLBACK_STATUS.ERROR, error);
       } finally {
         callback && callback(CALLBACK_STATUS.LOADING, false);
@@ -109,12 +113,26 @@ export const useOrders = () => {
         }
     }, []);
 
+  const handleDashboradStats = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data: any = await OrdersController.dashboradData();
+      dispatch(setDashboardData(data));
+      return data;
+    } catch (error) {
+      console.log("@Error", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isLoading,
     handleGetOrders,
     handleAddOrders,
     handleDeleteOrders,
     handleOrdersBooking,
+    handleDashboradStats,
     handleGetBookedOrders,
     handleUpdateDispatchStatus,
     handleUpdateShipmentDetails,

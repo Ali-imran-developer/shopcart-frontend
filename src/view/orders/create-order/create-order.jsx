@@ -59,13 +59,13 @@ export default function CreateOrder() {
         if(values.products[0]?.productId === ""){
           toast.error("Please select product!")
         }else{
-          await handleAddOrders(values);
-          toast.success("Order created successfully");
-          navigate(routes.orders.orders);
+          const response = await handleAddOrders(values);
+          if(response.message === "Order created successfully!"){
+            navigate(routes.orders.orders);
+          }
         }
       } catch (error) {
         console.error("Error submitting form:", error);
-        toast.error(error.message || "An error occurred");
       } finally {
         setLoading(false);
       }

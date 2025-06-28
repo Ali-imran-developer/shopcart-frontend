@@ -26,13 +26,13 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response) {
       const { status, data } = error.response;
-      console.log("@statusstatus", error.response.data.message);
+      console.log("@statusstatus", error.response.data.message, status);
       if (
-        error.response.data.message === "Token could not be verified" &&
+        error.response.data.message === "Unauthorized: User not found" &&
         status === 401
       ) {
         console.log("Unauthorized! Logging out...");
-        // AuthController.logout();
+        AuthController.clear();
         window.location.href = "/login";
       }
     }

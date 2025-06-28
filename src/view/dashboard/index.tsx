@@ -12,8 +12,18 @@ import StockReport from "./components/stock-report";
 import { PiPlusBold } from "react-icons/pi";
 import HandWaveIcon from "@shared/components/icons/hand-wave";
 import AuthController from "@/controllers/authController";
+import { useOrders } from "@/hooks/order-hook";
+import { useAppSelector } from "@/hooks/store-hook";
+import { useEffect } from "react";
 
 export default function EcommerceDashboard() {
+  const { handleDashboradStats } = useOrders();
+  const { dashboardData } = useAppSelector((state) => state.Orders);
+
+  useEffect(() => {
+    handleDashboradStats();
+  }, []);
+
 
   return (
     // <div className="@container">
@@ -51,7 +61,7 @@ export default function EcommerceDashboard() {
   
     <div className="@container">
       <div className="grid grid-cols-1 gap-6 @4xl:grid-cols-2 @7xl:grid-cols-12 3xl:gap-8">
-        <StatCards className="@2xl:grid-cols-3 @3xl:gap-6 @4xl:col-span-2 @7xl:col-span-8" />
+        <StatCards dashboardData={dashboardData} className="@2xl:grid-cols-3 @3xl:gap-6 @4xl:col-span-2 @7xl:col-span-8" />
 
         <ProfitWidget className="h-[464px] @sm:h-[520px] @7xl:col-span-8 @7xl:col-start-12 @7xl:row-start-1 @7xl:row-end-3 @7xl:h-full" />
 
@@ -61,11 +71,11 @@ export default function EcommerceDashboard() {
 
         <RepeatCustomerRate className="@4xl:col-span-2 @7xl:col-span-12 @[90rem]:col-span-8" />
 
-        <BestSellers className="@7xl:col-span-6 @[90rem]:col-span-4" />
+        <BestSellers dashboardData={dashboardData} className="@7xl:col-span-6 @[90rem]:col-span-4" />
 
         <UserLocation className="@7xl:col-span-6 @[90rem]:col-span-5 @[112rem]:col-span-4" />
 
-        <StockReport className="@4xl:col-span-2 @7xl:col-span-12 @[90rem]:col-span-7 @[112rem]:col-span-8" />
+        {/* <StockReport className="@4xl:col-span-2 @7xl:col-span-12 @[90rem]:col-span-7 @[112rem]:col-span-8" /> */}
       </div>
     </div>
   );
