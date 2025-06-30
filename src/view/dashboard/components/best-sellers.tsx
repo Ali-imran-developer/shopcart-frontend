@@ -50,9 +50,9 @@ export default function BestSellers({ className, dashboardData }: { className?: 
       descriptionClassName="mt-1 flex items-center [&_.react-datepicker-wrapper]:w-full [&_.react-datepicker-wrapper]:max-w-[228px] text-gray-500"
       className={className}
     >
-      <div className="custom-scrollbar mt-[18px] grid max-h-[460px] gap-4 overflow-y-auto @sm:gap-5">
+      <div className="custom-scrollbar mt-[18px] grid max-h-[460px] overflow-y-auto">
         {dashboardData?.topProducts?.map((product: any) => (
-          <div key={product?.product?._id} className="flex items-start p-2">
+          <div key={product?.product?._id} className="flex items-start p-1">
             <div className="relative me-3 h-11 w-11 shrink-0 overflow-hidden rounded @sm:h-12 @sm:w-12">
               <Avatar
                 src={product?.product?.image}

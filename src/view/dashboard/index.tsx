@@ -26,38 +26,39 @@ export default function EcommerceDashboard() {
 
 
   return (
-    // <div className="@container">
-    //   <WelcomeBanner
-    //     title={
-    //       <>
-    //         Good Morning {""}
-    //         <HandWaveIcon className="inline-flex h-8 w-8" />
-    //       </>
-    //     }
-    //     description={
-    //       "You don't have a store yet. Create your first store to start managing your products."
-    //     }
-    //     media={
-    //       <div className=" ">
-    //         <img
-    //           src="/assets/images/not-found.png"
-    //           alt="Welcome shop image form freepik"
-    //           className="dark:brightness-95 dark:drop-shadow-md"
-    //           width={200}
-    //           height={200}
-    //         />
-    //       </div>
-    //     }
-    //     contentClassName="@2xl:max-w-[calc(100%-340px)]"
-    //     className="border border-muted bg-gray-0 pb-8 @4xl:col-span-2 @7xl:col-span-8 dark:bg-gray-100/30 lg:pb-9"
-    //   >
-    //     <Link to={"/add-channels"} className="inline-flex">
-    //       <Button as="span" className="h-[38px] shadow md:h-10">
-    //         <PiPlusBold className="me-1 h-4 w-4" /> Create Store
-    //       </Button>
-    //     </Link>
-    //   </WelcomeBanner>
-    // </div>
+    <>
+    {/* <div className="@container">
+      <WelcomeBanner
+        title={
+          <>
+            Good Morning {""}
+            <HandWaveIcon className="inline-flex h-8 w-8" />
+          </>
+        }
+        description={
+          "You don't have a product yet. Create your first product to start managing your store."
+        }
+        media={
+          <div className=" ">
+            <img
+              src="/assets/images/not-found.png"
+              alt="Welcome shop image form freepik"
+              className="dark:brightness-95 dark:drop-shadow-md"
+              width={200}
+              height={200}
+            />
+          </div>
+        }
+        contentClassName="@2xl:max-w-[calc(100%-340px)]"
+        className="border border-muted bg-gray-0 pb-8 @4xl:col-span-2 @7xl:col-span-8 dark:bg-gray-100/30 lg:pb-9"
+      >
+        <Link to={"/create-products"} className="inline-flex">
+          <Button as="span" className="h-[38px] shadow md:h-10">
+            <PiPlusBold className="me-1 h-4 w-4" /> Create Product
+          </Button>
+        </Link>
+      </WelcomeBanner>
+    </div> */}
   
     <div className="@container">
       <div className="grid grid-cols-1 gap-6 @4xl:grid-cols-2 @7xl:grid-cols-12 3xl:gap-8">
@@ -78,5 +79,6 @@ export default function EcommerceDashboard() {
         {/* <StockReport className="@4xl:col-span-2 @7xl:col-span-12 @[90rem]:col-span-7 @[112rem]:col-span-8" /> */}
       </div>
     </div>
+    </>
   );
 }

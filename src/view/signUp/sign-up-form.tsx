@@ -4,6 +4,7 @@ import { routes } from "../../config/routes";
 import { Form, Formik } from "formik";
 import { useAuth } from "@/hooks/auth-hooks";
 import { signUpSchema } from "@/validators/signup.schema";
+import { useGoogleAuth } from "../google-authentication";
 
 const initialValues = {
   userName: "",
@@ -12,6 +13,7 @@ const initialValues = {
 };
 
 export default function SignUpForm() {
+  const googleLogin = useGoogleAuth();
   const { handlePrimarySignup, isLoading } = useAuth();
 
   const handleSubmit = async (values: any) => {
@@ -57,7 +59,7 @@ export default function SignUpForm() {
               {...getFieldProps("password")}
               error={touched.password && (errors.password as any)}
             />
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col gap-3 items-center">
               <Button
                 type="submit"
                 className="bg-blue-600 w-full"
@@ -65,6 +67,15 @@ export default function SignUpForm() {
                 isLoading={isLoading}
               >
                 Sign Up
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => googleLogin()}
+              >
+                <img src="./assets/images/google-logo.webp" alt="Google" className="w-5 h-5 me-4" />
+                Continue with Google
               </Button>
             </div>
           </Form>
