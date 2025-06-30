@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Title, Text, Input, Button } from "rizzui";
+import { Title, Text, Input, Button, Radio } from "rizzui";
 
 export const CartPageWrapper = ({ formik, selectedProducts }: any) => {
-
   useEffect(() => {
     if (selectedProducts && selectedProducts.length > 0) {
       const total = selectedProducts.reduce(
@@ -10,14 +9,14 @@ export const CartPageWrapper = ({ formik, selectedProducts }: any) => {
           sum + item.price * item.quantity,
         0
       );
-  
+
       const orderTaxPrice = Number(formik?.values?.pricing?.orderTax || 0);
       const prepaidPrice = Number(formik?.values?.pricing?.paid || 0);
       const shippingPrice = Number(formik.values.pricing.shipping || 0);
-  
+
       const totalOrderPrice = total + orderTaxPrice + shippingPrice;
       const OriginaltotalPrice = totalOrderPrice - prepaidPrice;
-  
+
       // Only update if values have changed to avoid unnecessary re-renders
       if (formik.values.pricing.totalPrice !== OriginaltotalPrice) {
         formik.setFieldValue("pricing.totalPrice", OriginaltotalPrice);
@@ -26,8 +25,13 @@ export const CartPageWrapper = ({ formik, selectedProducts }: any) => {
         formik.setFieldValue("pricing.subTotal", total);
       }
     }
-  }, [selectedProducts, formik.values.pricing.orderTax, formik.values.pricing.paid, formik.values.pricing.shipping]);  
-  
+  }, [
+    selectedProducts,
+    formik.values.pricing.orderTax,
+    formik.values.pricing.paid,
+    formik.values.pricing.shipping,
+  ]);
+
   return (
     <div className="@container">
       <div className="mx-auto w-full max-w-[1536px] items-start @5xl:grid @5xl:grid-cols-12 @5xl:gap-7 @6xl:grid-cols-10 @7xl:gap-10">
@@ -37,12 +41,17 @@ export const CartPageWrapper = ({ formik, selectedProducts }: any) => {
             <Title as="h2" className="pb-4 text-xl font-medium">
               Cart Totals
             </Title>
-            <div className="grid grid-cols-1 gap-4 @md:gap-6">
+            <div className="grid grid-cols-1 gap-4 @md:gap-6 border border-gray-200 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <Text className="font-semibold">Subtotal</Text>
                 <Input
                   value={formik?.values?.pricing?.subTotal}
-                  onChange={(e) => formik?.setFieldValue("pricing.subTotal", Number(e.target.value))}
+                  onChange={(e) =>
+                    formik?.setFieldValue(
+                      "pricing.subTotal",
+                      Number(e.target.value)
+                    )
+                  }
                   className="w-20 p-0"
                   placeholder="0.00"
                   type="number"
@@ -55,7 +64,12 @@ export const CartPageWrapper = ({ formik, selectedProducts }: any) => {
                   type="number"
                   // name="pricing.orderTax"
                   value={formik?.values?.pricing?.orderTax}
-                  onChange={(e) => formik?.setFieldValue("pricing.orderTax", Number(e.target.value))}
+                  onChange={(e) =>
+                    formik?.setFieldValue(
+                      "pricing.orderTax",
+                      Number(e.target.value)
+                    )
+                  }
                   className="w-20 p-0"
                   placeholder="0.00"
                   onFocus={() => {
@@ -70,28 +84,28 @@ export const CartPageWrapper = ({ formik, selectedProducts }: any) => {
                   }}
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <Text className="font-semibold">Paid Already</Text>
-                <Input
-                  type="number"
-                  value={formik?.values?.pricing?.paid}
-                  onChange={(e) =>
-                    formik.setFieldValue("pricing.paid", Number(e.target.value))
-                  }
-                  onFocus={() => {
-                    if (formik?.values?.pricing?.paid === 0) {
-                      formik.setFieldValue("pricing.paid", "");
+              {/* <div className="flex items-center justify-between">
+                  <Text className="font-semibold">Paid Already</Text>
+                  <Input
+                    type="number"
+                    value={formik?.values?.pricing?.paid}
+                    onChange={(e) =>
+                      formik.setFieldValue("pricing.paid", Number(e.target.value))
                     }
-                  }}
-                  onBlur={() => {
-                    if (formik?.values?.pricing?.paid === "") {
-                      formik.setFieldValue("pricing.paid", 0);
-                    }
-                  }}
-                  placeholder="0.00"
-                  className="w-20 p-0"
-                />
-              </div>
+                    onFocus={() => {
+                      if (formik?.values?.pricing?.paid === 0) {
+                        formik.setFieldValue("pricing.paid", "");
+                      }
+                    }}
+                    onBlur={() => {
+                      if (formik?.values?.pricing?.paid === "") {
+                        formik.setFieldValue("pricing.paid", 0);
+                      }
+                    }}
+                    placeholder="0.00"
+                    className="w-20 p-0"
+                  />
+                </div> */}
               <div className="flex items-center justify-between">
                 <Text className="font-semibold">Shipping</Text>
                 <Input
@@ -109,12 +123,15 @@ export const CartPageWrapper = ({ formik, selectedProducts }: any) => {
                     }
                   }}
                   onChange={(e) =>
-                    formik.setFieldValue("pricing.shipping", Number(e.target.value))
+                    formik.setFieldValue(
+                      "pricing.shipping",
+                      Number(e.target.value)
+                    )
                   }
                   className="w-20 p-0"
                 />
               </div>
-              <div className="relative flex items-end mt-4">
+              <div className="relative flex items-end">
                 <Input
                   type="text"
                   placeholder="Enter coupon code"
@@ -134,7 +151,7 @@ export const CartPageWrapper = ({ formik, selectedProducts }: any) => {
                   Apply
                 </Button>
               </div>
-              <div className="flex items-center justify-between py-4">
+              <div className="flex items-center justify-between mb-2">
                 <Text className="font-semibold">Total</Text>
                 <Input
                   type="number"

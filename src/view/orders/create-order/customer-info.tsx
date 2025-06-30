@@ -10,24 +10,12 @@ interface CustomerInfoProps {
   formik: any;
 }
 
-const paymentOptions = [
-  {
-    value: "cod",
-    label: "COD",
-  },
-  {
-    value: "prepaid",
-    label: "Prepaid",
-  },
-];
-
 export default function CustomerInfo({ className, formik }: CustomerInfoProps) {
   const { fetchShippers, shippers } = useShipperData();
 
   useEffect(() => {
     fetchShippers();
-
-  },[])
+  }, []);
 
   const shipperOptions = ensureArray(shippers)?.map((item: any) => ({
     value: item?.city,
@@ -40,52 +28,30 @@ export default function CustomerInfo({ className, formik }: CustomerInfoProps) {
     }
   }, [shipperOptions, formik]);
 
-  useEffect(() => {
-    if (paymentOptions.length > 0 && !formik.values.paymentMethod) {
-      formik.setFieldValue("paymentMethod", paymentOptions[0]?.value);
-    }
-  }, [paymentOptions, formik]);
-
   return (
-    <div className={cn("pb-4 @container @5xl:col-span-4 @5xl:py-0 @6xl:col-span-3", className)}>
-      <div className="rounded-xl border border-gray-300 p-5 @sm:p-6 @md:p-7">
-        <div className="space-y-4 @lg:space-y-5 @2xl:space-y-6">
-
-          <Select
-            dropdownClassName="!z-0"
-            options={paymentOptions}
-            label="Payment Method"
-            value={formik.values.paymentMethod}
-            onChange={(option: { label: string }) =>
-              formik.setFieldValue("paymentMethod", option.label)
-            }
-            onBlur={() => formik.setFieldTouched("paymentMethod", true)}
-          />
-
-          <div className="relative ">
-            {ensureArray(shippers)?.length === 0 && (
-              <Link
-                className="absolute right-2 cursor-pointer text-[#3872fa] underline"
-                to={"/add-shipper-info"}
-              >
-                Add Shipper
-              </Link>
-            )}
-            <Select
-              dropdownClassName="!z-0"
-              options={shipperOptions}
-              name="shipperCity"
-              label="Shipper Address"
-              value={formik?.values?.shipperCity}
-              onChange={(option: { value: string }) =>
-                formik.setFieldValue("shipperCity", option)
-              }
-              getOptionValue={(option) => option.value}
-              onBlur={() => formik.setFieldTouched("shipperId", true)}
-              error={formik?.touched?.shipperId && formik?.errors?.shipperId}
-            />
-          </div>
-        </div>
+    <div className={cn("pb-6 @container @5xl:col-span-4 @5xl:py-0 @6xl:col-span-3", className)}>
+      <div className="relative ">
+        {ensureArray(shippers)?.length === 0 && (
+          <Link
+            className="absolute right-2 cursor-pointer text-[#3872fa] underline"
+            to={"/add-shipper-info"}
+          >
+            Add Shipper
+          </Link>
+        )}
+        <Select
+          dropdownClassName="!z-0"
+          options={shipperOptions}
+          name="shipperCity"
+          label="Shipper Address"
+          value={formik?.values?.shipperCity}
+          onChange={(option: { value: string }) =>
+            formik.setFieldValue("shipperCity", option)
+          }
+          getOptionValue={(option) => option.value}
+          onBlur={() => formik.setFieldTouched("shipperId", true)}
+          error={formik?.touched?.shipperId && formik?.errors?.shipperId}
+        />
       </div>
     </div>
   );

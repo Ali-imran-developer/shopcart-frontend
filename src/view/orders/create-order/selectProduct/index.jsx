@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useAppSelector } from "@/hooks/store-hook";
 import { ProductsModal } from "./producstModal";
 import { useProduct } from "@/hooks/product-hook";
+import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 
 export const SelectProduct = ({ formik, products, setProducts }) => {
   const { onOpen, onClose, show } = useModal();
@@ -33,120 +34,91 @@ export const SelectProduct = ({ formik, products, setProducts }) => {
   }, []);
 
   const handleAddSelectedItems = () => {
-    const selectedProducts = products.filter((item) => item.checked);
-    const formikProductsValue = selectedProducts.map((product) => ({
-      productId: product._id,
-      productQty: product.quantity || 1,
-    }));
-    formik.setFieldValue("products", formikProductsValue);
+    const selectedProducts = ensureArray(products)?.filter(
+      (item) => item?.checked
+    );
+    const formikProductsValue = ensureArray(selectedProducts)?.map(
+      (product) => ({
+        productId: product?._id,
+        productQty: product?.quantity || 1,
+      })
+    );
+    formik?.setFieldValue("products", formikProductsValue);
     setSearch("");
     onClose();
   };
 
   const addItemToCart = (product) => {
-    const updatedProducts = products.map((item) => {
-      if (item._id === product._id && !product.id) {
-        const newQuantity = (item.quantity || 0) + 1;
+    const updatedProducts = ensureArray(products)?.map((item) => {
+      if (item?._id === product?._id) {
+        const newQuantity = (item?.quantity || 0) + 1;
         return {
           ...item,
           quantity: newQuantity,
+          checked: true,
         };
       }
-      // const updatedVariants = item.variants?.map((variant) => {
-      //   if (variant.id === product.id) {
-      //     return {
-      //       ...variant,
-      //       quantity: (variant.quantity || 0) + 1,
-      //     };
-      //   }
-      //   return variant;
-      // });
-      // return {
-      //   ...item,
-      //   variants: updatedVariants ?? item.variants,
-      // };
+      return item;
     });
     setProducts(updatedProducts);
     updateFormikProductValues(updatedProducts);
   };
 
   const removeItemFromCart = (product) => {
-    const updatedProducts = products.map((item) => {
-      if (item._id === product._id && !product.id) {
-        const newQuantity = item.quantity > 1 ? item.quantity - 1 : 0;
+    const updatedProducts = ensureArray(products)?.map((item) => {
+      if (item?._id === product?._id) {
+        const newQuantity = (item?.quantity || 0) - 1;
         return {
           ...item,
-          quantity: newQuantity,
+          quantity: newQuantity > 0 ? newQuantity : 0,
+          checked: newQuantity > 0 ? true : false,
         };
       }
-      // const updatedVariants = item.variants?.map((variant) => {
-      //   if (variant.id === product.id) {
-      //     const newQuantity = (variant.quantity || 1) - 1;
-      //     return {
-      //       ...variant,
-      //       quantity: newQuantity > 0 ? newQuantity : 0,
-      //     };
-      //   }
-      //   return variant;
-      // });
-      // return {
-      //   ...item,
-      //   variants: updatedVariants ?? item.variants,
-      // };
+      return item;
     });
     setProducts(updatedProducts);
     updateFormikProductValues(updatedProducts);
   };
 
   const clearItemFromCart = (product) => {
-    const updatedProducts = products.map((item) => {
-      if (item._id === product._id) {
+    const updatedProducts = ensureArray(products)?.map((item) => {
+      if (item?._id === product?._id) {
         return {
           ...item,
-          checked: false,
           quantity: 0,
+          checked: false,
         };
       }
-      // const updatedVariants = item.variants?.map((variant) => {
-      //   if (variant.id === product.id) {
-      //     return {
-      //       ...variant,
-      //       checked: false,
-      //       quantity: 0,
-      //     };
-      //   }
-      //   return variant;
-      // });
-
-      // return {
-      //   ...item,
-      //   variants: updatedVariants ?? item.variants,
-      // };
+      return item;
     });
     setProducts(updatedProducts);
     updateFormikProductValues(updatedProducts);
   };
 
   const updateFormikProductValues = (updatedProducts) => {
-    const selectedProducts = updatedProducts.filter(item => item.checked && item.quantity > 0);
-    const formikProductsValue = selectedProducts.map(product => ({
-      productId: product._id,
-      productQty: product.quantity || 1,
-    }));
-    formik.setFieldValue("products", formikProductsValue);
+    const selectedProducts = ensureArray(updatedProducts)?.filter(
+      (item) => item?.checked && item?.quantity > 0
+    );
+    const formikProductsValue = ensureArray(selectedProducts)?.map(
+      (product) => ({
+        productId: product?._id,
+        productQty: product?.quantity || 1,
+      })
+    );
+    formik?.setFieldValue("products", formikProductsValue);
   };
 
   const getTotalCheckedCount = (products) => {
     let totalChecked = 0;
-    products.forEach((item) => {
+    ensureArray(products)?.forEach((item) => {
       if (item?.checked) {
         totalChecked += 1;
       }
-      item.variants?.forEach((variant) => {
-        if (variant?.checked) {
-          totalChecked += 1;
-        }
-      });
+      // item.variants?.forEach((variant) => {
+      //   if (variant?.checked) {
+      //     totalChecked += 1;
+      //   }
+      // });
     });
     return totalChecked;
   };
@@ -160,36 +132,38 @@ export const SelectProduct = ({ formik, products, setProducts }) => {
 
   const handleCheck = (e, val) => {
     const { checked } = e.target;
-    const updatedProducts = products.map((item) => {
-      if (item._id === val._id) {
+    const updatedProducts = ensureArray(products)?.map((item) => {
+      if (item?._id === val?._id) {
         return {
           ...item,
           checked,
-          quantity: checked ? item.quantity || 1 : 0,
+          quantity: checked ? item?.quantity || 1 : 0,
         };
       }
       return item;
     });
     setProducts(updatedProducts);
-    const updatedOriginalData = originalData.map((item) => {
-      if (item._id === val._id) {
+    const updatedOriginalData = ensureArray(originalData)?.map((item) => {
+      if (item?._id === val?._id) {
         return {
           ...item,
           checked,
-          quantity: checked ? item.quantity || 1 : 0,
+          quantity: checked ? item?.quantity || 1 : 0,
         };
       }
       return item;
     });
     setOriginalData(updatedOriginalData);
+    updateFormikProductValues(updatedProducts);
   };
 
   const productModalSearchHandle = (e) => {
     const { value } = e.target;
     setModalSearch(value);
-    const filteredProducts = originalData.filter((item) =>
-      item?.title?.toLowerCase().includes(value.toLowerCase()) ||
-      item?.name?.toLowerCase().includes(value.toLowerCase())
+    const filteredProducts = ensureArray(originalData)?.filter(
+      (item) =>
+        item?.title?.toLowerCase()?.includes(value?.toLowerCase()) ||
+        item?.name?.toLowerCase()?.includes(value?.toLowerCase())
     );
     setProducts(filteredProducts);
   };

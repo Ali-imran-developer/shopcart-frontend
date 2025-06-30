@@ -22,11 +22,11 @@ export default function SelectedItems({
   addItemToCart: (item: any) => void;
   removeItemFromCart: (item: any) => void;
 }) {
-  const selectedProducts = products?.filter((item: any) => item.checked && item.quantity > 0);
+  const selectedProducts = ensureArray(products)?.filter((item: any) => item?.checked && item?.quantity > 0);
   
   if (!selectedProducts || selectedProducts.length === 0) {
     return (
-      <div className="pb-3">
+      <div className="pt-4">
         <Empty />
       </div>
     );
@@ -35,9 +35,9 @@ export default function SelectedItems({
   return (
     <SimpleBar className={cn("pb-3", className)}>
       <div className={cn("grid gap-3.5", className)}>
-        {selectedProducts.map((item: any) => {
-          const quantity = item.quantity || 0;
-          const totalPrice = item.price * quantity;
+        {ensureArray(selectedProducts)?.map((item: any) => {
+          const quantity = item?.quantity || 0;
+          const totalPrice = item?.price * quantity;
           return (
             <div key={item._id}>
               <div className="flex justify-between items-center mt-4 mb-2">

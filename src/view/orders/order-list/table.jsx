@@ -57,7 +57,12 @@ export default function OrderTable({
   const [selectedStatus, setSelectedStatus] = useState({});
   const [loading, setLoading] = useState("");
   const [expandedRowId, setExpandedRowId] = useState(null);
-  const { handleGetOrders, handleUpdateDispatchStatus, handleDeleteOrders, isLoading } = useOrders();
+  const {
+    handleGetOrders,
+    handleUpdateDispatchStatus,
+    handleDeleteOrders,
+    isLoading,
+  } = useOrders();
 
   const filteredOrders = useMemo(() => {
     const options = filterOptions.reduce((acc, item) => {
@@ -103,6 +108,28 @@ export default function OrderTable({
     },
   });
 
+  // const attackAPI = async () => {
+  //   const token =
+  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODVlNjI1MjdkMjY3ZWI0MjVkMjIwMDQiLCJyb2xlIjoidXNlciIsImVtYWlsIjoibXVzdGFmYS5pbXJhbjE1OThAZ21haWwuY29tIiwidXNlck5hbWUiOiJtdXN0YWZhIGltcmFuIiwiaWF0IjoxNzUxMjIzNDM5LCJleHAiOjE3NTE4MjgyMzl9.elFA00139A6BvKlpkODP4IZe-aSi-aVO5GekoGVcCZs";
+
+  //   for (let i = 0; i < 50; i++) {
+  //     try {
+  //       const res = await fetch("http://localhost:5000/api/orders/get", {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       const data = await res.json();
+  //       console.log(`Request ${i + 1}:`, res.status, data);
+  //     } catch (err) {
+  //       console.error(`Request ${i + 1} failed:`, err);
+  //     }
+  //   }
+  // };
+  // // attackAPI();
+
   useEffect(() => {
     table.resetExpanded();
     table.resetRowSelection();
@@ -110,18 +137,15 @@ export default function OrderTable({
 
   useEffect(() => {
     handleGetOrders();
-
   }, []);
 
   useEffect(() => {
     setData(filteredOrders);
     setExpandedRowId(null);
-
   }, [filteredOrders]);
 
   useEffect(() => {
     setColumns(ordersColumns({ expandedRowId, handleDeleteOrders }));
-
   }, [expandedRowId]);
 
   useEffect(() => {
@@ -150,7 +174,7 @@ export default function OrderTable({
 
       const response = await Promise.all(
         hasStatusUpdate.map((item) =>
-          handleUpdateDispatchStatus(item?._id, {status: item?.status})
+          handleUpdateDispatchStatus(item?._id, { status: item?.status })
         )
       );
       toast.success(response.message || "Status updated successfully");
@@ -167,7 +191,12 @@ export default function OrderTable({
 
   return (
     <>
-      <div className={cn("rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 px-4 py-2", className)}>
+      <div
+        className={cn(
+          "rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 px-4 py-2",
+          className
+        )}
+      >
         <TabList
           tabs={filterOptions}
           setActiveTab={setActiveTab}

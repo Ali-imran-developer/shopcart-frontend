@@ -107,20 +107,20 @@ export const ordersColumns = ({ expandedRowId, handleDeleteOrders }) => {
         </Text>
       ),
     }),
-    columnHelper.accessor("pricing.shipping", {
-      id: "pricing.shipping",
-      size: 100,
-      header: "Shipping",
-      enableGlobalFilter: true,
-      cell: ({ row }) => {
-        const price = row?.original?.pricing?.shipping ?? 0;
-        return (
-          <Text className="font-medium text-gray-700">
-            Rs. {formatNumberWithCommas(Math.floor(price))}
-          </Text>
-        );
-      },
-    }),
+    // columnHelper.accessor("pricing.shipping", {
+    //   id: "pricing.shipping",
+    //   size: 100,
+    //   header: "Shipping",
+    //   enableGlobalFilter: true,
+    //   cell: ({ row }) => {
+    //     const price = row?.original?.pricing?.shipping ?? 0;
+    //     return (
+    //       <Text className="font-medium text-gray-700">
+    //         Rs. {formatNumberWithCommas(Math.floor(price))}
+    //       </Text>
+    //     );
+    //   },
+    // }),
     columnHelper.accessor("pricing.totalPrice", {
       id: "pricing.totalPrice",
       size: 100,
@@ -135,15 +135,27 @@ export const ordersColumns = ({ expandedRowId, handleDeleteOrders }) => {
         );
       },
     }),
-    columnHelper.accessor("shipperCity", {
+    columnHelper.display({
       id: "shipperCity",
-      size: 150,
-      header: "Shipper City",
+      size: 120,
+      header: "Shipper",
+      enableSorting: true,
+      enableGlobalFilter: true,
+      cell: ({ row }) => (
+        <Text className="font-semibold ms-3">
+          {row?.original?.shipperCity ?? ""}
+        </Text>
+      ),
+    }),
+    columnHelper.display({
+      id: "payment",
+      size: 120,
+      header: "Payment",
       enableSorting: true,
       enableGlobalFilter: true,
       cell: ({ row }) => (
         <Text className="font-semibold">
-          {row?.original?.shipperCity ?? ""}
+          {row?.original?.payment ?? ""}
         </Text>
       ),
     }),
@@ -154,16 +166,16 @@ export const ordersColumns = ({ expandedRowId, handleDeleteOrders }) => {
       enableSorting: false,
       cell: ({ row }) => getStatusBadge(row?.original?.status ?? ""),
     }),
-    columnHelper.display({
-      id: "actions",
-      size: 50,
-      cell: ({ row }) => (
-        <DeletePopover
-          description="Are u really want to delete this order!"
-          onDelete={() => handleDeleteOrders(row?.original?._id)}
-        />
-      ),
-    }),
+    // columnHelper.display({
+    //   id: "actions",
+    //   size: 50,
+    //   cell: ({ row }) => (
+    //     <DeletePopover
+    //       description="Are u really want to delete this order!"
+    //       onDelete={() => handleDeleteOrders(row?.original?._id)}
+    //     />
+    //   ),
+    // }),
   ];
 
   return columns;

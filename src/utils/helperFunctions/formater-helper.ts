@@ -28,3 +28,8 @@ export const formatPrice = (value: string | number) => {
     typeof value === "string" ? value?.replace(/,/g, "") : value;
   return Number(numberValue)?.toLocaleString("en-US");
 };
+
+export const generateOrderNumber = () => {
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
+  return `S${randomNumber}`;
+};
