@@ -68,15 +68,9 @@ export default function SignUpForm() {
               >
                 Sign Up
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => GoogleAuthButton()}
-              >
-                <img src="./assets/images/google-logo.webp" alt="Google" className="w-5 h-5 me-4" />
-                Continue with Google
-              </Button>
+              <div className="w-full">
+                <GoogleAuthButton />
+              </div>
             </div>
           </Form>
         )}
