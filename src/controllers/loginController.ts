@@ -19,6 +19,9 @@ class LoginController {
   static resetPassword(data: any) {
     return apiRequest("post", "/api/reset-password", data);
   }
+  static googleAuthentication(data: any){
+    return apiRequest("post", "/api/auth/google/token-login", data);
+  }
 }
 
 export default LoginController;

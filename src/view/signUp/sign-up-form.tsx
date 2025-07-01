@@ -4,7 +4,7 @@ import { routes } from "../../config/routes";
 import { Form, Formik } from "formik";
 import { useAuth } from "@/hooks/auth-hooks";
 import { signUpSchema } from "@/validators/signup.schema";
-import { useGoogleAuth } from "../google-authentication";
+import  GoogleAuthButton from "../google-authentication";
 
 const initialValues = {
   userName: "",
@@ -13,7 +13,7 @@ const initialValues = {
 };
 
 export default function SignUpForm() {
-  const googleLogin = useGoogleAuth();
+  // const googleLogin = useGoogleAuth();
   const { handlePrimarySignup, isLoading } = useAuth();
 
   const handleSubmit = async (values: any) => {
@@ -72,7 +72,7 @@ export default function SignUpForm() {
                 type="button"
                 variant="outline"
                 className="w-full"
-                onClick={() => googleLogin()}
+                onClick={() => GoogleAuthButton()}
               >
                 <img src="./assets/images/google-logo.webp" alt="Google" className="w-5 h-5 me-4" />
                 Continue with Google

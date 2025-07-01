@@ -41,6 +41,23 @@ export const useAuth = () => {
     }
   }, []);
 
+  const handleGoogleSignup = useCallback(async (values: any) => {
+    try {
+      setIsLoading(true);
+      const response: any = await LoginController.googleAuthentication(values);
+      const { token } = response.data;
+      AuthController.set({ token: token });
+      toast.success(response?.message);
+      navigate("/");
+      return response;
+    } catch (error: any) {
+      console.log("@Error", error);
+      toast.error(error?.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const handleUpdateUser = useCallback(async (id: String ,values: any) => {
     try {
       setIsLoading(true);

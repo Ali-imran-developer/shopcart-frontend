@@ -1,24 +1,31 @@
-import { useGoogleLogin } from "@react-oauth/google";
+import AuthController from "@/controllers/authController";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import axios from "axios";
+import toast from "react-hot-toast";
 
-export const useGoogleAuth = () => {
-  return useGoogleLogin({
-    onSuccess: async (tokenResponse: any) => {
-      try {
-        const response = await axios.post("https://learning-express-three.vercel.app/api/auth/google/token-login",
-          {
-            credential: tokenResponse.credential,
-          }
-        );
-        const { token } = response.data;
-        localStorage.setItem("token", token);
-        window.location.href = "/dashboard";
-      } catch (err) {
-        console.error("Login failed", err);
-      }
-    },
-    onError: () => {
-      console.error("Google login error");
-    },
-  });
+const GoogleAuthButton = () => {
+  const handleSuccess = async (credentialResponse: CredentialResponse) => {
+    try {
+      const response = await axios.post(
+        "https://learning-express-three.vercel.app/api/auth/google/token-login",
+        { credential: credentialResponse.credential }
+      );
+      const { token } = response.data;
+      AuthController.set({ token: token });
+      window.location.href = "/";
+    } catch (error) {
+      console.log(error);
+      toast.error("Login failed");
+    }
+  };
+
+  return (
+    <GoogleLogin
+      onSuccess={handleSuccess}
+      onError={() => toast.error("Google Login Failed")}
+      useOneTap
+    />
+  );
 };
+
+export default GoogleAuthButton;
