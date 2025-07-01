@@ -21,7 +21,7 @@ export default function SignIn() {
           continue.
         </>
       }
-      description="Your E-commerce Sales and Management Partner"
+      description="If you are login with google, just sign-in with google."
       bannerTitle=""
       bannerDescription=""
       isSocialLoginActive={false}

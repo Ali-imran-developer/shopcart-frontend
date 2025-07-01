@@ -5,6 +5,7 @@ import { routes } from "@config/routes";
 import { Form, Formik } from "formik";
 import { useAuth } from "@/hooks/auth-hooks";
 import { loginSchema } from "@/utils/validators/login.schema";
+import GoogleAuthButton from "../google-authentication";
 
 const initialValues = {
   email: "",
@@ -71,6 +72,9 @@ export default function SignInForm() {
                 <span>Sign in</span>{" "}
                 <PiArrowRightBold className="ms-2 mt-0.5 h-5 w-5" />
               </Button>
+              <div className="w-full">
+                <GoogleAuthButton />
+              </div>
             </div>
           </Form>
         )}
