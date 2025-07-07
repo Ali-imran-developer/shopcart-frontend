@@ -83,12 +83,12 @@ export default function ProductsTable({
       {!hideFooter && (
         <TableFooter table={table} onExport={handleExportData} isLoading={""} />
       )}
-      {!hidePagination && (
+      {/* {!hidePagination && (
         <TablePagination
           table={table}
           className={cn("py-4", paginationClassName)}
         />
-      )}
+      )} */}
     </>
   );
 }

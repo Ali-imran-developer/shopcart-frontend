@@ -66,12 +66,12 @@ export default function SalesChannelTable({
           classNames={classNames}
         />
 
-        {!hidePagination && (
+        {/* {!hidePagination && (
           <TablePagination
             table={table}
             className={cn("py-4", paginationClassName)}
           />
-        )}
+        )} */}
       </div>
     </>
   );

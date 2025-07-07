@@ -69,14 +69,14 @@ const allRoutes: IRoute[] = [
     sidebar: true,
     component: lazy(() => import("../view/orders/order-detail")),
   },
-  {
-    name: "testing",
-    section: "common",
-    route: "/testing",
-    protections: "token",
-    sidebar: true,
-    component: lazy(() => import("../view/testing")),
-  },
+  // {
+  //   name: "testing",
+  //   section: "common",
+  //   route: "/testing",
+  //   protections: "token",
+  //   sidebar: true,
+  //   component: lazy(() => import("../view/testing")),
+  // },
   {
     name: "checkout",
     section: "common",

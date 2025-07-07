@@ -114,12 +114,12 @@ const TableColumnDnd = ({
           }}
         />
         {!hideFooter && <TableFooter table={table} />}
-        {!hidePagination && (
+        {/* {!hidePagination && (
           <TablePagination
             table={table}
             className={cn("py-4", paginationClassName)}
           />
-        )}
+        )} */}
       </DndContext>
     </WidgetCard>
   );

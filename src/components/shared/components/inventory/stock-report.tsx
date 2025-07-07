@@ -53,7 +53,7 @@ export default function StockReport({ className }: { className?: string }) {
           rowClassName: "last:border-0",
         }}
       />
-      <TablePagination table={table} className="p-4" />
+      {/* <TablePagination table={table} className="p-4" /> */}
     </WidgetCard>
   );
 }

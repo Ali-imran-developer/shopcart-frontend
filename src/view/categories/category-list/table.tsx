@@ -69,7 +69,7 @@ export default function CategoriesTable({
           }}
         />
         {/* <TableFooter table={table} /> */}
-        {!hidePagination && <TablePagination table={table} className="py-4" />}
+        {/* {!hidePagination && <TablePagination table={table} className="py-4" />} */}
       </div>
     </>
   );

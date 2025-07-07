@@ -58,7 +58,7 @@ export default function UsersTable({data, isLoading}: {data: any, isLoading: boo
         }}
       />
       <TableFooter table={table} />
-      <TablePagination table={table} className="py-4" />
+      {/* <TablePagination table={table} className="py-4" /> */}
       {/* <TablePagination className="py-4" /> */}
     </div>
   );
