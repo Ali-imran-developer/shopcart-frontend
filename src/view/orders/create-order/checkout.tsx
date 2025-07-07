@@ -5,15 +5,15 @@ import { loadStripe } from "@stripe/stripe-js";
 const VITE_STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 const stripePromise = loadStripe(VITE_STRIPE_KEY);
 
-const CheckoutPage = ({ formik, closeDrawer }: any) => {
-
+const CheckoutPage = ({ formik, closeDrawer, prepaid }: any) => {
   return (
-    <Elements stripe={stripePromise}>
-      <StripePayment 
-        formik={formik} 
-        closeDrawer={closeDrawer} 
-      />
-    </Elements>
+    <>
+      {prepaid && (
+        <Elements stripe={stripePromise}>
+          <StripePayment formik={formik} closeDrawer={closeDrawer} />
+        </Elements>
+      )}
+    </>
   );
 };
 

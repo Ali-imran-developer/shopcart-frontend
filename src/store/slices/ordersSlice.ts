@@ -1,14 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type initialStateType = {
-  orderData: any;
+  orderData: {
+    orders: any[];
+    totalOrders: number;
+  };
   dashboardData: any;
   bookedOrdersData: any
   isDataLoaded: boolean;
 };
 
 const initialState: initialStateType = {
-  orderData: null,
+  orderData: { orders: [], totalOrders: 0 },
   dashboardData: null,
   bookedOrdersData: null,
   isDataLoaded: false,

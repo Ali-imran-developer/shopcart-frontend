@@ -7,7 +7,7 @@ import { getStatusBadge } from "@/components/shared/components/table-utils/get-s
 import { PiCaretDownBold, PiCaretUpBold } from "react-icons/pi";
 
 const columnHelper = createColumnHelper();
-export const ordersColumns = ({ expandedRowId, handleDeleteOrders }) => {
+export const ordersColumns = ({ expandedRowId }) => {
   const columns = [
     columnHelper.display({
       id: "expandedHandler",
@@ -135,7 +135,7 @@ export const ordersColumns = ({ expandedRowId, handleDeleteOrders }) => {
         );
       },
     }),
-    columnHelper.display({
+    columnHelper.accessor("shipperCity", {
       id: "shipperCity",
       size: 120,
       header: "Shipper",

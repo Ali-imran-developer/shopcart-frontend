@@ -50,11 +50,29 @@ const filterOptions = [
 
 export default function OrderTable({
   className,
+  isLoading,
+  page,
+  limit,
+  paymentStatus,
+  setPaymentStatus,
+  onFilterApply,
+  setUpdateParams,
+  activeTab,
+  setActiveTab,
   variant = "modern",
   hideFilters = false,
   hidePagination = false,
   onDataChange,
 }: {
+  isLoading?: any;
+  page?: any;
+  limit?: any;
+  paymentStatus?: any;
+  setPaymentStatus?: any;
+  onFilterApply?: any;
+  setUpdateParams?: any;
+  activeTab?: any;
+  setActiveTab?: any;
   className?: string;
   hideFilters?: boolean;
   hidePagination?: boolean;
@@ -63,10 +81,7 @@ export default function OrderTable({
 }) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [activeTab, setActiveTab] = useState<string>("confirmed");
-  const { orderData, bookedOrdersData } = useAppSelector(
-    (state) => state?.Orders
-  );
+  const { orderData } = useAppSelector((state) => state?.Orders);
   const { courierCreds } = useAppSelector((state) => state?.Courier);
   const [selectedCouriers, setSelectedCouriers] = useState({});
   const [selectedMethod, setSelectedMethod] = useState({});
@@ -76,27 +91,8 @@ export default function OrderTable({
   const [ordersData, setOrderData] = useState<any>([]);
   const { fetchShippers, shippers } = useShipperData();
   const { getCourierKeys } = useCouriers();
-  const {
-    handleGetOrders,
-    handleOrdersBooking,
-    handleGetBookedOrders,
-    handleUpdateDispatchStatus,
-    isLoading,
-  } = useOrders();
-
-  const filteredOrders = useMemo(() => {
-    const options = filterOptions.reduce<Record<string, string>>(
-      (acc, item) => {
-        acc[item.value] = item.label.toLowerCase();
-        return acc;
-      },
-      {}
-    );
-    return ensureArray(orderData?.orders).filter(
-      (order) => order.status === options[activeTab]
-    );
-  }, [orderData?.orders, activeTab]);
-  console.log(courierCreds?.creds, "....");
+  const { handleGetOrders, handleOrdersBooking, handleUpdateDispatchStatus } =
+    useOrders();
 
   useEffect(() => {
     getCourierKeys();
@@ -104,40 +100,40 @@ export default function OrderTable({
   }, []);
 
   useEffect(() => {
-    if (filteredOrders?.length && shippers?.length && courierCreds?.creds?.length) {
-      const updatedOrders = ensureArray(filteredOrders).map((order: any) => {
-        const shippersData = shippers.filter((shipper: any) => {
-          return shipper?.user === order?.user;
-        });
-        const shipperInfo = shippersData.map((shipper: any) => {
+    if (orderData?.orders?.length) {
+      const updatedOrders = ensureArray(orderData?.orders)?.map(
+        (order: any) => {
+          const shippersData = ensureArray(shippers)?.filter((shipper: any) => {
+            return shipper?.user === order?.user;
+          });
+          const shipperInfo = ensureArray(shippersData)?.map((shipper: any) => {
+            return {
+              shipperId: shipper?._id ?? null,
+              shipperCity: shipper?.city ?? null,
+            };
+          });
+          const courierInfo = ensureArray(courierCreds?.creds)?.map(
+            (courier: any) => ({
+              courierId: courier?.courier ?? null,
+              courierName: courier?.couriersname ?? "",
+              logo: courier?.logo ?? "",
+              defaultCourier: courier?.isDefault ?? false,
+            })
+          );
           return {
-            shipperId: shipper?._id ?? null,
-            shipperCity: shipper?.city ?? null,
+            ...order,
+            shipperInfo: shipperInfo.length ? shipperInfo : [],
+            courierInfo: courierInfo?.length ? courierInfo : [],
           };
-        });
-        console.log(shipperInfo, "shipper info from table");
-        const courierInfo = courierCreds?.creds?.map((courier: any) => ({
-          courierId: courier?.courier ?? null,
-          courierName: courier?.couriersname ?? "",
-          logo: courier?.logo ?? "",
-          defaultCourier: courier?.isDefault ?? false,
-        }));
-        return {
-          ...order,
-          shipperInfo: shipperInfo.length ? shipperInfo : [],
-          courierInfo: courierInfo.length ? courierInfo : [],
-        };
-      });
-      console.log("Updated Orders with Shipper Info", updatedOrders);
+        }
+      );
       setOrderData(updatedOrders);
     }
-  }, [filteredOrders, shippers, courierCreds?.creds]);
+  }, [orderData, shippers, courierCreds?.creds]);
 
   const [expandedRowId, setExpandedRowId] = useState<any>(null);
-  const ultimateData =
-    activeTab === "booked" ? bookedOrdersData?.bookOrders : ordersData;
   const { table, setData, setColumns } = useTanStackTable<any>({
-    tableData: ensureArray(ultimateData),
+    tableData: ensureArray(ordersData),
     columnConfig: [],
     options: {
       initialState: {
@@ -163,17 +159,13 @@ export default function OrderTable({
   });
 
   useEffect(() => {
-    if (activeTab === "booked") {
-      handleGetBookedOrders();
-    } else {
-      handleGetOrders();
-    }
+    handleGetOrders();
   }, [activeTab]);
 
   useEffect(() => {
-    setData(ensureArray(ultimateData));
+    setData(ensureArray(ordersData));
     setExpandedRowId(null);
-  }, [ultimateData]);
+  }, [ordersData]);
 
   useEffect(() => {
     if (activeTab === "booked") {
@@ -212,27 +204,43 @@ export default function OrderTable({
     status: SetStateAction<string>,
     row: { original: any }
   ) => {
-    const orderData = row?.original;
-    const initialValues = {
-      orderId: orderData?._id,
-      userId: orderData?.user,
-      courierId: selectedCouriers,
-      shipmentType: selectedMethod,
-      shipperId: selectedShipper,
-    };
+    // const orderData = row?.original;
+    // const initialValues = {
+    //   orderId: orderData?._id,
+    //   userId: orderData?.user,
+    //   courierId: selectedCouriers,
+    //   shipmentType: selectedMethod,
+    //   shipperId: selectedShipper,
+    // };
     try {
       setLoading(status);
       if (status === "Booked") {
-        console.log("initialValues", initialValues);
+        // console.log("initialValues", initialValues, checkedItems);
         try {
-          await handleOrdersBooking(initialValues, (status, result) => {
-            if (status === "success") {
-              toast.success(result?.message || "Order booked successfully!");
-            } else if (status === "error") {
-              toast.error(result?.message || "Something went wrong");
-            }
+          const selectedOrders = checkedItems?.length >= 1 ? checkedItems : [row?.original];
+          const bookingPromises = selectedOrders.map((orderData: any) => {
+            const initialValues = {
+              orderId: orderData?._id,
+              userId: orderData?.user,
+              courierId: selectedCouriers,
+              shipmentType: selectedMethod,
+              shipperId: selectedShipper,
+            };
+            return new Promise((resolve) => {
+              handleOrdersBooking(initialValues, (status: any, result: any) => {
+                if (status === "success") {
+                  toast.success(
+                    result?.message || "Order booked successfully!"
+                  );
+                } else if (status === "error") {
+                  toast.error(result?.message || "Something went wrong");
+                }
+                resolve({ status, result, _id: orderData?._id });
+              });
+            });
           });
-          await handleGetOrders();
+          const results: any[] = await Promise.all(bookingPromises);
+          setData((prev) => ensureArray(prev)?.filter((order) => !results.some((res) => res?.status === "success" && res?._id === order?._id)));
         } catch (error: any) {
           console.log("error", error);
           toast.error(error?.message || "Something went wrong");
@@ -251,7 +259,7 @@ export default function OrderTable({
               handleUpdateDispatchStatus(
                 item._id,
                 { status: item.status },
-                (status, result) => {
+                (status: any, result: any) => {
                   if (status === "success") {
                     console.log(result?.message);
                   } else if (status === "error") {
@@ -266,7 +274,12 @@ export default function OrderTable({
               toast.success(res.message);
             }
           });
-          await handleGetOrders();
+          setData((prev) =>
+            ensureArray(prev)?.filter(
+              (order) =>
+                !hasStatusUpdate?.some((updated) => updated?._id === order?._id)
+            )
+          );
         } catch (error: any) {
           console.log("error", error);
           toast.error(error.message || "Failed to update status");
@@ -348,7 +361,13 @@ export default function OrderTable({
           isLoading={loading}
           handleStatusChange={handleStatusChange}
         />
-        {!hidePagination && <TablePagination table={table} className="py-4" />}
+        <TablePagination
+          table={table}
+          currentPage={page}
+          totalPages={Math?.ceil(orderData?.totalOrders / limit) ?? 0}
+          updateParams={setUpdateParams}
+          className={cn("py-4")}
+        />
       </div>
     </>
   );

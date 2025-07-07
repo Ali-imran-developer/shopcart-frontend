@@ -171,12 +171,13 @@ export default function CreateOrder() {
       </form>
       {prepaid && (
         <PaymentDrawer
+          prepaid={prepaid}
           isDrawerOpen={prepaid}
-          closeDrawer={(shouldReset = true) => {
+          closeDrawer={() => {
             setPrepaid(false);
-            if (shouldReset) {
+            // if (shouldReset) {
               formik.setFieldValue("paymentMethod", "cod");
-            }
+            // }
           }}
           formik={formik}
         />

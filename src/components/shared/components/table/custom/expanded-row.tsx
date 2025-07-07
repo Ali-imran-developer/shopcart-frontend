@@ -2,6 +2,7 @@ import { PiXBold } from "react-icons/pi";
 import { ActionIcon, Avatar, Button, Flex, Text, Title, Tooltip } from "rizzui";
 import {
   ensureArray,
+  formatPrice,
   sanitizePhone,
 } from "@/utils/helperFunctions/formater-helper";
 import SimpleBar from "simplebar-react";
@@ -28,33 +29,30 @@ const CustomExpandedComponent = ({
           <div className="">
             {ensureArray(row?.original?.products)?.map((item: any) => {
               return (
-                <article
-                  key={item?.productData?._id ?? ""}
-                  className="flex items-center justify-between py-2 first-of-type:pt-2.5 last-of-type:pb-2.5 px-4"
-                >
+                <article key={item?._id ?? ""} className="flex items-center justify-between py-2 first-of-type:pt-2.5 last-of-type:pb-2.5 px-4">
                   <div className="flex items-start">
                     <div className="w-12 flex-shrink-0 overflow-hidden rounded-full">
                       <Avatar
-                        name={item?.productData?.name ?? ""}
-                        src={item?.productData?.image ?? ""}
+                        name={item?.name ?? ""}
+                        src={item?.image ?? ""}
                       />
                     </div>
                     <header>
                       <Title as="h4" className="mb-0.5 text-sm font-medium">
-                        {item?.productData?.name ?? ""}
+                        {item?.name ?? ""}
                       </Title>
                       <Text className="text-xs text-gray-500">
                         Unit Price: Rs.{" "}
                         {formatNumberWithCommas(
-                          Math.floor(item?.productData?.price)
+                          Math.floor(item?.price)
                         )}
                       </Text>
                     </header>
                   </div>
                   <div
                     className={`flex max-w-xs items-end ${
-                      Number(item?.productData?.stock) *
-                        Number(item?.productData?.price) >
+                      Number(item?.stock) *
+                        Number(item?.price) >
                       999
                         ? "gap-11"
                         : "gap-14"
@@ -62,18 +60,18 @@ const CustomExpandedComponent = ({
                   >
                     <div className="flex items-center gap-2">
                       <Text className="font-semibold text-gray-800">
-                        {item?.productData?.price ?? ""}
+                        {formatPrice(item?.price) ?? ""}
                       </Text>
                       <PiXBold size={13} className="text-gray-500" />
                       <Text className="font-semibold text-gray-800">
-                        {item?.quantity ?? ""}
+                        {item?.productQty ?? ""}
                       </Text>
                     </div>
                     <Text className="font-medium text-gray-900 dark:text-gray-700">
                       Rs.{" "}
                       {formatNumberWithCommas(
-                        Number(item?.productData?.price ?? 0) *
-                          Math.floor(Number(item?.quantity ?? 0))
+                        Number(item?.price ?? 0) *
+                          Math.floor(Number(item?.productQty ?? 0))
                       )}
                     </Text>
                   </div>

@@ -1,8 +1,12 @@
+import { ParamsType } from "@/types";
 import { apiRequest } from "./apiController";
 
 class OrdersController {
-  static getAllOrders() {
-    return apiRequest("get", `/api/orders/get`);
+  static getAllOrders(queryParams: ParamsType) {
+    return apiRequest(
+      "get",
+      `/api/orders/get?status=${queryParams?.status}&page=${queryParams?.page}&limit=${queryParams?.limit}&payment=${queryParams?.payment}`
+    );
   }
   static getBookedOrders() {
     return apiRequest("get", `/api/orders/booking/get`);

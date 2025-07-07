@@ -1,41 +1,28 @@
-import React from "react";
 import DateFiled from "@shared/components/controlled-table/date-field";
 import PriceField from "@shared/components/controlled-table/price-field";
 import StatusField from "@shared/components/controlled-table/status-field";
 import { FilterDrawerView } from "@shared/components/controlled-table/table-filter";
-import {
-  renderOptionDisplayValue,
-  statusOptions,
-} from "@shared/components/invoice/form-utils";
+import { orderStatusOptions, renderOptionDisplayValue, statusOptions } from "@shared/components/invoice/form-utils";
 import ToggleColumns from "@shared/components/table-utils/toggle-columns";
 import { getDateRangeStateValues } from "@utils/helperFunctions/get-formatted-date";
 import { type Table as ReactTableType } from "@tanstack/react-table";
 import { useState } from "react";
-import {
-  PiFunnel,
-  PiMagnifyingGlassBold,
-  PiTrash,
-  PiTrashDuotone,
-} from "react-icons/pi";
+import {  PiFunnel, PiMagnifyingGlassBold, PiTrash, PiTrashDuotone } from "react-icons/pi";
 import { Button, Flex, Input } from "rizzui";
 
 interface TableToolbarProps<T extends Record<string, any>> {
   table: ReactTableType<T>;
 }
 
-export default function Filters<TData extends Record<string, any>>({
-  table,
-}: TableToolbarProps<TData>) {
+export default function Filters<TData extends Record<string, any>>({ table }: TableToolbarProps<TData>) {
   const [openDrawer, setOpenDrawer] = useState(false);
-  const isMultipleSelected = table.getSelectedRowModel().rows.length > 1;
-
-  const {
-    options: { meta },
-  } = table;
+  const isMultipleSelected = table?.getSelectedRowModel()?.rows?.length > 1;
+  const { options: {meta}} = table;
 
   return (
-    <Flex align="center" justify="between" className="mb-4">
-      <Input
+    <>
+    {/* // <Flex className="mb-4"> */}
+      {/* <Input
         type="search"
         placeholder="Search by product name..."
         value={table.getState().globalFilter ?? ""}
@@ -44,7 +31,7 @@ export default function Filters<TData extends Record<string, any>>({
         inputClassName="h-9"
         clearable={true}
         prefix={<PiMagnifyingGlassBold className="size-4" />}
-      />
+      /> */}
 
       <FilterDrawerView
         isOpen={openDrawer}
@@ -56,8 +43,8 @@ export default function Filters<TData extends Record<string, any>>({
         </div>
       </FilterDrawerView>
 
-      <Flex align="center" gap="3" className="w-auto">
-        {isMultipleSelected ? (
+      {/* <Flex align="center" gap="3" className="w-auto"> */}
+        {/* {isMultipleSelected ? (
           <Button
             color="danger"
             variant="outline"
@@ -72,39 +59,35 @@ export default function Filters<TData extends Record<string, any>>({
             <PiTrash size={18} />
             Delete
           </Button>
-        ) : null}
+        ) : null} */}
 
-        <Button
-          variant={"outline"}
-          onClick={() => setOpenDrawer(!openDrawer)}
-          className="h-9 pe-3 ps-2.5"
-        >
-          <PiFunnel className="me-1.5 size-[18px]" strokeWidth={1.7} />
-          Filters
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant={"outline"}
+            onClick={() => setOpenDrawer(!openDrawer)}
+            className="h-9 pe-3 ps-2.5"
+          >
+            <PiFunnel className="me-1.5 size-[18px]" strokeWidth={1.7} />
+            Filters
+          </Button>
 
-        <ToggleColumns table={table} />
-      </Flex>
-    </Flex>
+          <ToggleColumns table={table} />
+        </div>
+      {/* </Flex> */}
+    {/* </Flex> */}
+    </>
   );
 }
 
-function FilterElements<T extends Record<string, any>>({
-  table,
-}: TableToolbarProps<T>) {
-  const priceFieldValue = (table.getColumn("amount")?.getFilterValue() ?? [
-    "",
-    "",
-  ]) as string[];
-  const createdDate =
-    table.getColumn("createdAt")?.getFilterValue() ?? ([null, null] as any);
-  const dueDate =
-    table.getColumn("dueDate")?.getFilterValue() ?? ([null, null] as any);
-  const isFiltered =
-    table.getState().globalFilter || table.getState().columnFilters.length > 0;
+function FilterElements<T extends Record<string, any>>({ table }: TableToolbarProps<T>) {
+  // const priceFieldValue = (table.getColumn("amount")?.getFilterValue() ?? [ "", "", ]) as string[];
+  // const createdDate = table.getColumn("createdAt")?.getFilterValue() ?? ([null, null] as any);
+  // const dueDate = table.getColumn("dueDate")?.getFilterValue() ?? ([null, null] as any);
+  const isFiltered = table?.getState()?.globalFilter || table?.getState()?.columnFilters?.length > 0;
+
   return (
     <>
-      <PriceField
+      {/* <PriceField
         value={priceFieldValue}
         onChange={(v) => table.getColumn("amount")?.setFilterValue(v)}
         label="Amount"
@@ -121,11 +104,12 @@ function FilterElements<T extends Record<string, any>>({
         inputProps={{
           label: "Created Date",
         }}
-      />
+      /> */}
+      {console.log(table?.getColumn("payment"))as any}
       <StatusField
-        options={statusOptions}
-        value={table.getColumn("status")?.getFilterValue() ?? []}
-        onChange={(e) => table.getColumn("status")?.setFilterValue(e)}
+        options={orderStatusOptions}
+        value={table.getColumn("payment")?.getFilterValue() ?? []}
+        onChange={(e) => table.getColumn("payment")?.setFilterValue(e)}
         getOptionValue={(option: { value: any }) => option.value}
         getOptionDisplayValue={(option: { value: any }) =>
           renderOptionDisplayValue(option.value as string)
@@ -133,7 +117,7 @@ function FilterElements<T extends Record<string, any>>({
         displayValue={(selected: string) => renderOptionDisplayValue(selected)}
         dropdownClassName="!z-20 h-auto"
         className={"w-auto"}
-        label="Status"
+        label="Payment"
       />
 
       {isFiltered && (

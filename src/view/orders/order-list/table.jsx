@@ -13,7 +13,10 @@ import { startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import { TabList } from "@/components/shared/tabs";
 import toast from "react-hot-toast";
-import { useOrders } from "@/hooks/order-hook";
+import OrdersController from "@/controllers/ordersController";
+import Filters from "@/view/orders/order-list/filters";
+import { Input } from "rizzui";
+import { PiMagnifyingGlassBold } from "react-icons/pi";
 
 const filterOptions = [
   {
@@ -35,7 +38,7 @@ const filterOptions = [
     ],
   },
   {
-    value: "cancel",
+    value: "cancelled",
     label: "Cancelled",
     buttons: [
       { title: "Confirmed", className: "text-green-dark" },
@@ -47,47 +50,30 @@ const filterOptions = [
 
 export default function OrderTable({
   className,
+  isLoading,
+  page,
+  limit,
+  paymentStatus,
+  setPaymentStatus,
+  onFilterApply,
+  setUpdateParams,
+  activeTab,
+  setActiveTab,
   variant = "modern",
   hideFilters = false,
   hidePagination = false,
 }) {
   const navigate = useNavigate();
   const { orderData } = useAppSelector((state) => state.Orders);
-  const [activeTab, setActiveTab] = useState("open");
   const [selectedStatus, setSelectedStatus] = useState({});
   const [loading, setLoading] = useState("");
   const [expandedRowId, setExpandedRowId] = useState(null);
-  const {
-    handleGetOrders,
-    handleUpdateDispatchStatus,
-    handleDeleteOrders,
-    isLoading,
-  } = useOrders();
-
-  const filteredOrders = useMemo(() => {
-    const options = filterOptions.reduce((acc, item) => {
-      acc[item.value] = item.label.toLowerCase();
-      return acc;
-    }, {});
-    return ensureArray(orderData?.orders).filter(
-      (order) => order.status === options[activeTab]
-    );
-  }, [orderData?.orders, activeTab]);
 
   const { table, setData, setColumns } = useTanStackTable({
-    tableData: filteredOrders,
-    columnConfig: ordersColumns({ expandedRowId, handleDeleteOrders }),
+    tableData: ensureArray(orderData?.orders),
+    columnConfig: ordersColumns({ expandedRowId }),
     options: {
-      initialState: {
-        pagination: {
-          pageIndex: 0,
-          pageSize: 20,
-        },
-        columnPinning: {
-          left: ["expandedHandler"],
-          right: ["action"],
-        },
-      },
+      initialState: {},
       meta: {
         handleSelectedRow: (row) => {
           console.log("@row", row);
@@ -108,44 +94,18 @@ export default function OrderTable({
     },
   });
 
-  // const attackAPI = async () => {
-  //   const token =
-  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODVlNjI1MjdkMjY3ZWI0MjVkMjIwMDQiLCJyb2xlIjoidXNlciIsImVtYWlsIjoibXVzdGFmYS5pbXJhbjE1OThAZ21haWwuY29tIiwidXNlck5hbWUiOiJtdXN0YWZhIGltcmFuIiwiaWF0IjoxNzUxMjIzNDM5LCJleHAiOjE3NTE4MjgyMzl9.elFA00139A6BvKlpkODP4IZe-aSi-aVO5GekoGVcCZs";
-
-  //   for (let i = 0; i < 50; i++) {
-  //     try {
-  //       const res = await fetch("http://localhost:5000/api/orders/get", {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       const data = await res.json();
-  //       console.log(`Request ${i + 1}:`, res.status, data);
-  //     } catch (err) {
-  //       console.error(`Request ${i + 1} failed:`, err);
-  //     }
-  //   }
-  // };
-  // // attackAPI();
-
   useEffect(() => {
     table.resetExpanded();
     table.resetRowSelection();
   }, [activeTab]);
 
   useEffect(() => {
-    handleGetOrders();
-  }, []);
-
-  useEffect(() => {
-    setData(filteredOrders);
+    setData(ensureArray(orderData?.orders));
     setExpandedRowId(null);
-  }, [filteredOrders]);
+  }, [ensureArray(orderData?.orders)]);
 
   useEffect(() => {
-    setColumns(ordersColumns({ expandedRowId, handleDeleteOrders }));
+    setColumns(ordersColumns({ expandedRowId }));
   }, [expandedRowId]);
 
   useEffect(() => {
@@ -159,6 +119,7 @@ export default function OrderTable({
     startTransition(() => {
       setActiveTab(nextTab);
     });
+    setUpdateParams({ status: nextTab, page: 1 });
   };
 
   const handleStatusChange = async (checkedItems, status, row) => {
@@ -174,11 +135,18 @@ export default function OrderTable({
 
       const response = await Promise.all(
         hasStatusUpdate.map((item) =>
-          handleUpdateDispatchStatus(item?._id, { status: item?.status })
+          OrdersController.updateOrderStatus(item?._id, {
+            status: item?.status,
+          })
         )
       );
       toast.success(response.message || "Status updated successfully");
-      await handleGetOrders();
+      setData((prev) =>
+        ensureArray(prev)?.filter(
+          (order) =>
+            !hasStatusUpdate?.some((updated) => updated?._id === order?._id)
+        )
+      );
       table.resetRowSelection();
       table.resetExpanded();
     } catch (error) {
@@ -191,18 +159,36 @@ export default function OrderTable({
 
   return (
     <>
-      <div
-        className={cn(
-          "rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 px-4 py-2",
-          className
-        )}
-      >
-        <TabList
-          tabs={filterOptions}
-          setActiveTab={setActiveTab}
-          activeTab={activeTab}
-          selectTab={selectTab}
-        />
+      <div className={cn("rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 px-4 py-2", className)}>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-6">
+            <TabList
+              setSelectedStatus={setSelectedStatus}
+              tabs={filterOptions}
+              setActiveTab={setActiveTab}
+              activeTab={activeTab}
+              selectTab={selectTab}
+              className="ms-2"
+            />
+            <Input
+              type="search"
+              placeholder="Search by name..."
+              value={table.getState().globalFilter ?? ""}
+              onClear={() => table.setGlobalFilter("")}
+              onChange={(e) => table.setGlobalFilter(e.target.value)}
+              inputClassName="h-9"
+              clearable={true}
+              prefix={<PiMagnifyingGlassBold className="size-4" />}
+            />
+          </div>
+          <Filters
+            table={table}
+            isLoading={isLoading}
+            paymentStatus={paymentStatus}
+            setPaymentStatus={setPaymentStatus}
+            onFilterApply={onFilterApply}
+          />
+        </div>
         <Table
           table={table}
           activeTab={activeTab}
@@ -210,7 +196,6 @@ export default function OrderTable({
           expandedRowId={expandedRowId}
           showLoadingText={isLoading}
           isLoading={isLoading}
-          data={filteredOrders}
           classNames={{
             container: "border border-muted rounded-md border-t-0 mt-4",
             rowClassName: "last:border-0",
@@ -233,7 +218,13 @@ export default function OrderTable({
           isLoading={loading}
           handleStatusChange={handleStatusChange}
         />
-        {!hidePagination && <TablePagination table={table} className="py-4" />}
+        <TablePagination
+          table={table}
+          currentPage={page}
+          totalPages={Math?.ceil(orderData?.totalOrders / limit) ?? 0}
+          updateParams={setUpdateParams}
+          className={cn("py-4")}
+        />
       </div>
     </>
   );

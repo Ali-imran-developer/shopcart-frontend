@@ -1,12 +1,19 @@
 import { Drawer, Title } from "rizzui";
 import CheckoutPage from "./checkout";
 
-const PaymentDrawer = ({ isDrawerOpen, closeDrawer, formik }: any) => {
-
+const PaymentDrawer = ({ isDrawerOpen, closeDrawer, formik, prepaid }: any) => {
   return (
-    <Drawer size="sm" isOpen={isDrawerOpen} onClose={closeDrawer}>  
-      <CheckoutPage formik={formik} closeDrawer={closeDrawer} />
-    </Drawer>
+    <>
+      {prepaid && (
+        <Drawer size="sm" isOpen={isDrawerOpen} onClose={closeDrawer}>
+          <CheckoutPage
+            formik={formik}
+            closeDrawer={closeDrawer}
+            prepaid={prepaid}
+          />
+        </Drawer>
+      )}
+    </>
   );
 };
 

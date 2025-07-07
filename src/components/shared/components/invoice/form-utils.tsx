@@ -71,8 +71,19 @@ export const statusOptions = [
   },
 ];
 
+export const orderStatusOptions = [
+  {
+    value: "paid",
+    label: "Paid",
+  },
+  {
+    value: "pending",
+    label: "Pending",
+  },
+];
+
 export function renderOptionDisplayValue(value: string) {
-  switch (value.toLowerCase()) {
+  switch (value?.toLowerCase()) {
     case "pending":
       return (
         <div className="flex items-center">

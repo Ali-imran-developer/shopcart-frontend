@@ -13,19 +13,23 @@ export function FilterDrawerView({
   drawerTitle,
   setOpenDrawer,
   children,
+  isLoading,
+  onFilterApply,
 }: React.PropsWithChildren<{
   drawerTitle?: string;
   hasSearched?: boolean;
   setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>;
   isOpen?: boolean;
+  isLoading?: boolean;
+  onFilterApply?: any;
 }>) {
   return (
     <Drawer
-      size="sm"
+      // size="sm"
       isOpen={isOpen ?? false}
       onClose={() => setOpenDrawer(false)}
       overlayClassName="dark:bg-opacity-40 dark:backdrop-blur-md"
-      containerClassName="dark:bg-gray-100"
+      containerClassName="dark:bg-gray-100 w-[300px]"
       className="z-[9999]"
     >
       <div className="flex h-full flex-col p-5">
@@ -48,7 +52,11 @@ export function FilterDrawerView({
         </div>
         <Button
           size="lg"
-          onClick={() => setOpenDrawer(false)}
+          isLoading={isLoading}
+          onClick={() => {
+            setOpenDrawer(false);
+            onFilterApply();
+          }}
           className="mt-5 h-11 w-full text-sm"
         >
           Show Results

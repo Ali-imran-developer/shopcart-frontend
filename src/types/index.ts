@@ -177,3 +177,10 @@ export type CreateRoles = {
   name: string;
   permissions: string[];
 };
+
+export type ParamsType = {
+  payment: string;
+  page: number;
+  limit: number;
+  status: string;
+};

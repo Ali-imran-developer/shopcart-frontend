@@ -360,9 +360,9 @@ export const bookedOrdersColumns = ({ expandedRowId }: any) => {
             <img
               src={image}
               alt={courierName}
-              className="w-10 h-10 rounded-md"
+              className="w-12 h-12 rounded-md"
             />
-            <Text className="font-semibold">{courierName}</Text>
+            {/* <Text className="font-semibold">{courierName}</Text> */}
           </Flex>
         );
       },

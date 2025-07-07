@@ -1,18 +1,19 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CALLBACK_STATUS } from "../config/enums";
 import { useAppDispatch } from "./store-hook";
 import toast from "react-hot-toast";
 import OrdersController from "@/controllers/ordersController";
 import { setBookedOrders, setDashboardData, setOrders } from "@/store/slices/ordersSlice";
+import { ParamsType } from "@/types";
 
-export const useOrders = () => {
+export const useOrders: any = (queryParams: ParamsType) => {
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGetOrders = useCallback(async () => {
     try {
       setIsLoading(true);
-      const data: any = await OrdersController.getAllOrders();
+      const data: any = await OrdersController.getAllOrders(queryParams);
       dispatch(setOrders(data));
       return data;
     } catch (error: any) {
@@ -21,7 +22,13 @@ export const useOrders = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [queryParams]);
+
+  useEffect(() => {
+    if (queryParams?.status || queryParams?.page || queryParams?.limit || queryParams?.payment){
+      handleGetOrders();
+    }
+  }, [queryParams?.status, queryParams?.page, queryParams?.limit, queryParams?.payment]);
 
   const handleAddOrders = useCallback(
     async (values: any, callback: (status: any, value: any) => void) => {
@@ -65,7 +72,7 @@ export const useOrders = () => {
     try {
       const data: any = await OrdersController.orderDelete(id);
       toast.success(data?.response ?? "Product Delete Successfully");
-      await handleGetOrders();
+      // await handleGetOrders();
     } catch (error) {
       console.log("@Error", error);
     }
