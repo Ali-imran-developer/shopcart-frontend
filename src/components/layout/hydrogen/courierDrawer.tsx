@@ -18,7 +18,9 @@ export default function CourierDrawer({
       className="w-60"
     >
       <div className="w-60 !important">
-        <Sidebar />
+        <Sidebar setSidebarOpen={function (val: boolean): void {
+          throw new Error("Function not implemented.");
+        } } />
       </div>
     </Drawer>
   );

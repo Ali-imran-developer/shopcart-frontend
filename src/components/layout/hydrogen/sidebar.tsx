@@ -4,7 +4,7 @@ import { SidebarMenu } from "./sidebar-menu";
 import { Link } from "react-router-dom";
 import WorkSpaceSwitcher from "../carbon/work-space-switcher";
 
-export default function Sidebar({ className, setSidebarOpen }: { setSidebarOpen: (val: boolean) => void; className?: string}) {
+export default function Sidebar({ className, setSidebarOpen }: any) {
   return (
     <aside
       className={cn(

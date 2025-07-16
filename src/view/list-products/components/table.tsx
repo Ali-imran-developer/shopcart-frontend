@@ -4,7 +4,6 @@ import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import TablePagination from "@shared/components/table/pagination";
 import { ListForResaleColumns, ListedForResaleColumns } from "./columns";
 import TableFooter from "./footer";
-import ListDrawer from "./drawer";
 import { TabList } from "@/components/shared/tabs";
 import { TableVariantProps } from "rizzui";
 import { useNavigate } from "react-router-dom";

@@ -5,7 +5,7 @@ import WorkSpaceSwitcher from "@layouts/carbon/work-space-switcher";
 import { SidebarMenu } from "../hydrogen/sidebar-menu";
 import { Link } from "react-router-dom";
 
-export function CarbonDrawerSidebar({ className }: { className?: string }) {
+export function CarbonDrawerSidebar({ className, setSidebarOpen }: any) {
   return (
     <aside
       className={cn(
@@ -24,7 +24,7 @@ export function CarbonDrawerSidebar({ className }: { className?: string }) {
       </div>
 
       <SimpleBar className="h-[calc(100%-144px)]">
-        <SidebarMenu />
+        <SidebarMenu setSidebarOpen={setSidebarOpen} />
       </SimpleBar>
 
       <div className="relative bg-gray-0 px-6 pb-3 pt-1 dark:bg-gray-100">
