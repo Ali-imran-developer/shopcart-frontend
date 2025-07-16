@@ -1,8 +1,11 @@
 import { apiRequest } from "./apiController";
 
 class categoriesController {
-  static fetchAllCategory() {
-    return apiRequest("get", "/api/categories/get");
+  static fetchAllCategory(queryParams: any) {
+    return apiRequest("get", `/api/categories/get?page=${queryParams?.page}&limit=${queryParams?.limit}`);
+  }
+  static getPublicCategory(queryParams: any) {
+    return apiRequest("get", `/api/categories/get/public?page=${queryParams?.page}&limit=${queryParams?.limit}`);
   }
   static addNewCategory(data: any) {
     return apiRequest("post", "/api/categories/create", data);

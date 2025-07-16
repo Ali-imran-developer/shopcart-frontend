@@ -10,8 +10,7 @@ import { useState } from "react";
 import SidebarDrawer from "./courierDrawer";
 import CartIcon from "@/components/shared/components/icons/carticon";
 
-export default function Header() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+export default function Header({sidebarOpen, setSidebarOpen}: any) {
 
   const handleDrawerClose = () => {
     setSidebarOpen(false);

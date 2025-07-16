@@ -3,7 +3,7 @@ import { CALLBACK_STATUS } from "../config/enums";
 import { useAppDispatch } from "./store-hook";
 import toast from "react-hot-toast";
 import OrdersController from "@/controllers/ordersController";
-import { setBookedOrders, setDashboardData, setOrders } from "@/store/slices/ordersSlice";
+import { setBookedOrders, setDashboardData, setOrders, setPaymentData } from "@/store/slices/ordersSlice";
 import { ParamsType } from "@/types";
 
 export const useOrders: any = (queryParams: ParamsType) => {
@@ -78,6 +78,20 @@ export const useOrders: any = (queryParams: ParamsType) => {
     }
   }, []);
 
+  const getPayments = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data = await OrdersController.paymentData(queryParams);
+      dispatch(setPaymentData(data));
+      return data;
+    } catch (error: any) {
+      console.log("@Error", error);
+      toast.error(error?.message);
+    } finally{
+      setIsLoading(false);
+    }
+  }, []);
+
   const handleUpdateDispatchStatus = useCallback(
     async (id: String, status: any, callback: (status: any, value: any) => void
     ) => {
@@ -111,6 +125,7 @@ export const useOrders: any = (queryParams: ParamsType) => {
       try {
         const response: any = await OrdersController.orderBooking(values);
         response && dispatch(setBookedOrders(response));
+        await OrdersController.getAllOrders(queryParams);
         callback && callback(CALLBACK_STATUS.SUCCESS, response);
       } catch (error) {
         callback && callback(CALLBACK_STATUS.ERROR, error);
@@ -135,6 +150,7 @@ export const useOrders: any = (queryParams: ParamsType) => {
 
   return {
     isLoading,
+    getPayments,
     handleGetOrders,
     handleAddOrders,
     handleDeleteOrders,

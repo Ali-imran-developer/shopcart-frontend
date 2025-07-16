@@ -62,8 +62,8 @@ export const SalesChannelColumns = ({ navigate }: any) => {
       enableSorting: false,
       header: "Total Products",
       cell: ({ row }) => (
-        <Text className="font-medium text-gray-700 text-center">
-          {row?.original?.totalProducts ?? 0}
+        <Text className="font-semibold">
+          {row?.original?.totalProducts ?? 0} Products
         </Text>
       ),
     }),
@@ -73,8 +73,8 @@ export const SalesChannelColumns = ({ navigate }: any) => {
       enableSorting: false,
       header: "Total Orders",
       cell: ({ row }) => (
-        <Text className="font-medium text-gray-700 text-center">
-          {row?.original?.totalOrders ?? 0}
+        <Text className="font-semibold">
+          {row?.original?.totalOrders ?? 0} Orders
         </Text>
       ),
     }),
@@ -83,8 +83,8 @@ export const SalesChannelColumns = ({ navigate }: any) => {
       size: 100,
       header: "Total Customers",
       cell: ({ row }) => (
-        <Text className="text-center font-semibold">
-          {row?.original?.totalCustomers ?? 0}
+        <Text className="font-semibold">
+          {row?.original?.totalCustomers ?? 0} Customers
         </Text>
       ),
     }),

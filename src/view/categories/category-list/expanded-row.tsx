@@ -1,24 +1,10 @@
-import DeletePopover from "@/components/shared/components/table/delete-popover";
-import { useCategories } from "@/hooks/categories";
-import { ensureArray } from "@/utils/helperFunctions/formater-helper";
-import toast from "react-hot-toast";
 import { Avatar, Text } from "rizzui";
+import { ensureArray } from "@/utils/helperFunctions/formater-helper";
+import DeletePopover from "@/components/shared/components/table/delete-popover";
 
-const CustomExpandedComponent = ({ row }: any) => {
+const CustomExpandedComponent = ({ row, handleDeleteSubCategory }: any) => {
   const selectedRow = row?.original;
-  const { handleDeleteSubCategory, handleGetCategories } = useCategories();
   const selectedSubCategories = ensureArray(selectedRow?.subCategory);
-
-  const handleSubCategoryDelete = async (sub: any) => {
-    try {
-      await handleDeleteSubCategory(selectedRow._id, sub._id,);
-      toast.success("Subcategory deleted successfully");
-      await handleGetCategories();
-    } catch (error: any) {
-      toast.error("Error deleting subcategory");
-      console.error("Subcategory delete error:", error);
-    }
-  };
 
   return (
     <div className="py-4 ps-[180px]">
@@ -38,7 +24,7 @@ const CustomExpandedComponent = ({ row }: any) => {
             </div>
             <DeletePopover
               description="Are u really want to delete this subCategory!"
-              onDelete={() => handleSubCategoryDelete(sub)}
+              onDelete={() => handleDeleteSubCategory(selectedRow?._id, sub?._id,)}
             />
           </div>
         ))

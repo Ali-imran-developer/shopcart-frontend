@@ -1,5 +1,5 @@
 import { routes } from "@config/routes";
-import { PiHouse, PiBasket, PiSquaresFour, PiUsers, PiGearSix, PiMoney } from "react-icons/pi";
+import { PiHouse, PiBasket, PiSquaresFour, PiUsers, PiGearSix, PiMoney, PiSpotifyLogo, PiSquareHalfBottom, PiSpeedometer, PiSpeakerHigh, PiSkipBackCircle, PiShuffleSimple, PiShoppingCartThin, PiShoppingCart, PiAirplane, PiAlignRight } from "react-icons/pi";
 
 export const menuItems = [
   {
@@ -36,28 +36,48 @@ export const menuItems = [
     ],
   },
   {
+    name: "Resale",
+    href: "#",
+    icon: <PiShoppingCart className="w-5 h-5"/>,
+    dropdownItems: [
+      { name: "List Poducts", href: routes.resale.listPoducts },
+      // { name: "Reselling Orders", href: routes.resale.resellingOrders },
+      // { name: "My Resellers", href: routes.resale.myResellers },
+    ],
+  },
+  {
+    name: "MarketPlace",
+    href: "#",
+    icon: <PiAlignRight className="w-5 h-5"/>,
+    dropdownItems: [
+      { name: "ShowCase", href: routes.marketPlace.showCase },
+      // { name: "My Listing", href: routes.marketPlace.myListing },
+      // { name: "My Orders", href: routes.marketPlace.myOrders },
+    ],
+  },
+  {
     name: "Payments",
     href: "#",
     icon: <PiMoney className="w-5 h-5"/>,
     dropdownItems: [
       { name: "Dashboard", href: routes.payments.dashboard },
-      {
-        name: "History",
-        href: "",
-        dropdownItems: [
-          {
-            name: "View Details",
-            href: "View Details",
-            dropdownItems: [
-              {
-                name: "Print",
-                href: routes.payments.history.viewDetails.print,
-              },
-            ],
-          },
-          { name: "Dispute", href: routes.payments.history.dispute },
-        ],
-      },
+      // {
+      //   name: "History",
+      //   href: "",
+      //   dropdownItems: [
+      //     {
+      //       name: "View Details",
+      //       href: "View Details",
+      //       dropdownItems: [
+      //         {
+      //           name: "Print",
+      //           href: routes.payments.history.viewDetails.print,
+      //         },
+      //       ],
+      //     },
+      //     { name: "Dispute", href: routes.payments.history.dispute },
+      //   ],
+      // },
     ],
   },
   {

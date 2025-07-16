@@ -3,6 +3,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ActionIcon, Avatar, Checkbox, Flex, Text, Tooltip } from "rizzui";
 import DeletePopover from "@/components/shared/components/table/delete-popover";
 import DateCell from "@/components/ui/date-cell";
+import { getStatusBadge } from "@/components/shared/components/table-utils/get-status-badge";
 
 const columnHelper = createColumnHelper<any>();
 export const productsListColumns = [
@@ -28,7 +29,7 @@ export const productsListColumns = [
   }),
   columnHelper.display({
     id: "name",
-    size: 150,
+    size: 250,
     header: "Name",
     cell: ({ row }) => {
       return (
@@ -37,7 +38,9 @@ export const productsListColumns = [
             name={row?.original?.name ?? ""}
             src={row?.original?.image ?? ""}
           />
-          <Text className="text-sm">{row?.original?.name ?? ""}</Text>
+          <Text className="text-sm font-semibold">
+            {row?.original?.name ?? ""}
+          </Text>
         </Flex>
       );
     },
@@ -56,18 +59,7 @@ export const productsListColumns = [
       const rawHTML = row?.original?.description || "";
       const plainText = rawHTML.replace(/<[^>]+>/g, "");
       return (
-        <div
-          className="font-semibold overflow-hidden overflow-ellipsis"
-          style={{
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            lineHeight: "1.2",
-            maxHeight: "2.4em",
-          }}
-        >
-          {plainText}
-        </div>
+        <div className="font-semibold truncate line-clamp-1">{plainText}</div>
       );
     },
   }),
@@ -85,27 +77,25 @@ export const productsListColumns = [
   }),
   columnHelper.display({
     id: "price",
-    size: 120,
+    size: 70,
     header: "Price",
     cell: ({ row }) => (
-      <Text className="font-semibold">{row?.original?.price ?? ""}</Text>
+      <Text className="font-semibold ms-3">{row?.original?.price ?? ""}</Text>
     ),
   }),
   columnHelper.display({
     id: "stock",
-    size: 120,
+    size: 70,
     header: "Stock",
     cell: ({ row }) => (
-      <Text className="font-semibold">{row?.original?.stock ?? ""}</Text>
+      <Text className="font-semibold ms-3">{row?.original?.stock ?? ""}</Text>
     ),
   }),
   columnHelper.display({
-    id: "available",
-    size: 70,
-    header: "Available",
-    cell: ({ row }) => (
-      <Text className="font-semibold">{row?.original?.available ?? ""}</Text>
-    ),
+    id: "status",
+    size: 100,
+    header: "Status",
+    cell: ({ row }) => getStatusBadge(row?.original?.status),
   }),
   columnHelper.display({
     id: "action",

@@ -10,8 +10,8 @@ class ShipperInfoController {
   static editShipperInfo(payload: any, id: String) {
     return apiRequest("put", `/api/shipperinfo/update/${id}`, payload);
   }
-  static getAllShipperInfo() {
-    return apiRequest("get", `/api/shipperinfo/get`);
+  static getAllShipperInfo(queryParams: any) {
+    return apiRequest("get", `/api/shipperinfo/get?page=${queryParams?.page}&limit=${queryParams?.limit}`);
   }
 }
 

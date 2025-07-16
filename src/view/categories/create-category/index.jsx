@@ -8,11 +8,6 @@ import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import { useNavigate } from "react-router-dom";
 import { routes } from "@/config/routes";
 import { PiX } from "react-icons/pi";
-// import {
-//   addNewCategory,
-//   editCategory,
-// } from "@/store/slices/categoriesSlice";
-// import FormGroup from "@/components/shared/form-group";
 import cn from "@/utils/helperFunctions/class-names";
 import { useCategories } from "@/hooks/categories";
 
@@ -34,9 +29,8 @@ function FormGroup({ title, className, description, children }) {
 
 const CreateCategory = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [isLoading, setLoading] = useState(false);
-  const { handleGetCategories, handleAddCategory, handleEditCategory } = useCategories();
+  const { handleAddCategory, handleEditCategory } = useCategories();
   const { data } = useAppSelector((state) => state.Categories);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryId, setCategoryId] = useState(null);
@@ -52,11 +46,6 @@ const CreateCategory = () => {
     description: "",
     status: "active",
   };
-
-  useEffect(() => {
-    handleGetCategories();
-
-  }, []);
 
   const formik = useFormik({
     initialValues,
@@ -78,15 +67,8 @@ const CreateCategory = () => {
             name,
             categoryId: selectedCategory?._id,
           }));
-          const payload = {
-            name: selectedCategory?.name,
-            subCategory: finalSubCategories,
-          };
-          console.log("selectedCategory?._id", selectedCategory?._id);
-          console.log("payload", payload);
+          const payload = { name: selectedCategory?.name, subCategory: finalSubCategories };
           await handleEditCategory(payload, selectedCategory?._id);
-          toast.success("Subcategories added successfully!");
-          navigate(routes?.products?.categories);
         } catch (error) {
           toast.error(error?.message || "Failed to add subcategory.");
         } finally {
@@ -108,8 +90,6 @@ const CreateCategory = () => {
             status: formik?.values?.status,
           };
           await handleAddCategory(payload);
-          toast.success("Category created successfully!");
-          navigate(routes?.products?.categories);
         } catch (error) {
           toast.error(error?.message || "Failed to create category.");
         } finally {
@@ -121,10 +101,10 @@ const CreateCategory = () => {
   });
 
   const handleRemoveSubCategory = (name) => {
-    setTempSubCategories(tempSubCategories.filter((sub) => sub !== name));
+    setTempSubCategories(ensureArray(tempSubCategories)?.filter((sub) => sub !== name));
   };
 
-  const categoryOptions = ensureArray(data)?.map((cat) => ({
+  const categoryOptions = ensureArray(data?.categories)?.map((cat) => ({
     value: cat,
     label: cat?.name,
   }));

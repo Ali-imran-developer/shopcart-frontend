@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CollapseProvider, CustomCollapse } from "../collapse";
 
-export function SidebarMenu() {
+export function SidebarMenu({ setSidebarOpen }: { setSidebarOpen: (val: boolean) => void}) {
   const { pathname } = useLocation();
   const [activeDropdown, setActiveDropdown] = useState(null);
 
@@ -89,8 +89,9 @@ export function SidebarMenu() {
         <Link
           to={item.href}
           key={item.name + index}
+          onClick={() => setSidebarOpen(false)}
           className={cn(
-            "flex items-center justify-between rounded-md px-3 py-2 font-medium capitalize transition-all duration-200 hover:bg-gray-100 mx-3.5 2xl:mx-5",
+            "flex items-center justify-between rounded-md px-3 py-2 font-medium capitalize transition-all duration-300  ease-in-out hover:bg-gray-100 mx-3.5 2xl:mx-5",
             isActive
               ? "text-primary"
               : level > 0

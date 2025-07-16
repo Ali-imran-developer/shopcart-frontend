@@ -14,7 +14,14 @@ const App = () => {
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route element={<TokenProtectedRoutes />}>
-            {mapRoutes(getRoutes("tokenProtected"))}
+            <Route element={<HydrogenLayout />}>
+              {mapRoutes(
+                getRoutes("tokenProtected").filter((route) => route.sidebar)
+              )}
+            </Route>
+            {mapRoutes(
+              getRoutes("tokenProtected").filter((route) => !route.sidebar)
+            )}
           </Route>
           <Route element={<PublicRoute />}>
             {mapRoutes(getRoutes("unprotected"))}
@@ -28,19 +35,7 @@ const App = () => {
 
 const mapRoutes = (routes: IRoute[]): JSX.Element[] =>
   routes.map((route, key) => (
-    <Route
-      key={key}
-      path={route.route}
-      element={
-        route.sidebar ? (
-          <HydrogenLayout>
-            <route.component />
-          </HydrogenLayout>
-        ) : (
-          <route.component />
-        )
-      }
-    />
+    <Route key={key} path={route.route} element={<route.component />} />
   ));
 
 export default App;

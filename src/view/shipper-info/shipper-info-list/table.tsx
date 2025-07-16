@@ -4,11 +4,13 @@ import { useTanStackTable } from "@shared/components/table/custom/use-TanStack-T
 import TablePagination from "@shared/components/table/pagination";
 import { TableVariantProps } from "rizzui";
 import cn from "@/utils/helperFunctions/class-names";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import TableFooter from "@/components/shared/components/table/footer";
 import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import { useNavigate } from "react-router-dom";
 import { useShipperData } from "@/hooks/shipper-hook";
+import { useAppSelector } from "@/hooks/store-hook";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 export interface ShipperInfoType {
   _id?: string;
@@ -32,16 +34,24 @@ export default function OrderTable({
   variant?: TableVariantProps;
 }) {
   const navigate = useNavigate();
-  const { fetchShippers, deleteShipper, shippers, isLoading } = useShipperData();
+  const { updateParams, params } = useQueryParams();
+  const { shipperData } = useAppSelector((state) => state.Shipper);
+  const queryParams = useMemo(() => {
+    return {
+      page: Number(params.get("page")) || 1,
+      limit: Number(params.get("limit")) || 10,
+    };
+  }, [params]);
+  const { deleteShipper, isLoading } = useShipperData(queryParams);
 
   const { table, setData } = useTanStackTable<any>({
-    tableData: ensureArray(shippers),
-    columnConfig: ShipperInfoColumn({ navigate, deleteShipper }),
+    tableData: ensureArray(shipperData?.shipper),
+    columnConfig: ShipperInfoColumn({ navigate }),
     options: {
       initialState: {
         pagination: {
           pageIndex: 0,
-          pageSize: 20,
+          pageSize: 10,
         },
         columnPinning: {
           left: ["expandedHandler"],
@@ -60,14 +70,9 @@ export default function OrderTable({
   });
 
   useEffect(() => {
-    fetchShippers();
+    setData(ensureArray(shipperData?.shipper));
 
-  },[]);
-
-  useEffect(() => {
-    setData(ensureArray(shippers));
-
-  }, [shippers]);
+  }, [shipperData?.shipper]);
 
   return (
     <>
@@ -83,7 +88,13 @@ export default function OrderTable({
           }}
         />
         <TableFooter table={table} />
-        {/* {!hidePagination && <TablePagination table={table} className="py-4" />} */}
+        <TablePagination
+          table={table}
+          currentPage={queryParams?.page}
+          totalPages={Math?.ceil(shipperData?.totalShippers / queryParams?.limit) ?? 0}
+          updateParams={updateParams}
+          className={cn("py-4")}
+        />
       </div>
     </>
   );

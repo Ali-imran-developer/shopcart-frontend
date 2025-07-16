@@ -3,7 +3,7 @@ import { useTanStackTable } from "@shared/components/table/custom/use-TanStack-T
 import TablePagination from "@shared/components/table/pagination";
 import cn from "@/utils/helperFunctions/class-names";
 import { useAppSelector } from "@/hooks/store-hook";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import TableFooter from "@/components/shared/components/table/footer";
 import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ import { Checkbox, Flex, Text } from "rizzui";
 import { formatNumberWithCommas } from "@/utils/helperFunctions/format-number";
 import { routes } from "@/config/routes";
 import { useOrders } from "@/hooks/order-hook";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 const columnHelper = createColumnHelper();
 export const ordersColumns = () => {
@@ -114,7 +115,18 @@ export default function OrderTable({
   hidePagination = false,
 }) {
   const { orderData } = useAppSelector((state) => state.Orders);
-  const { handleGetOrders, isLoading } = useOrders();
+  const { updateParams, params } = useQueryParams();
+
+  const queryParams = useMemo(() => {
+    return {
+      payment: params.get("payment") || "",
+      page: Number(params.get("page")) || 1,
+      limit: Number(params.get("limit")) || 10,
+      status: params.get("status") || "open",
+    };
+  }, [params]);
+
+  const { isLoading } = useOrders(queryParams);
 
   const { table, setData } = useTanStackTable({
     tableData: ensureArray(orderData?.orders),
@@ -123,7 +135,7 @@ export default function OrderTable({
       initialState: {
         pagination: {
           pageIndex: 0,
-          pageSize: 20,
+          pageSize: 10,
         },
         columnPinning: {
           left: ["expandedHandler"],
@@ -144,23 +156,13 @@ export default function OrderTable({
   });
 
   useEffect(() => {
-    handleGetOrders();
-
-  }, []);
-
-  useEffect(() => {
     setData(ensureArray(orderData?.orders));
 
   }, [orderData?.orders]);
 
   return (
     <>
-      <div
-        className={cn(
-          "rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 px-4 py-2",
-          className
-        )}
-      >
+      <div className={cn("rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 px-4 py-2", className)}>
         <Table
           table={table}
           variant={variant}
@@ -168,12 +170,18 @@ export default function OrderTable({
           isLoading={isLoading}
           data={ensureArray(orderData?.orders)}
           classNames={{
-            container: "border border-muted rounded-md border-t-0 mt-4",
+            container: "border border-muted rounded-md border-t-0 mt-4 max-h-[400px] overflow-y-auto",
             rowClassName: "last:border-0",
           }}
         />
         <TableFooter table={table} />
-        {!hidePagination && <TablePagination table={table} className="py-4" />}
+        <TablePagination
+          table={table}
+          currentPage={queryParams?.page}
+          totalPages={Math?.ceil(orderData?.totalOrders / queryParams?.limit) ?? 0}
+          updateParams={updateParams}
+          className={cn("py-4")}
+        />
       </div>
     </>
   );

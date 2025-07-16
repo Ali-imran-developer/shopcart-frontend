@@ -7,7 +7,7 @@ import { useShipperData } from "@/hooks/shipper-hook";
 
 const columnHelper = createColumnHelper<any>();
 
-export const ShipperInfoColumn = ({ navigate, deleteShipper }: any) => {
+export const ShipperInfoColumn = ({ navigate }: any) => {
   const handleEditAddress = (address: any) => {
     navigate(`/add-shipper-info`, {
       state: { address, shipperInfo: "edit" },

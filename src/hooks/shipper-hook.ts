@@ -3,6 +3,8 @@ import toast from "react-hot-toast";
 import ShipperInfoController from "@/controllers/shipper-info";
 import { useNavigate } from "react-router-dom";
 import { routes } from "@/config/routes";
+import { useDispatch } from "react-redux";
+import { setShipper } from "@/store/slices/shipperSlice";
 
 interface ShipperInfoType {
   _id?: string;
@@ -15,7 +17,8 @@ interface ShipperInfoType {
   storeId: string;
 }
 
-export const useShipperData = () => {
+export const useShipperData = (queryParams?: any) => {
+  const dispatch = useDispatch();
   const [shippers, setShippers] = useState<ShipperInfoType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -23,7 +26,8 @@ export const useShipperData = () => {
   const fetchShippers = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await ShipperInfoController.getAllShipperInfo();
+      const response = await ShipperInfoController.getAllShipperInfo(queryParams);
+      dispatch(setShipper(response));
       setShippers(response?.shipper);
     } catch (error) {
       console.error("Error fetching shippers:", error);
@@ -31,7 +35,7 @@ export const useShipperData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [queryParams]);
 
   const addShipper = useCallback(async (values: ShipperInfoType, callback?: (status: string, value?: any) => void) => {
     try {
@@ -81,6 +85,12 @@ export const useShipperData = () => {
       setIsLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if(queryParams?.page || queryParams?.limit){
+      fetchShippers()
+    }
+  },[queryParams?.page, queryParams?.limit])
 
   return {
     shippers,

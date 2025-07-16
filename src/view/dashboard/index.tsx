@@ -22,12 +22,12 @@ export default function EcommerceDashboard() {
 
   useEffect(() => {
     handleDashboradStats();
+    
   }, []);
-
 
   return (
     <>
-    {/* <div className="@container">
+      {/* <div className="@container">
       <WelcomeBanner
         title={
           <>
@@ -59,26 +59,28 @@ export default function EcommerceDashboard() {
         </Link>
       </WelcomeBanner>
     </div> */}
-  
-    <div className="@container">
-      <div className="grid grid-cols-1 gap-6 @4xl:grid-cols-2 @7xl:grid-cols-12 3xl:gap-8">
-        <StatCards dashboardData={dashboardData} className="@2xl:grid-cols-3 @3xl:gap-6 @4xl:col-span-2 @7xl:col-span-8" />
 
-        <ProfitWidget className="h-[464px] @sm:h-[520px] @7xl:col-span-8 @7xl:col-start-12 @7xl:row-start-1 @7xl:row-end-3 @7xl:h-full" />
+      <div className="@container">
+        <div className="w-full space-y-4">
+          <StatCards dashboardData={dashboardData} className="grid grid-cols-1 lg:grid-cols-3" />
 
-        <SalesReport className="@4xl:col-span-1 @7xl:col-span-8" />
+          <div className="flex flex-col lg:flex-row gap-4">
+            <ProfitWidget className="w-full lg:w-1/2" />
+            <SalesReport className="w-full lg:w-1/2" />
+          </div>
 
-        <RecentOrder className="relative @4xl:col-span-2 @7xl:col-span-12" />
+          <RecentOrder className="relative @4xl:col-span-2 @7xl:col-span-12" />
 
-        <RepeatCustomerRate className="@4xl:col-span-2 @7xl:col-span-12 @[90rem]:col-span-8" />
+          <RepeatCustomerRate className="@4xl:col-span-2 @7xl:col-span-12 @[90rem]:col-span-8" />
 
-        <BestSellers dashboardData={dashboardData} className="@7xl:col-span-6 @[90rem]:col-span-4" />
+          <div className="flex flex-col lg:flex-row gap-4">
+            <BestSellers dashboardData={dashboardData} className="w-full lg:w-1/2" />
+            <UserLocation className="w-full lg:w-1/2" />
+          </div>
 
-        <UserLocation className="@7xl:col-span-6 @[90rem]:col-span-5 @[112rem]:col-span-4" />
-
-        {/* <StockReport className="@4xl:col-span-2 @7xl:col-span-12 @[90rem]:col-span-7 @[112rem]:col-span-8" /> */}
+          {/* <StockReport className="@4xl:col-span-2 @7xl:col-span-12 @[90rem]:col-span-7 @[112rem]:col-span-8" /> */}
+        </div>
       </div>
-    </div>
     </>
   );
 }

@@ -4,31 +4,40 @@ import TablePagination from "@components/shared/components/table/pagination";
 import { productsListColumns } from "./columns";
 import TableFooter from "@shared/components/table/footer";
 import cn from "@utils/helperFunctions/class-names";
-import { exportToCSV } from "@utils/helperFunctions/export-to-csv";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { ensureArray } from "@/utils/helperFunctions/formater-helper";
 import { useNavigate } from "react-router-dom";
 import { routes } from "@/config/routes";
 import { Input } from "rizzui";
 import { PiMagnifyingGlassBold } from "react-icons/pi";
 import { useAppSelector } from "@/hooks/store-hook";
-import { useProduct } from "@/hooks/product-hook";
 import toast from "react-hot-toast";
+import { TabList } from "@/components/shared/tabs";
+
+const filterOptions = [
+  {
+    value: "active",
+    label: "Active",
+  },
+  {
+    value: "inactive",
+    label: "In Active",
+  }
+];
 
 export default function ProductsTable({
-  pageSize = 5,
-  hideFilters = false,
-  hidePagination = false,
   hideFooter = false,
   className,
-  classNames = {
-    container: "border border-muted rounded-md",
-    rowClassName: "last:border-0",
-  },
-  paginationClassName,
+  page,
+  limit,
+  isLoading,
+  activeTab,
+  setActiveTab,
+  updateParams,
+  handleDeleteProducts,
 }) {
   const navigate = useNavigate();
-  const { handleGetProducts, handleDeleteProducts, isLoading } = useProduct();
+  const [selectedStatus, setSelectedStatus] = useState({});
   const { data } = useAppSelector((state) => state.Products);
 
   const { table, setData } = useTanStackTable({
@@ -38,7 +47,7 @@ export default function ProductsTable({
       initialState: {
         pagination: {
           pageIndex: 0,
-          pageSize: pageSize,
+          pageSize: 10,
         },
       },
       meta: {
@@ -62,22 +71,29 @@ export default function ProductsTable({
   });
 
   useEffect(() => {
-    handleGetProducts();
-  }, []);
-
-  useEffect(() => {
     setData(ensureArray(data?.products));
+
   }, [data?.products]);
+
+  const selectTab = (nextTab) => {
+    startTransition(() => {
+      setActiveTab(nextTab);
+    });
+    updateParams({ status: nextTab, page: 1 });
+  };
 
   return (
     <>
-      <div
-        className={cn(
-          "rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 px-4 py-2",
-          className
-        )}
-      >
-        <div className="flex items-end justify-end mb-4">
+      <div className={cn("rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 px-4 py-2", className)}>
+        <div className="flex items-center justify-between mb-2">
+          <TabList
+            setSelectedStatus={setSelectedStatus}
+            tabs={filterOptions}
+            setActiveTab={setActiveTab}
+            activeTab={activeTab}
+            selectTab={selectTab}
+            className="ms-2"
+          />
           <Input
             type="search"
             clearable={true}
@@ -100,13 +116,14 @@ export default function ProductsTable({
             rowClassName: "last:border-0",
           }}
         />
-        {!hideFooter && <TableFooter table={table} isLoading={""} />}
-        {!hidePagination && (
-          <TablePagination
-            table={table}
-            className={cn("py-4", paginationClassName)}
-          />
-        )}
+        <TableFooter table={table} buttons={selectedStatus} />
+        <TablePagination
+          table={table}
+          currentPage={page}
+          totalPages={Math?.ceil(data?.totalProducts / limit) ?? 0}
+          updateParams={updateParams}
+          className={cn("py-4")}
+        />
       </div>
     </>
   );

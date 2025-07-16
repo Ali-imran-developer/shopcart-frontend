@@ -37,10 +37,8 @@ const CourierMethods = [
 
 const columnHelper = createColumnHelper<OrderRow>();
 export const confirmOrdersColumns = ({
-  formik,
-  navigate,
+  ordersData,
   expandedRowId,
-  dispatch,
   selectedCouriers,
   setSelectedMethod,
   setSelectedCouriers,
@@ -132,17 +130,21 @@ export const confirmOrdersColumns = ({
       header: "Courier",
       size: 140,
       enableSorting: false,
-      cell: ({ row }) => {
-        const courierData = ensureArray(row?.original?.courierInfo);
-        const courierOptions = ensureArray(courierData)?.map((item: any) => ({
+      cell: ({ row, table: {options: { meta }}}) => {
+        const courierOptions = ensureArray(row?.original?.courierInfo)?.map((item: any) => ({
           value: item.courierId,
           label: item.courierName,
         }));
+        // const selectedCourier = courierOptions?.find((item) => {
+        //   const match = row?.original?.courierInfo?.find((c: any) => c?.courierId === item.value);
+        //   return match?.defaultCourier;
+        // });
         return (
           <StatusSelect
             placeholder="Select Courier"
-            onChange={(val) => setSelectedCouriers(val)}
+            onChange={(value) => setSelectedCouriers(value)}
             options={courierOptions}
+            // displayValue={(option: { label: string }) => option?.label}
           />
         );
       },

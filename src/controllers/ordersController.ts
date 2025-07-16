@@ -29,6 +29,9 @@ class OrdersController {
   static dashboradData() {
     return apiRequest("get", "/api/orders/dashboard-stats");
   }
+  static paymentData(queryParams: any) {
+    return apiRequest("get", `/api/orders/payments/get?page=${queryParams?.page}&limit=${queryParams?.limit}`);
+  }
 }
 
 export default OrdersController;

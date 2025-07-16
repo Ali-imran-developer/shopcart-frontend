@@ -1,103 +1,25 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-const BASE_URL = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface FormValues {
-  locationName?: string;
-  city?: string;
-  storeName?: string;
-  phoneNumber?: string;
-  address?: string;
-  returnAddress?: string;
-}
-
-interface EditFormValues {
-  formData?: FormValues;
-  id?: string;
-}
-
-const initialState = {
-  isLoading: false,
-  shipperList: [],
+type initialStateType = {
+  shipperData: any;
+  isDataLoaded: boolean;
 };
 
-export const addNewShipper = createAsyncThunk(
-  "/shipperinfo/create",
-  async (formData: FormValues) => {
-    const result = await axios.post(
-      `${BASE_URL}/api/shipperinfo/create`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
-    return result?.data;
-  }
-);
+const initialState: initialStateType = {
+  shipperData: null,
+  isDataLoaded: false,
+};
 
-export const fetchAllShipper = createAsyncThunk(
-  "/shipperinfo/get",
-  async () => {
-    const result = await axios.get(
-      `${BASE_URL}/api/shipperinfo/get`,
-      {
-        withCredentials: true,
-      }
-    );
-    return result?.data;
-  }
-);
-
-export const editShipper = createAsyncThunk(
-  "/shipperinfo/update",
-  async ({ id, formData }: EditFormValues) => {
-    const result = await axios.put(
-      `${BASE_URL}/api/shipperinfo/update/${id}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
-    return result?.data;
-  }
-);
-
-export const deleteShipper = createAsyncThunk(
-  "/shipperinfo/delete",
-  async (id: string) => {
-    const result = await axios.delete(
-      `${BASE_URL}/api/shipperinfo/delete/${id}`, {
-        withCredentials: true,
-      }
-    );
-    return result?.data;
-  }
-);
-
-const ShipperSlice = createSlice({
-  name: "ShipperInfo",
+export const ShipperSlice = createSlice({
+  name: "ShipperSlice",
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchAllShipper.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(fetchAllShipper.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.shipperList = action.payload.shipper ?? [];
-      })
-      .addCase(fetchAllShipper.rejected, (state) => {
-        state.isLoading = false;
-        state.shipperList = [];
-      });
+  reducers: {
+    setShipper: (state, action: PayloadAction<any>) => {
+      state.shipperData = action.payload;
+      state.isDataLoaded = true;
+    },
   },
 });
 
+export const { setShipper } = ShipperSlice.actions;
 export default ShipperSlice.reducer;

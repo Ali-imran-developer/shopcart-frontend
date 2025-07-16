@@ -43,31 +43,14 @@ export default function ConfirmOrdersPage() {
     };
   }, [params, activeTab]);
 
-  const { isLoading } = useOrders(queryParams);
+  const { isLoading, handleOrdersBooking, handleUpdateDispatchStatus } = useOrders(queryParams);
   const handleFilterApply = () => {
     updateParams({ payment: paymentStatus, page: 1 });
   };
 
   return (
     <>
-      <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton
-            data={[]}
-            fileName="order_data"
-            header="Order ID,Name,Email,Avatar,Items,Price,Status,Created At,Updated At"
-          />
-          <Link
-            to={isOrderData ? "/load-sheets" : "#"}
-            className="w-full @lg:w-auto"
-          >
-            <Button as="span" className="@lg:w-auto" disabled={!isOrderData}>
-              <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
-              Create LoadSheet
-            </Button>
-          </Link>
-        </div>
-      </PageHeader>
+      <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}/>
       <div className="flex flex-col gap-5 @container 2xl:gap-x-6 2xl:gap-y-7 3xl:gap-8">
         <OrdersTable
           isLoading={isLoading}
@@ -80,6 +63,8 @@ export default function ConfirmOrdersPage() {
           setPaymentStatus={setPaymentStatus}
           onFilterApply={handleFilterApply}
           onDataChange={setIsOrderData}
+          bookingOrder={handleOrdersBooking}
+          dispatchOrder={handleUpdateDispatchStatus}
         />
       </div>
     </>

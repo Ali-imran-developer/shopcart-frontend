@@ -5,6 +5,7 @@ type initialStateType = {
     orders: any[];
     totalOrders: number;
   };
+  paymentData?: any;
   dashboardData: any;
   bookedOrdersData: any
   isDataLoaded: boolean;
@@ -13,6 +14,7 @@ type initialStateType = {
 const initialState: initialStateType = {
   orderData: { orders: [], totalOrders: 0 },
   dashboardData: null,
+  paymentData: null,
   bookedOrdersData: null,
   isDataLoaded: false,
 };
@@ -30,9 +32,12 @@ export const OrderSlice = createSlice({
     },
     setDashboardData:(state, action: PayloadAction<any>) => {
       state.dashboardData = action.payload;
-    }, 
+    },
+    setPaymentData:(state, action: PayloadAction<any>) => {
+      state.paymentData = action.payload;
+    },
   },
 });
 
-export const { setOrders, setBookedOrders, setDashboardData } = OrderSlice.actions;
+export const { setOrders, setBookedOrders, setDashboardData, setPaymentData } = OrderSlice.actions;
 export default OrderSlice.reducer;

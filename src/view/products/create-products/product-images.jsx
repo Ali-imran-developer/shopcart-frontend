@@ -36,7 +36,6 @@ function ProductImageUpload({
     setImageFile(null);
     setUploadedImageUrl("");
     setUploadError(null);
-    // Clear the image field in formik
     if (formik) {
       formik.setFieldValue("image", "");
     }
@@ -49,13 +48,8 @@ function ProductImageUpload({
     try {
       setImageLoadingState(true);
       setUploadError(null);
-
-      // OPTION 1: Upload via your backend
       const data = new FormData();
       data.append("my_file", imageFile);
-
-      console.log("Uploading file:", imageFile.name);
-
       const response = await axios.post(
         `${BASE_URL}/api/products/upload-image`,
         data,
@@ -63,17 +57,11 @@ function ProductImageUpload({
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          // Add a longer timeout for larger files
-          timeout: 30000,
         }
       );
-
       if (response?.data?.success) {
         const cloudinaryUrl = response.data.result.url;
-        console.log("Upload successful:", cloudinaryUrl);
         setUploadedImageUrl(cloudinaryUrl);
-
-        // Update the formik field with the Cloudinary URL
         if (formik) {
           formik.setFieldValue("image", cloudinaryUrl);
         }
@@ -137,7 +125,7 @@ function ProductImageUpload({
                 <BsFile className="w-8 text-primary mr-2 h-8" />
               )}
             </div>
-            <p className="text-sm font-medium">
+            <p className="text-sm font-medium w-3/4 truncate line-clamp-2">
               {imageFile?.name || "Previously uploaded image"}
             </p>
             <Button

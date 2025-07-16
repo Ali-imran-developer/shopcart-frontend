@@ -1,6 +1,7 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import productReducer from "./productSlice";
+import resaleProductReducer from "./resaleSlice";
 import orderReducer from "./ordersSlice";
 import storeReducer from "./storeSlice";
 import courierReducer from "./courierSlice";
@@ -12,6 +13,7 @@ import shipperReducer from "./shipperSlice";
 const rootReducer = combineReducers({
   Auth: authReducer,
   Products: productReducer,
+  ResaleProducts: resaleProductReducer,
   Orders: orderReducer,
   Shipper: shipperReducer,
   Profile: profileReducer,

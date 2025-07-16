@@ -1,4 +1,4 @@
-import { Input, Select } from "rizzui";
+import { AdvancedRadio, Input, RadioGroup, Select } from "rizzui";
 import FormGroup from "@shared/form-group";
 import QuillEditor from "@components/ui/quill-editor";
 import cn from "@/utils/helperFunctions/class-names";
@@ -12,10 +12,12 @@ interface ProductSummaryProps {
   formik?: any;
 }
 
-export default function ProductSummary({
-  className,
-  formik,
-}: ProductSummaryProps) {
+const statusOptions = [
+  { value: "active", name: "Active" },
+  { value: "inactive", name: "In-Active" },
+];
+
+export default function ProductSummary({ className, formik }: ProductSummaryProps) {
   const { handleGetCategories } = useCategories();
   const [subCategoryOptions, setSubCategoryOptions] = useState<any>(null);
   const { data } = useAppSelector((state) => state.Categories);
@@ -110,6 +112,23 @@ export default function ProductSummary({
                 : undefined
             }
           />
+
+          <RadioGroup
+            value={formik?.values?.status}
+            setValue={(value) => formik?.setFieldValue("status", value)}
+            className="col-span-full grid gap-4 @2xl:grid-cols-3 @4xl:gap-6"
+          >
+            {ensureArray(statusOptions)?.map((item: any) => (
+              <AdvancedRadio
+                key={item?.value}
+                value={item?.value}
+                contentClassName="px-4 py-6 flex items-center justify-between"
+                inputClassName="[&~span]:border-0 [&~span]:ring-1 [&~span]:ring-gray-200"
+              >
+                <span>{item?.name}</span>
+              </AdvancedRadio>
+            ))}
+          </RadioGroup>
         </div>
       </div>
     </>

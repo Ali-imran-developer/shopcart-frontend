@@ -21,27 +21,13 @@ export interface FormValues {
 }
 
 const AddShipperInfo = () => {
-  const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useAppDispatch();
   const { maskRHFValue } = usePhoneNumberMask();
-  const params = useParams();
   const { addShipper, updateShipper, isLoading } = useShipperData();
 
   const editAddress = location?.state?.address;
 
-  const {
-    address: {
-      storeName = "",
-      phoneNumber = "",
-      locationName = "",
-      city = "",
-      returnAddress = "",
-      address = "",
-      // storeId = "",
-    } = {},
-    shipperInfo = "",
-  } = ensureObject(location?.state) || {};
+  const { address: { storeName = "", phoneNumber = "", locationName = "", city = "", returnAddress = "", address = "" } = {}, shipperInfo = ""} = ensureObject(location?.state) || {};
 
   const initialValues = {
     storeName: storeName ?? "",

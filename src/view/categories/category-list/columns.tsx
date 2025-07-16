@@ -1,24 +1,11 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { Avatar, Checkbox, Flex, Text } from "rizzui";
-import toast from "react-hot-toast";
 import DeletePopover from "@/components/shared/components/table/delete-popover";
 import DateCell from "@/components/ui/date-cell";
 import { getStatusBadge } from "@/components/shared/components/table-utils/get-status-badge";
-import { useCategories } from "@/hooks/categories";
 
 const columnHelper = createColumnHelper<any>();
 export const CategoriesColumns = () => {
-  const { handleDeleteCategory, handleGetCategories } = useCategories();
-  const removeCategories = async (val: any) => {
-    try {
-      await handleDeleteCategory(val._id);
-      toast.success("Category deleted successfully");
-      handleGetCategories();
-    } catch (error: any) {
-      toast.error(error.message || "Error deleting category");
-      console.error("Delete error:", error);
-    }
-  };
 
   const columns = [
     columnHelper.display({
@@ -107,10 +94,10 @@ export const CategoriesColumns = () => {
     columnHelper.display({
       id: "actions",
       size: 50,
-      cell: ({ row }) => (
+      cell: ({ row, table: { options: { meta } } }) => (
         <>
           <DeletePopover
-            onDelete={() => removeCategories(row?.original)}
+            onDelete={() => meta?.handleDeleteRow && meta?.handleDeleteRow(row?.original)}
             description="Are u really want to delete this category!"
           />
         </>

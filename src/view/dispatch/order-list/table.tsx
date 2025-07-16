@@ -27,6 +27,7 @@ import { generateShippingLabelPDF } from "../labelPrint";
 import { useOrders } from "@/hooks/order-hook";
 import { useShipperData } from "@/hooks/shipper-hook";
 import { useCouriers } from "@/hooks/courier-hook";
+import Filters from "@/view/orders/order-list/filters";
 
 const filterOptions = [
   {
@@ -59,6 +60,9 @@ export default function OrderTable({
   setUpdateParams,
   activeTab,
   setActiveTab,
+  getOrders,
+  dispatchOrder,
+  bookingOrder,
   variant = "modern",
   hideFilters = false,
   hidePagination = false,
@@ -74,6 +78,9 @@ export default function OrderTable({
   activeTab?: any;
   setActiveTab?: any;
   className?: string;
+  getOrders?: any;
+  bookingOrder?: any;
+  dispatchOrder?: any;
   hideFilters?: boolean;
   hidePagination?: boolean;
   variant?: TableVariantProps;
@@ -83,7 +90,7 @@ export default function OrderTable({
   const dispatch = useAppDispatch();
   const { orderData } = useAppSelector((state) => state?.Orders);
   const { courierCreds } = useAppSelector((state) => state?.Courier);
-  const [selectedCouriers, setSelectedCouriers] = useState({});
+  const [selectedCouriers, setSelectedCouriers] = useState<{ [key: string]: any }>({});
   const [selectedMethod, setSelectedMethod] = useState({});
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedShipper, setSelectedShipper] = useState();
@@ -91,8 +98,6 @@ export default function OrderTable({
   const [ordersData, setOrderData] = useState<any>([]);
   const { fetchShippers, shippers } = useShipperData();
   const { getCourierKeys } = useCouriers();
-  const { handleGetOrders, handleOrdersBooking, handleUpdateDispatchStatus } =
-    useOrders();
 
   useEffect(() => {
     getCourierKeys();
@@ -100,36 +105,32 @@ export default function OrderTable({
   }, []);
 
   useEffect(() => {
-    if (orderData?.orders?.length) {
-      const updatedOrders = ensureArray(orderData?.orders)?.map(
-        (order: any) => {
-          const shippersData = ensureArray(shippers)?.filter((shipper: any) => {
-            return shipper?.user === order?.user;
-          });
-          const shipperInfo = ensureArray(shippersData)?.map((shipper: any) => {
-            return {
-              shipperId: shipper?._id ?? null,
-              shipperCity: shipper?.city ?? null,
-            };
-          });
-          const courierInfo = ensureArray(courierCreds?.creds)?.map(
-            (courier: any) => ({
-              courierId: courier?.courier ?? null,
-              courierName: courier?.couriersname ?? "",
-              logo: courier?.logo ?? "",
-              defaultCourier: courier?.isDefault ?? false,
-            })
-          );
-          return {
-            ...order,
-            shipperInfo: shipperInfo.length ? shipperInfo : [],
-            courierInfo: courierInfo?.length ? courierInfo : [],
-          };
-        }
+    const updatedOrders = ensureArray(orderData?.orders)?.map((order: any) => {
+      const shippersData = ensureArray(shippers)?.filter((shipper: any) => {
+        return shipper?.user === order?.user;
+      });
+      const shipperInfo = ensureArray(shippersData)?.map((shipper: any) => {
+        return {
+          shipperId: shipper?._id ?? null,
+          shipperCity: shipper?.city ?? null,
+        };
+      });
+      const courierInfo = ensureArray(courierCreds?.creds)?.map(
+        (courier: any) => ({
+          courierId: courier?.courier ?? null,
+          courierName: courier?.couriersname ?? "",
+          logo: courier?.logo ?? "",
+          defaultCourier: courier?.isDefault ?? false,
+        })
       );
-      setOrderData(updatedOrders);
-    }
-  }, [orderData, shippers, courierCreds?.creds]);
+      return {
+        ...order,
+        shipperInfo: shipperInfo.length ? shipperInfo : [],
+        courierInfo: courierInfo?.length ? courierInfo : [],
+      };
+    });
+    setOrderData(updatedOrders);
+  }, [orderData?.orders, shippers, courierCreds?.creds]);
 
   const [expandedRowId, setExpandedRowId] = useState<any>(null);
   const { table, setData, setColumns } = useTanStackTable<any>({
@@ -139,10 +140,21 @@ export default function OrderTable({
       initialState: {
         pagination: {
           pageIndex: 0,
-          pageSize: 20,
+          pageSize: 10,
         },
       },
       meta: {
+        handleSelectedValue: (rowId: string, selectedCourier: { value: string, label: string }) => {
+          try {
+            setSelectedCouriers((prev) => ({
+              ...prev,
+              [rowId]: selectedCourier,
+            }));
+            console.log("selectedCourier", selectedCourier?.label);
+          } catch (error: any) {
+            console.error("Error updating selected courier:", error);
+          }
+        },
         handleSelectRow: (row) => {
           if (expandedRowId === row?.original?._id) {
             setExpandedRowId(null);
@@ -159,10 +171,6 @@ export default function OrderTable({
   });
 
   useEffect(() => {
-    handleGetOrders();
-  }, [activeTab]);
-
-  useEffect(() => {
     setData(ensureArray(ordersData));
     setExpandedRowId(null);
   }, [ordersData]);
@@ -173,6 +181,7 @@ export default function OrderTable({
     } else if (activeTab === "confirmed") {
       setColumns(
         confirmOrdersColumns({
+          ordersData,
           navigate,
           expandedRowId,
           dispatch,
@@ -217,7 +226,8 @@ export default function OrderTable({
       if (status === "Booked") {
         // console.log("initialValues", initialValues, checkedItems);
         try {
-          const selectedOrders = checkedItems?.length >= 1 ? checkedItems : [row?.original];
+          const selectedOrders =
+            checkedItems?.length >= 1 ? checkedItems : [row?.original];
           const bookingPromises = selectedOrders.map((orderData: any) => {
             const initialValues = {
               orderId: orderData?._id,
@@ -227,11 +237,9 @@ export default function OrderTable({
               shipperId: selectedShipper,
             };
             return new Promise((resolve) => {
-              handleOrdersBooking(initialValues, (status: any, result: any) => {
+              bookingOrder(initialValues, (status: any, result: any) => {
                 if (status === "success") {
-                  toast.success(
-                    result?.message || "Order booked successfully!"
-                  );
+                  toast.success(result?.message);
                 } else if (status === "error") {
                   toast.error(result?.message || "Something went wrong");
                 }
@@ -256,7 +264,7 @@ export default function OrderTable({
               : [{ ...row?.original, status: status?.toLowerCase() }];
           const response: any = await Promise.all(
             hasStatusUpdate.map((item) =>
-              handleUpdateDispatchStatus(
+              dispatchOrder(
                 item._id,
                 { status: item.status },
                 (status: any, result: any) => {
@@ -306,33 +314,40 @@ export default function OrderTable({
   useEffect(() => {
     table.resetExpanded();
     table.resetRowSelection();
-  }, [filterOptions, activeTab]);
+  }, [activeTab]);
 
   return (
     <>
-      <div
-        className={cn(
-          "rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 p-4",
-          className
-        )}
-      >
-        <Input
-          type="search"
-          clearable={true}
-          inputClassName="h-[36px]"
-          placeholder="Search by name..."
-          onClear={() => table.setGlobalFilter("")}
-          value={table.getState().globalFilter ?? ""}
-          prefix={<PiMagnifyingGlassBold className="size-4" />}
-          onChange={(e) => table.setGlobalFilter(e.target.value)}
-          className="w-full @3xl:order-3 @3xl:ms-auto @3xl:max-w-72"
-        />
-        <TabList
-          tabs={filterOptions}
-          setActiveTab={setActiveTab}
-          activeTab={activeTab}
-          selectTab={selectTab}
-        />
+      <div className={cn("rounded-xl border border-muted bg-gray-0 dark:bg-gray-50 p-4", className)}>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-6">
+            <TabList
+              setSelectedStatus={setSelectedStatus}
+              tabs={filterOptions}
+              setActiveTab={setActiveTab}
+              activeTab={activeTab}
+              selectTab={selectTab}
+              className="ms-2"
+            />
+            <Input
+              type="search"
+              placeholder="Search by name..."
+              value={table.getState().globalFilter ?? ""}
+              onClear={() => table.setGlobalFilter("")}
+              onChange={(e) => table.setGlobalFilter(e.target.value)}
+              inputClassName="h-9"
+              clearable={true}
+              prefix={<PiMagnifyingGlassBold className="size-4" />}
+            />
+          </div>
+          <Filters
+            table={table}
+            isLoading={isLoading}
+            paymentStatus={paymentStatus}
+            setPaymentStatus={setPaymentStatus}
+            onFilterApply={onFilterApply}
+          />
+        </div>
         <Table
           table={table}
           variant={variant}
@@ -340,7 +355,7 @@ export default function OrderTable({
           showLoadingText={isLoading}
           isLoading={isLoading}
           classNames={{
-            container: "border border-muted rounded-md border-t-0 mt-4",
+            container: "border border-muted rounded-md border-t-0 mt-4 max-h-[360px] overflow-y-auto",
             rowClassName: "last:border-0",
           }}
           components={{

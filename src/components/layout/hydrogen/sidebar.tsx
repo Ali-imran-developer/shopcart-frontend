@@ -1,11 +1,10 @@
 import cn from "@utils/helperFunctions/class-names";
 import SimpleBar from "@ui/simplebar";
-import Logo from "@shared/components/logo";
 import { SidebarMenu } from "./sidebar-menu";
 import { Link } from "react-router-dom";
 import WorkSpaceSwitcher from "../carbon/work-space-switcher";
 
-export default function Sidebar({ className }: { className?: string }) {
+export default function Sidebar({ className, setSidebarOpen }: { setSidebarOpen: (val: boolean) => void; className?: string}) {
   return (
     <aside
       className={cn(
@@ -13,16 +12,17 @@ export default function Sidebar({ className }: { className?: string }) {
         className
       )}
     >
-      <div className="sticky top-0 z-40 bg-gray-0/10 px-6 pb-2 pt-5 dark:bg-gray-100/5 2xl:px-8 2xl:pt-6 hidden lg:block 2xl:block">
+      <div className="sticky top-0 z-40 bg-gray-0/10 ps-10 pb-2 pt-5 dark:bg-gray-100/5 2xl:px-8 2xl:pt-6 hidden lg:block 2xl:block">
         <Link
           to={"/"}
           aria-label="Site Logo"
           className="text-gray-800 hover:text-gray-900"
         >
+          {/* <Logo className="max-w-[155px] hidden lg:block xl:block 2xl:block" /> */}
           <img
             src="./assets/images/shopcart-logo.png"
             alt=""
-            className="max-w-[135px] object-cover"
+            className="max-w-[110px] w-full"
           />
         </Link>
       </div>
@@ -33,7 +33,7 @@ export default function Sidebar({ className }: { className?: string }) {
       />
 
       <SimpleBar className="h-[calc(100%-160px)]">
-        <SidebarMenu />
+        <SidebarMenu setSidebarOpen={setSidebarOpen} />
       </SimpleBar>
     </aside>
   );

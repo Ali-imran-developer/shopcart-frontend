@@ -197,7 +197,7 @@ export default function OrderTable({
           showLoadingText={isLoading}
           isLoading={isLoading}
           classNames={{
-            container: "border border-muted rounded-md border-t-0 mt-4",
+            container: "border border-muted rounded-md border-t-0 mt-4 max-h-[380px] overflow-y-auto",
             rowClassName: "last:border-0",
           }}
           components={{

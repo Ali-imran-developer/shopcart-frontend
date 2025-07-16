@@ -35,6 +35,16 @@ export const routes = {
     purchaseOrders: "/purchaseOrder",
     ediProduct: (slug: string) => `/products/${slug}/edit`,
   },
+  resale: {
+    listPoducts: "/list-products",
+    resellingOrders: "/reselling-orders",
+    myResellers: "/my-resellers",
+  },
+  marketPlace: {
+    showCase: "/show-case",
+    myListing: "/my-listing",
+    myOrders: "/my-orders",
+  },
   reselling: {
     resellingProduct: "/reselling-product",
     myResellers: "/my-resellers",
@@ -73,13 +83,13 @@ export const routes = {
     billing: "/billing",
   },
   payments: {
-    dashboard: "/dashboard",
-    history: {
-      viewDetails: {
-        print: "/print",
-      },
-      dispute: "/dispute",
-    },
+    dashboard: "/payments/dashborad",
+    // history: {
+    //   viewDetails: {
+    //     print: "/print",
+    //   },
+    //   dispute: "/dispute",
+    // },
   },
   rolesPermissions: "/roles-permissions",
   eCommerce: {

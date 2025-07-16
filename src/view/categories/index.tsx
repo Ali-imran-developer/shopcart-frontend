@@ -30,11 +30,6 @@ export default function ConfirmOrdersPage() {
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center lg:gap-3 gap-4 @lg:mt-0 flex-wrap">
-          <ExportButton
-            data={[]}
-            fileName="order_data"
-            header="Order ID,Name,Email,Avatar,Items,Price,Status,Created At,Updated At"
-          />
           <Link to={routes?.products?.createCategories} className="@lg:w-auto">
             <Button as="span" className="@lg:w-auto">
               <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
