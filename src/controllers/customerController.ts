@@ -1,8 +1,8 @@
 import { apiRequest } from "./apiController";
 
 class CustomerControllers {
-  static fetchAllCustomers() {
-    return apiRequest("get", "/api/customer/get");
+  static fetchAllCustomers(queryParams?: any) {
+    return apiRequest("get", `/api/customer/get?page=${queryParams?.page}&limit=${queryParams?.limit}`);
   }
   static addNewCustomer(data: any) {
     return apiRequest("post", "/api/customer/create", data);

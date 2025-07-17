@@ -7,9 +7,10 @@ import { useCategories } from "@/hooks/categories";
 import { useResaleProduct } from "@/hooks/resale-hook";
 import { Loading } from "@/components/shared/loader";
 import { PiArrowLeft, PiArrowRight } from "react-icons/pi";
+import { Input, Text } from "rizzui";
 
 export default function ShowCase() {
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const { getPublicCategories } = useCategories();
   const { getAllResaleProducts, isLoading } = useResaleProduct();
@@ -36,22 +37,21 @@ export default function ShowCase() {
   const filteredData = ensureArray(allResellerData?.data)?.filter((product) => {
     const lowerQuery = searchQuery.toLowerCase();
     const matchesName = product?.product?.name?.toLowerCase().includes(lowerQuery);
-    return matchesName;
+    const matchesCategory = selectedCategory === "All" || product?.resale?.category === selectedCategory;
+    return matchesName && matchesCategory;
   });
 
   return (
     <div className="@container px-4 py-2">
       <div className="flex items-center mb-10">
-        <input
+        <Text className="font-semibold text-2xl text-black w-60">Search Products</Text>
+        <Input
           onChange={(e) => setSearchQuery(e?.target?.value)}
           value={searchQuery}
-          className="max-w-full p-1.5 w-full placeholder:text-gray-400 border border-gray-200 rounded-tl-lg rounded-bl-lg"
+          className="max-w-full w-full"
           type="search"
-          placeholder="Search Product"
+          placeholder="Enter Product Name"
         />
-        <button className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-tr-lg rounded-br-lg">
-          Search
-        </button>
       </div>
     <div className="relative mb-8">
       <button onClick={scrollLeft} className="absolute left-0 top-1/3 -translate-y-1/2 z-10 bg-white dark:bg-black p-2 rounded-full shadow-md">
@@ -64,9 +64,6 @@ export default function ShowCase() {
             <div onClick={() => setSelectedCategory(category?.name)} className={`w-20 h-20 flex items-center justify-center rounded-full border cursor-pointer
               ${selectedCategory === category?.name ? "border-blue-500" : "border-gray-300"}`}>
                 <img src={category?.image ?? ""} alt={category?.name} className="w-19 h-19 rounded-full" />
-              {/* <span className="text-lg font-bold text-gray-700">
-                {category?.name?.charAt(0).toUpperCase()}
-              </span> */}
             </div>
             <span className="text-gray-600 text-sm font-semibold text-center">
               {category?.name}

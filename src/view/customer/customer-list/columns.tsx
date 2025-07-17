@@ -27,20 +27,22 @@ export const CustomerColumn = ({ handleDeleteCustomer }: any) => {
     //     />
     //   ),
     // }),
-    columnHelper.display({
+    columnHelper.accessor("customerName", {
       id: "name",
       size: 120,
       header: "Customer Name",
+      enableSorting: false,
       cell: ({ row }) => (
         <Text className="font-semibold capitalize">
           {row?.original?.customerName ?? ""}
         </Text>
       ),
     }),
-    columnHelper.display({
+    columnHelper.accessor("phone", {
       id: "phone",
       size: 150,
       header: "Phone",
+      enableSorting: false,
       cell: ({ row }) => (
         <Text className="font-semibold">0{row?.original?.phone ?? ""}</Text>
       ),
@@ -52,7 +54,7 @@ export const CustomerColumn = ({ handleDeleteCustomer }: any) => {
       enableSorting: false,
       cell: ({ row }) => (
         <Text className="font-semibold capitalize">
-          {row?.original?.city ?? ""}{" "}
+          {row?.original?.city ?? ""}
         </Text>
       ),
     }),

@@ -74,7 +74,7 @@ export default function untProductModernCard({
                       <div className="text-black font-semibold text-base">
                         Rs. {item?.product?.price ?? 0}
                       </div>
-                      <p className="text-gray-500 font-medium line-clamp-2 cursor-pointer mt-1">
+                      <p className="text-gray-500 font-medium line-clamp-2 cursor-pointer mt-1 hover:text-blue-600">
                         {item?.product?.name ?? ""}
                       </p>
                     </div>

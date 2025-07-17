@@ -50,9 +50,6 @@ export const orderFormSchema = z.object({
 export const shipmentDetailsSchema = Yup.object().shape({
   shipperCity: Yup.string().required("Shipper is required"),
   shipmentDetails: Yup.object().shape({
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
     name: Yup.string().required("Name is required"),
     phone: Yup.string()
       .required("Phone is required")

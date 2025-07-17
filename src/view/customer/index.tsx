@@ -4,8 +4,9 @@ import CustomerTable from "./customer-list/table";
 import { PiPlusBold } from "react-icons/pi";
 import { metaObject } from "@config/site.config";
 import { useAppSelector } from "@/hooks/store-hook";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCustomer } from "@/hooks/customer-hook";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 export const metadata = {
   ...metaObject("Customer"),
@@ -17,13 +18,15 @@ const pageHeader = {
 
 export default function CustomerDetail() {
   const [open, setOpen] = useState(false);
-  const { handleGetCustomer, isLoading } = useCustomer();
-  const { customerData } = useAppSelector( (state) => state?.Customer);
-
-  useEffect(() => {
-    handleGetCustomer();
-
-  }, []);
+  const { updateParams, params } = useQueryParams();
+  const queryParams = useMemo(() => {
+    return {
+      page: Number(params.get("page")) || 1,
+      limit: Number(params.get("limit")) || 10,
+    };
+  }, [params]);
+  const { isLoading } = useCustomer(queryParams);
+  const { customerData } = useAppSelector((state) => state?.Customer);
 
   return (
     <>
@@ -47,6 +50,9 @@ export default function CustomerDetail() {
           setOpen={setOpen}
           data={customerData}
           isDataLoaded={isLoading}
+          page={queryParams?.page}
+          limit={queryParams?.limit}
+          updateParams={updateParams}
         />
       </div>
     </>
